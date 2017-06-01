@@ -1,4 +1,6 @@
 
+open Base
+       
 type id = string
 
 type ty =
@@ -63,21 +65,20 @@ and bind id t rho =
   | Some s -> unify t s rho
 
 type program = id * id list * obj
-type programType = (id * ty list * ty) list
+type programCtx = (id * ty list * ty) list
 type ctx = (id * ty) list
-let rec lookupPredicate i n (objGamma : programType) =
-  match objGamma with
-    [] -> None
-  | (j , tylist , ty) :: rho' ->
-     if (i == j && n == (length tylist))
-     then Some (tylist , ty)
-     else lookupPredicate i n rho'
 
+let rec lookupPredicateType i n objGamma =
+  find objGamma (fun (j, tylist, ty) -> i == j && n == length tylist)
+       
+let lookupTermType i gamma =
+  find (fun (x , ty) -> i == x) gamma 
+                              
 let rec infer x gamma objGamma =
   match x with
     Op (o , tl) ->
     let m = length tl in
-    (match lookupPredicate o m gamma with
+    (match lookupTermType o m gamma with
        None -> None
      | Some (tylist, ty) -> Some true)
   | Var i -> Some true
