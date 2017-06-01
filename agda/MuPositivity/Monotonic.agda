@@ -44,9 +44,7 @@ data Φ : Set where
   P : Predicate → Φ
   α[_]_ : (a : C) → Φ → Φ
   _⊗_ : Φ → Φ → Φ
---  _has_ : Φ → ℕ → Φ
   -_ : Φ → Φ
-
 
 data Φ+ : Set where
   v : Atom → Φ+

@@ -3,6 +3,7 @@
 from assignment2 import *
 
 if __name__ == "__main__":
+    
     """
     Fill in your server communication code here...
 
