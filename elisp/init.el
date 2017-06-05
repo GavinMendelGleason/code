@@ -70,8 +70,13 @@
 	;; Automatically start it in OCaml buffers
 	(add-hook 'tuareg-mode-hook 'merlin-mode t)
 	(add-hook 'caml-mode-hook 'merlin-mode t)
+	;; custom key bindings
+	(add-hook 'merlin-mode-hook
+       (lambda ()  
+		 (local-set-key (quote [?\M-x?\M-d]) (quote merlin-destruct))))
 	;; Use opam switch to lookup ocamlmerlin binary
 	(setq merlin-command 'opam)))
+
 
 
 ;; Fstar
