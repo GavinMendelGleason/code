@@ -73,7 +73,7 @@
 	;; custom key bindings
 	(add-hook 'merlin-mode-hook
        (lambda ()  
-		 (local-set-key (quote [?\M-x?\M-d]) (quote merlin-destruct))))
+		 (local-set-key (quote [?\C-x?\C-d]) (quote merlin-destruct))))
 	;; Use opam switch to lookup ocamlmerlin binary
 	(setq merlin-command 'opam)))
 

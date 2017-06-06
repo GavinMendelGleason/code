@@ -3,7 +3,9 @@ open Base
        
 type id = string
 type var = string * int
-  
+
+let eqId i j = String.equal i j
+                      
 type ty =
   | TyVar of id
   | Arr of ty * ty
@@ -15,10 +17,10 @@ type ty =
 
 (* inductively defined types *)
 type inductiveName = id
-and inductiveTypeParameters = id list
-and constructors = (id * ty) list
+type inductiveTypeParameters = id list
+type constructor = (id * ty list)
                              
-type ind = inductiveName * inductiveTypeParameters * constructors
+type ind = inductiveName * inductiveTypeParameters * constructor list
 
 type typedefCtx = ind list
        
@@ -94,7 +96,14 @@ let rec foldMaybe b f l =
       | Some y -> foldMaybe y f xs)
 
 let rec mapMaybe f l = Option.value_map ~f:f ~default:None l
-     
+
+let rec everyOk l : bool = match l with
+  | [] -> true
+  | (x :: xs) ->
+     (match x with
+      | Error _ -> false
+      | Ok _ -> everyOk xs)
+                                        
 let uncurry f (a,b) = f a b
 
 let rec lookup i rho =
@@ -133,11 +142,15 @@ type programCtx = (id * ty list * ty) list
 type ctx = (id * ty) list
 
 let rec lookupPredicateType i n objGamma =
-  List.find ~f:(fun (j, tylist, ty) -> String.equal i j && n = List.length tylist) objGamma 
+  List.find ~f:(fun (j, tylist, ty) -> eqId i j && n = List.length tylist) objGamma 
        
 let lookupTermType i gamma =
-  List.find ~f:(fun (x , ty) -> String.equal i x) gamma 
+  List.find ~f:(fun (x , ty) -> eqId i x) gamma 
 
+let lookupDefinition o ctx : constructor option =
+  List.find_map ctx ~f:(fun (x , tyl , constr) ->
+                           List.find ~f:(fun (c , tyl') -> eqId o c) constr)
+            
 let rec tyeq s t =
   match s , t with
   | TyVar id1 , TyVar id2 -> String.equal id1 id2
@@ -149,14 +162,45 @@ let rec tyeq s t =
   | Plus (a1 , b1) , Plus (a2 , b2) -> true
   | _ -> false
 
-let rec checkTermType (s : term) (ty : ty) (ctx : typedefCtx) : bool =
+type typeError =
+  | NoConstructor of id
+  | BadConstructorArguments of typeError list
+  | WrongNumberOfArgumentsToConstructor of term list * ty list 
+  | ApplicationOfNonFunctionType of term * ty
+
+let failures lst = List.fold lst ~init:[] ~f:(fun r x -> match x with | Ok x -> r | Error e -> e :: r)
+                                             
+(* Inverts the meaning of option *)
+let rec checkFunType (fty : ty) (tylst : ty list) : (unit , typeError) Result.t =
+  ??
+and checkTermType (s : term) (ty : ty) gamma (ctx : typedefCtx) : (unit , typeError) Result.t =
   match s with
-  | Fun _ -> (??)
-  | App (_,_) -> (??)
+  | Fun (o , tl) ->
+     (match lookupDefinition o ctx with 
+      | None -> Error (NoConstructor o)
+      | Some (_ , tyl) ->
+         (match List.zip tl tyl with
+          | None -> Error (WrongNumberOfArgumentsToConstructor (tl , tyl))
+          | Some lst ->
+             let errlist = failures (List.map lst (fun (t,ty) -> checkTermType t ty gamma ctx))
+             in match errlist with
+                | [] -> Ok ()
+                | _ -> Error (BadConstructorArguments errlist)
+         )
+     )
+  | App (f , tl) ->
+     let fty = inferTermType f gamma ctx in
+     let tlty = List.map tl ~f:(fun t -> inferTermType t gamma ctx)
+     in checkFunType fty flty     
+     (* 
+     (match ty with
+      | Arr (aty,bty) -> (??)
+      | _ -> Error (ApplicationOfNonFunctionType (s,ty))
+      *)
   | BVar _ -> (??)
   | FVar _ -> (??)
   | Lam (_,_) -> (??)                   
-and inferTermType (s : term) : ty option =
+and inferTermType (s : term) gamma ctx : (unit , typeError) Result.t =
   match s with
   | Fun _ -> (??)
   | App (_,_) -> (??)
