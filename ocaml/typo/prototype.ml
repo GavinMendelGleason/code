@@ -1,6 +1,10 @@
 
 open Base
 
+let (>>=) = Result.(>>=)
+let return = Result.return
+let (>>=*) = Option.(>>=)
+
 let uncurry f (a,b) = f a b
 let curry f a b = f (a,b)
        
@@ -24,7 +28,6 @@ type ty =
   | Times of ty * ty
   | Plus of ty * ty
 
-let (>>=) = Option.(>>=)
                    
 let rec eqTy s t =
   match s , t with
@@ -179,6 +182,8 @@ type typeError =
   | FreeVariableWithWrongType of var * ty * ty
   | LambdaNotFunction of term * ty
   | TypesNotUnifiable of ty * ty
+  | DifferentInductives of id * id list * id * id list
+  | VariableLost of id * ctx
 
 let lookupDefinition o (ctx : typedefCtx) : constructor option =
   List.find_map ctx ~f:(fun (it , constr) ->
@@ -189,26 +194,42 @@ let lookupIndType o (ctx : typedefCtx) : inductiveType option =
                    (List.find ctx ~f:(fun (x , constr) ->
                                 List.exists ~f:(fun (c , tyl') -> eqId o c) constr))
                 
-                    
+
+let rec eval (obj : obj) ctx db =
+  match obj with
+  | Op t -> (??)
+  | And _ -> (??)
+  | Or _ -> (??)
+  | Not _ -> (??)
+                   
 let failures lst = List.fold lst ~init:[] ~f:(fun r x -> match x with | Ok x -> r | Error e -> e :: r)
 
-let (>>=) = Result.(>>=)
-let (>>=*) = Option.(>>=)
-
+(* 
 let rec unifyType (tya : ty) (tyb : ty) ctx : ((ctx * ty) , typeError) Result.t =
   match tya, tyb with
-  | Ind tyla, Ind tylb -> map2 tyla tylb ~f:(fun tya tyb -> unifyType tyla tylb
-  | Arr (_,_), Arr (_,_) -> (??)
-  | T () , T () -> Ok (T ())
-  | Int () , Int () -> Ok (Int ())
-  | Bool () , Bool () -> Ok (Bool ())
+  | Ind (i, tyla), Ind (j, tylb) ->
+     if eqId i j
+     then let ctxee = List.fold2 tyla tylb ~init:(Ok ctx)
+                               ~f:(fun r ida idb ->
+                                 r >>= (fun ctx ->
+                                 (bind ida idb ctx) >>= (fun ctx' ->
+                                 return ctx')))
+          in match ctxee with
+             | Unequal_lengths -> Error (DifferentInductives (i,tyla,j,tylb))
+             | Ok ctxe -> ??
+     else Error (DifferentInductives (i,tyla,j,tylb))
+  | Arr (_,_), Arr (_,_) ->     ??                                   
+  | T () , T () -> Ok (ctx, T ())
+  | Int () , Int () -> Ok (ctx, Int ())
+  | Bool () , Bool () -> Ok (ctx, Bool ())
   | Times (_,_) , Times (_,_) -> (??)
   | Plus (_,_) , Plus (_,_) -> ??
   | TyVar _, TyVar _ -> ??
   | TyVar _, _ -> ??
   | _, TyVar _ -> ??
   | _ , _ -> Error (TypesNotUnifiable (tya,tyb))
-                   
+and bind ida idb ctx = ??
+                         
 (* Inverts the meaning of option *)
 let rec checkFunType (fty : ty) (tylst : ty list) : (unit , typeError) Result.t =
   ??
@@ -239,11 +260,6 @@ and checkTermType (s : term) (ty : ty) gamma (ctx : typedefCtx) : (unit , typeEr
      in ftye >>= (fun fty ->
         xtyle >>= (fun xtyl ->
         checkFunType fty xtyl))
-     (* 
-     (match ty with
-      | Arr (aty,bty) -> (??)
-      | _ -> Error (ApplicationOfNonFunctionType (s,ty))
-      *)
   | BVar _ -> failwith "Should not encounter bound var in type-checking 'checkTermType'"
   | FVar fv ->
      (match lookup fv gamma with
@@ -289,12 +305,16 @@ and inferTermType (s : term) gamma ctx : (ty , typeError) Result.t =
       | None -> Error (FreeVariableWithNoType (fv , gamma))
       | Some (_,ty') -> Ok ty')
   | Lam (x,t) ->
-     (match ty with
-      | Arr (tyx, tyy) ->
-         let (ot, v) = openTerm x t
-         in checkTermType ot tyy ((v, tyx) :: gamma) ctx
-      | _ -> Error (LambdaNotFunction (s , ty)))                   
-
+     let (ot,v) = openTerm x t in
+     let alpha = ?? 
+     in inferTermType ot ((v, alpha) :: gamma) ctx >>= (fun (gamma, ty) ->
+        Result.of_option (lookup v gamma) (VariableLost (x , gamma)) >>= (fun (v,ty) ->
+        (match ty with
+         | Arr (tyx, tyy) ->
+            let (ot, v) = openTerm x t
+            in ?? (* checkTermType ot tyy ((v, tyx) :: gamma) ctx *)
+         | _ -> Error (LambdaNotFunction (s , ty)))))
+       
 (* 
 let rec opType op tl gamma objGamma =
   if String.equal op "app"
@@ -352,3 +372,5 @@ Op[ap ; f ; g]
 
 Op
  *) 
+
+ *)

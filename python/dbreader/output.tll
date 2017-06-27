@@ -1,0 +1,724 @@
+
+@prefix domain: <http://dacura.org/dacura_wordpress> .
+@prefix dacura: <http://dacura.scss.tcd.ie/ontology/dacura#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ 
+
+domain:domain:wp_commentmeta 
+  a owl:class ;
+  rdfs:label "domain:wp_commentmeta"@en ;
+  rdfs:comment "domain:wp_commentmeta auto-generated from SQL table"@en .
+
+
+domain:comment_id
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_id"@en ;
+  rdfs:comment "comment_id auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_commentmeta ; 
+  rdfs:range xsd:integer .
+
+
+domain:meta_key
+  a owl:DatatypeProperty ;
+  rdfs:label "meta_key"@en ;
+  rdfs:comment "meta_key auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_commentmeta ; 
+  rdfs:range xsd:string .
+
+
+domain:meta_value
+  a owl:DatatypeProperty ;
+  rdfs:label "meta_value"@en ;
+  rdfs:comment "meta_value auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_commentmeta ; 
+  rdfs:range rdf:literal .
+
+ 
+
+domain:domain:wp_comments 
+  a owl:class ;
+  rdfs:label "domain:wp_comments"@en ;
+  rdfs:comment "domain:wp_comments auto-generated from SQL table"@en .
+
+
+domain:comment_post_ID
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_post_ID"@en ;
+  rdfs:comment "comment_post_ID auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range xsd:integer .
+
+
+domain:comment_author
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_author"@en ;
+  rdfs:comment "comment_author auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range rdf:literal .
+
+
+domain:comment_author_email
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_author_email"@en ;
+  rdfs:comment "comment_author_email auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range xsd:string .
+
+
+domain:comment_author_url
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_author_url"@en ;
+  rdfs:comment "comment_author_url auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range xsd:string .
+
+
+domain:comment_author_IP
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_author_IP"@en ;
+  rdfs:comment "comment_author_IP auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range xsd:string .
+
+
+domain:comment_date
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_date"@en ;
+  rdfs:comment "comment_date auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range rdf:literal .
+
+
+domain:comment_date_gmt
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_date_gmt"@en ;
+  rdfs:comment "comment_date_gmt auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range rdf:literal .
+
+
+domain:comment_content
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_content"@en ;
+  rdfs:comment "comment_content auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range rdf:literal .
+
+
+domain:comment_karma
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_karma"@en ;
+  rdfs:comment "comment_karma auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range xsd:integer .
+
+
+domain:comment_approved
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_approved"@en ;
+  rdfs:comment "comment_approved auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range xsd:string .
+
+
+domain:comment_agent
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_agent"@en ;
+  rdfs:comment "comment_agent auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range xsd:string .
+
+
+domain:comment_type
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_type"@en ;
+  rdfs:comment "comment_type auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range xsd:string .
+
+
+domain:comment_parent
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_parent"@en ;
+  rdfs:comment "comment_parent auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range xsd:integer .
+
+
+domain:user_id
+  a owl:DatatypeProperty ;
+  rdfs:label "user_id"@en ;
+  rdfs:comment "user_id auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_comments ; 
+  rdfs:range xsd:integer .
+
+ 
+
+domain:domain:wp_links 
+  a owl:class ;
+  rdfs:label "domain:wp_links"@en ;
+  rdfs:comment "domain:wp_links auto-generated from SQL table"@en .
+
+
+domain:link_url
+  a owl:DatatypeProperty ;
+  rdfs:label "link_url"@en ;
+  rdfs:comment "link_url auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_links ; 
+  rdfs:range xsd:string .
+
+
+domain:link_name
+  a owl:DatatypeProperty ;
+  rdfs:label "link_name"@en ;
+  rdfs:comment "link_name auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_links ; 
+  rdfs:range xsd:string .
+
+
+domain:link_image
+  a owl:DatatypeProperty ;
+  rdfs:label "link_image"@en ;
+  rdfs:comment "link_image auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_links ; 
+  rdfs:range xsd:string .
+
+
+domain:link_target
+  a owl:DatatypeProperty ;
+  rdfs:label "link_target"@en ;
+  rdfs:comment "link_target auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_links ; 
+  rdfs:range xsd:string .
+
+
+domain:link_description
+  a owl:DatatypeProperty ;
+  rdfs:label "link_description"@en ;
+  rdfs:comment "link_description auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_links ; 
+  rdfs:range xsd:string .
+
+
+domain:link_visible
+  a owl:DatatypeProperty ;
+  rdfs:label "link_visible"@en ;
+  rdfs:comment "link_visible auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_links ; 
+  rdfs:range xsd:string .
+
+
+domain:link_owner
+  a owl:DatatypeProperty ;
+  rdfs:label "link_owner"@en ;
+  rdfs:comment "link_owner auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_links ; 
+  rdfs:range xsd:integer .
+
+
+domain:link_rating
+  a owl:DatatypeProperty ;
+  rdfs:label "link_rating"@en ;
+  rdfs:comment "link_rating auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_links ; 
+  rdfs:range xsd:integer .
+
+
+domain:link_updated
+  a owl:DatatypeProperty ;
+  rdfs:label "link_updated"@en ;
+  rdfs:comment "link_updated auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_links ; 
+  rdfs:range rdf:literal .
+
+
+domain:link_rel
+  a owl:DatatypeProperty ;
+  rdfs:label "link_rel"@en ;
+  rdfs:comment "link_rel auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_links ; 
+  rdfs:range xsd:string .
+
+
+domain:link_notes
+  a owl:DatatypeProperty ;
+  rdfs:label "link_notes"@en ;
+  rdfs:comment "link_notes auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_links ; 
+  rdfs:range rdf:literal .
+
+
+domain:link_rss
+  a owl:DatatypeProperty ;
+  rdfs:label "link_rss"@en ;
+  rdfs:comment "link_rss auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_links ; 
+  rdfs:range xsd:string .
+
+ 
+
+domain:domain:wp_options 
+  a owl:class ;
+  rdfs:label "domain:wp_options"@en ;
+  rdfs:comment "domain:wp_options auto-generated from SQL table"@en .
+
+
+domain:option_name
+  a owl:DatatypeProperty ;
+  rdfs:label "option_name"@en ;
+  rdfs:comment "option_name auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_options ; 
+  rdfs:range xsd:string .
+
+
+domain:option_value
+  a owl:DatatypeProperty ;
+  rdfs:label "option_value"@en ;
+  rdfs:comment "option_value auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_options ; 
+  rdfs:range rdf:literal .
+
+
+domain:autoload
+  a owl:DatatypeProperty ;
+  rdfs:label "autoload"@en ;
+  rdfs:comment "autoload auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_options ; 
+  rdfs:range xsd:string .
+
+ 
+
+domain:domain:wp_postmeta 
+  a owl:class ;
+  rdfs:label "domain:wp_postmeta"@en ;
+  rdfs:comment "domain:wp_postmeta auto-generated from SQL table"@en .
+
+
+domain:post_id
+  a owl:DatatypeProperty ;
+  rdfs:label "post_id"@en ;
+  rdfs:comment "post_id auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_postmeta ; 
+  rdfs:range xsd:integer .
+
+
+domain:meta_key
+  a owl:DatatypeProperty ;
+  rdfs:label "meta_key"@en ;
+  rdfs:comment "meta_key auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_postmeta ; 
+  rdfs:range xsd:string .
+
+
+domain:meta_value
+  a owl:DatatypeProperty ;
+  rdfs:label "meta_value"@en ;
+  rdfs:comment "meta_value auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_postmeta ; 
+  rdfs:range rdf:literal .
+
+ 
+
+domain:domain:wp_posts 
+  a owl:class ;
+  rdfs:label "domain:wp_posts"@en ;
+  rdfs:comment "domain:wp_posts auto-generated from SQL table"@en .
+
+
+domain:post_author
+  a owl:DatatypeProperty ;
+  rdfs:label "post_author"@en ;
+  rdfs:comment "post_author auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range xsd:integer .
+
+
+domain:post_date
+  a owl:DatatypeProperty ;
+  rdfs:label "post_date"@en ;
+  rdfs:comment "post_date auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range rdf:literal .
+
+
+domain:post_date_gmt
+  a owl:DatatypeProperty ;
+  rdfs:label "post_date_gmt"@en ;
+  rdfs:comment "post_date_gmt auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range rdf:literal .
+
+
+domain:post_content
+  a owl:DatatypeProperty ;
+  rdfs:label "post_content"@en ;
+  rdfs:comment "post_content auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range rdf:literal .
+
+
+domain:post_title
+  a owl:DatatypeProperty ;
+  rdfs:label "post_title"@en ;
+  rdfs:comment "post_title auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range rdf:literal .
+
+
+domain:post_excerpt
+  a owl:DatatypeProperty ;
+  rdfs:label "post_excerpt"@en ;
+  rdfs:comment "post_excerpt auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range rdf:literal .
+
+
+domain:post_status
+  a owl:DatatypeProperty ;
+  rdfs:label "post_status"@en ;
+  rdfs:comment "post_status auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range xsd:string .
+
+
+domain:comment_status
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_status"@en ;
+  rdfs:comment "comment_status auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range xsd:string .
+
+
+domain:ping_status
+  a owl:DatatypeProperty ;
+  rdfs:label "ping_status"@en ;
+  rdfs:comment "ping_status auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range xsd:string .
+
+
+domain:post_password
+  a owl:DatatypeProperty ;
+  rdfs:label "post_password"@en ;
+  rdfs:comment "post_password auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range xsd:string .
+
+
+domain:post_name
+  a owl:DatatypeProperty ;
+  rdfs:label "post_name"@en ;
+  rdfs:comment "post_name auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range xsd:string .
+
+
+domain:to_ping
+  a owl:DatatypeProperty ;
+  rdfs:label "to_ping"@en ;
+  rdfs:comment "to_ping auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range rdf:literal .
+
+
+domain:pinged
+  a owl:DatatypeProperty ;
+  rdfs:label "pinged"@en ;
+  rdfs:comment "pinged auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range rdf:literal .
+
+
+domain:post_modified
+  a owl:DatatypeProperty ;
+  rdfs:label "post_modified"@en ;
+  rdfs:comment "post_modified auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range rdf:literal .
+
+
+domain:post_modified_gmt
+  a owl:DatatypeProperty ;
+  rdfs:label "post_modified_gmt"@en ;
+  rdfs:comment "post_modified_gmt auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range rdf:literal .
+
+
+domain:post_content_filtered
+  a owl:DatatypeProperty ;
+  rdfs:label "post_content_filtered"@en ;
+  rdfs:comment "post_content_filtered auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range rdf:literal .
+
+
+domain:post_parent
+  a owl:DatatypeProperty ;
+  rdfs:label "post_parent"@en ;
+  rdfs:comment "post_parent auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range xsd:integer .
+
+
+domain:guid
+  a owl:DatatypeProperty ;
+  rdfs:label "guid"@en ;
+  rdfs:comment "guid auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range xsd:string .
+
+
+domain:menu_order
+  a owl:DatatypeProperty ;
+  rdfs:label "menu_order"@en ;
+  rdfs:comment "menu_order auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range xsd:integer .
+
+
+domain:post_type
+  a owl:DatatypeProperty ;
+  rdfs:label "post_type"@en ;
+  rdfs:comment "post_type auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range xsd:string .
+
+
+domain:post_mime_type
+  a owl:DatatypeProperty ;
+  rdfs:label "post_mime_type"@en ;
+  rdfs:comment "post_mime_type auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range xsd:string .
+
+
+domain:comment_count
+  a owl:DatatypeProperty ;
+  rdfs:label "comment_count"@en ;
+  rdfs:comment "comment_count auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_posts ; 
+  rdfs:range xsd:integer .
+
+ 
+
+domain:domain:wp_term_relationships 
+  a owl:class ;
+  rdfs:label "domain:wp_term_relationships"@en ;
+  rdfs:comment "domain:wp_term_relationships auto-generated from SQL table"@en .
+
+
+domain:object_id
+  a owl:DatatypeProperty ;
+  rdfs:label "object_id"@en ;
+  rdfs:comment "object_id auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_term_relationships ; 
+  rdfs:range xsd:integer .
+
+
+domain:term_taxonomy_id
+  a owl:DatatypeProperty ;
+  rdfs:label "term_taxonomy_id"@en ;
+  rdfs:comment "term_taxonomy_id auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_term_relationships ; 
+  rdfs:range xsd:integer .
+
+
+domain:term_order
+  a owl:DatatypeProperty ;
+  rdfs:label "term_order"@en ;
+  rdfs:comment "term_order auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_term_relationships ; 
+  rdfs:range xsd:integer .
+
+ 
+
+domain:domain:wp_term_taxonomy 
+  a owl:class ;
+  rdfs:label "domain:wp_term_taxonomy"@en ;
+  rdfs:comment "domain:wp_term_taxonomy auto-generated from SQL table"@en .
+
+
+domain:term_id
+  a owl:DatatypeProperty ;
+  rdfs:label "term_id"@en ;
+  rdfs:comment "term_id auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_term_taxonomy ; 
+  rdfs:range xsd:integer .
+
+
+domain:taxonomy
+  a owl:DatatypeProperty ;
+  rdfs:label "taxonomy"@en ;
+  rdfs:comment "taxonomy auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_term_taxonomy ; 
+  rdfs:range xsd:string .
+
+
+domain:description
+  a owl:DatatypeProperty ;
+  rdfs:label "description"@en ;
+  rdfs:comment "description auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_term_taxonomy ; 
+  rdfs:range rdf:literal .
+
+
+domain:parent
+  a owl:DatatypeProperty ;
+  rdfs:label "parent"@en ;
+  rdfs:comment "parent auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_term_taxonomy ; 
+  rdfs:range xsd:integer .
+
+
+domain:count
+  a owl:DatatypeProperty ;
+  rdfs:label "count"@en ;
+  rdfs:comment "count auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_term_taxonomy ; 
+  rdfs:range xsd:integer .
+
+ 
+
+domain:domain:wp_terms 
+  a owl:class ;
+  rdfs:label "domain:wp_terms"@en ;
+  rdfs:comment "domain:wp_terms auto-generated from SQL table"@en .
+
+
+domain:name
+  a owl:DatatypeProperty ;
+  rdfs:label "name"@en ;
+  rdfs:comment "name auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_terms ; 
+  rdfs:range xsd:string .
+
+
+domain:slug
+  a owl:DatatypeProperty ;
+  rdfs:label "slug"@en ;
+  rdfs:comment "slug auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_terms ; 
+  rdfs:range xsd:string .
+
+
+domain:term_group
+  a owl:DatatypeProperty ;
+  rdfs:label "term_group"@en ;
+  rdfs:comment "term_group auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_terms ; 
+  rdfs:range xsd:integer .
+
+ 
+
+domain:domain:wp_usermeta 
+  a owl:class ;
+  rdfs:label "domain:wp_usermeta"@en ;
+  rdfs:comment "domain:wp_usermeta auto-generated from SQL table"@en .
+
+
+domain:user_id
+  a owl:DatatypeProperty ;
+  rdfs:label "user_id"@en ;
+  rdfs:comment "user_id auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_usermeta ; 
+  rdfs:range xsd:integer .
+
+
+domain:meta_key
+  a owl:DatatypeProperty ;
+  rdfs:label "meta_key"@en ;
+  rdfs:comment "meta_key auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_usermeta ; 
+  rdfs:range xsd:string .
+
+
+domain:meta_value
+  a owl:DatatypeProperty ;
+  rdfs:label "meta_value"@en ;
+  rdfs:comment "meta_value auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_usermeta ; 
+  rdfs:range rdf:literal .
+
+ 
+
+domain:domain:wp_users 
+  a owl:class ;
+  rdfs:label "domain:wp_users"@en ;
+  rdfs:comment "domain:wp_users auto-generated from SQL table"@en .
+
+
+domain:user_login
+  a owl:DatatypeProperty ;
+  rdfs:label "user_login"@en ;
+  rdfs:comment "user_login auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_users ; 
+  rdfs:range xsd:string .
+
+
+domain:user_pass
+  a owl:DatatypeProperty ;
+  rdfs:label "user_pass"@en ;
+  rdfs:comment "user_pass auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_users ; 
+  rdfs:range xsd:string .
+
+
+domain:user_nicename
+  a owl:DatatypeProperty ;
+  rdfs:label "user_nicename"@en ;
+  rdfs:comment "user_nicename auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_users ; 
+  rdfs:range xsd:string .
+
+
+domain:user_email
+  a owl:DatatypeProperty ;
+  rdfs:label "user_email"@en ;
+  rdfs:comment "user_email auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_users ; 
+  rdfs:range xsd:string .
+
+
+domain:user_url
+  a owl:DatatypeProperty ;
+  rdfs:label "user_url"@en ;
+  rdfs:comment "user_url auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_users ; 
+  rdfs:range xsd:string .
+
+
+domain:user_registered
+  a owl:DatatypeProperty ;
+  rdfs:label "user_registered"@en ;
+  rdfs:comment "user_registered auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_users ; 
+  rdfs:range rdf:literal .
+
+
+domain:user_activation_key
+  a owl:DatatypeProperty ;
+  rdfs:label "user_activation_key"@en ;
+  rdfs:comment "user_activation_key auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_users ; 
+  rdfs:range xsd:string .
+
+
+domain:user_status
+  a owl:DatatypeProperty ;
+  rdfs:label "user_status"@en ;
+  rdfs:comment "user_status auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_users ; 
+  rdfs:range xsd:integer .
+
+
+domain:display_name
+  a owl:DatatypeProperty ;
+  rdfs:label "display_name"@en ;
+  rdfs:comment "display_name auto-generated from SQL column"@en ;
+  rdfs:domain domain:wp_users ; 
+  rdfs:range xsd:string .
+
