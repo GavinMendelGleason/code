@@ -75,9 +75,17 @@ def get_xsd_type(ty):
     else:
         return 'rdf:literal'
 
-def construct_class_identies():
+def construct_class_identies(db):
     """This function assigns foreign key constraints of given columns to object identifiers.
     """
+    translations = {}
+    tables = get_tables()
+    for table in tables:
+        for column in table_columns(table):
+            if is_auto(column):
+                pass
+
+    return translations;
 
 def run_class_construction(table_class_dict):
     tables = get_tables()
@@ -103,7 +111,7 @@ domain:%(class)s
             if is_auto(column):
                 pass
             else:
-                xsd_type=get_xsd_type(column['Type'])
+                xsd_type = get_xsd_type(column['Type'])
 
                 predicate = """
 domain:%(pred)s
