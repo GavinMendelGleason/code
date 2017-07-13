@@ -1,37 +1,158 @@
 #!/usr/bin/env python
 
+import argparse
+# import logging
 import MySQLdb
 import re
+import config 
 
-db_name = 'dacura_wordpress'
-db = MySQLdb.connect(host="localhost",    # your host, usually localhost
-                     user="root",         # your username
-                     passwd="root",  # your password
-                     db="dacura_wordpress")        # name of the data base
+db = MySQLdb.connect(host=config.HOST,
+                     user=config.USER,
+                     passwd=config.PASSWORD,  # your password
+                     db=config.DB)        # name of the data base
 
+domain = 'http://dacura.org/%(db_name)s' % {'db_name' : config.DB }
 
-domain = 'http://dacura.org/%(db_name)s' % {'db_name' : db_name }
-
-def get_tables ():
+def get_tables():
     cur = db.cursor()
-    cur.execute(
-        """
-        SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-        WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='dacura_wordpress'
-        """)
+    stmt = """
+SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA=%(database)s
+    """
+    cur.execute(stmt, {'database' : config.DB})
     
     tables = [ table for (table,) in cur.fetchall() ]
     
     return tables
 
-def table_columns (table):
-    columns = """
-    SHOW COLUMNS FROM %s
+# Not sure how to do this yet,
+# we may need a pull-back for cross product indices 
+def create_table_name_map():
+    tables = get_tables()
+    return tables
+
+
+def classes(edges):
+    cns = {}
+    for edge in edges:
+        cns[edge['name']] = True
+    return len(cns)
+
+def intermediate_name(cs):
+    res = "%s" % c[0]['edge']
+    for c in cs[1:]:
+        res += '_x_'+c['edge']
+    return res
+
+def intermediate_predicate_name(cs):
+    return intermediate_name(cs)
+
+def intermediate_class_name(cs):
+    n = intermediate_name(cs)
+    return n[0].upper() + n[1:]
+
+def predicates_of_intermediates(cs):
+    return []
+#    preds = []
+#    for c in cs:
+#        { 'domain' : intermediate_class_name(cs),
+#          'edge' : cs['edge']
+#          'range' : 
+
+def pullbacks():
+    class_table = {}
+    reference_table = {}
+    
+    stmt = """
+SELECT *
+FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE TABLE_NAME = %(table)s
     """
 
-    query = columns % table
+    for table in get_tables():
+        
+        cur = db.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute(stmt, {'database' : config.DB , 'table' : table})
+        collect = {}
+        for constraint in cur:
+            if constraint['CONSTRAINT_NAME'] == 'PRIMARY':
+                collect[constraint['ORDINAL_POSITION']] = constraint['COLUMN_NAME']
+
+        # Only one primary key
+        class_table[table] = collect.values()
+
+    stmt = """
+SELECT *
+FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE
+REFERENCED_TABLE_SCHEMA = %(database)s AND TABLE_NAME = %(table)s
+    """
+
+    reference_table = {}
+    for table in get_tables():
+        reference_table[table] = {}
+        
+        cur = db.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute(stmt, {'database' : config.DB , 'table' : table})
+        
+        for constraint in cur:
+            if constraint['REFERENCED_TABLE_NAME'] in collect:
+                reference_table[table][constraint['REFERENCED_TABLE_NAME']].append(constraint['REFERENCED_COLUMN_NAME'])
+            else:
+                reference_table[table][constraint['REFERENCED_TABLE_NAME']] = [constraint['REFERENCED_COLUMN_NAME']]
+                
+        # Only one primary key
+        reference_table[table] = collect.values()
+
+
+        
+        
+    return class_table, reference_table
+
+#def pullbacks(edges):
+#    collect = {}
+#    for edge in edges:
+#        if edge['name'] in collect:
+#            collect[edge['name']].append(edge)
+#        else:
+#            collect[edge['name']] = [edge]
+#            
+#    pb = []
+#    for c in collect:
+#        if len(c) > 1:            
+#            pb.append({'domain' : c[0]['domain'],
+#                       'intermediate_class' : intermediate_class_name(c),
+#                       'intermediate_predicate' : intermediate_predicate_name(c),
+#                       'preds' : predicates_of_intermediates(c)})
+#    return pb
+
+def constraints(name_table):
+    tables = get_tables()
+    stmt = """
+SELECT *
+FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE
+REFERENCED_TABLE_SCHEMA = %(database)s AND REFERENCED_TABLE_NAME = %(table)s
+    """
+    cnstrs = {}
+    for table in tables:
+        cur = db.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute(stmt, {'database' : config.DB , 'table' : table})
+        for constraint in cur:
+            print constraint
+            if constraint['TABLE_NAME'] in cnstrs:
+                cnstrs[constraint['TABLE_NAME']].append(constraint)
+            else:
+                cnstrs[constraint['TABLE_NAME']] = [constraint]
+
+    return cnstrs
+
+def table_columns(table):
+    stmt = """
+SHOW COLUMNS FROM %(table)s
+    """ % {'table' : table}
     cur = db.cursor(MySQLdb.cursors.DictCursor)
-    cur.execute(query)
+    cur.execute(stmt)
     return cur.fetchall()
 
 
@@ -66,64 +187,99 @@ def class_name(suffix):
 def is_auto (column):
     return column['Extra'] == 'auto_increment'
 
-def get_xsd_type(ty):
-    """"""
+def is_primary (column):
+    return column['Key'] == 'PRI'
+
+def get_type_assignment(ty):
+    """This needs to be extended"""
     if re.search('int',ty):
         return 'xsd:integer'
-    elif re.search('varchar',ty):
+    elif re.search('varchar',ty) or re.search('text', ty):
         return 'xsd:string'
+    elif re.search('date',ty):
+        return 'xsd:dateTime'
     else:
         return 'rdf:literal'
 
-def construct_class_identies(db):
-    """This function assigns foreign key constraints of given columns to object identifiers.
-    """
-    translations = {}
-    tables = get_tables()
-    for table in tables:
-        for column in table_columns(table):
-            if is_auto(column):
-                pass
+def type_is(col,ty):
+    return re.search(ty,col['Type'])
 
-    return translations;
+def primary_keys(cols):
+    prime = []
+    for col_candidate in cols:
+        if is_primary(col_candidate):
+            prime.append(col_candidate)
+    return prime
 
-def run_class_construction(table_class_dict):
+def composite(col,cols):
+    p = primary_keys(cols)
+    return col in p
+
+def run_class_construction(class_dict):
     tables = get_tables()
     doc = []
     for table in tables:
         
-        c = class_name(table)
-        
         class_record = """ 
-
 domain:%(class)s 
   a owl:class ;
   rdfs:label "%(class)s"@en ;
   rdfs:comment "%(class)s auto-generated from SQL table"@en .
-""" % {'class' : c} 
+""" % {'class' : table} 
 
         doc.append(class_record)
         print '\n\n'
-        print 'Table: %s' % c
+        print 'Table: %s' % table
         
-        for column in table_columns(table):
+        columns = table_columns(table) 
+        for column in columns:
+            # column information
             print column
-            if is_auto(column):
+            if is_auto(column) or (is_primary(column) and not composite(column,columns)):
+                # We are the identifier for the object type.
+                # As such there is no need to store the column, it will be the
+                # the class itself. We will decide what to do with the
+                # datatype as needed when creating (or migrating) instances.
+                pass
+            if composite(column,columns):
                 pass
             else:
-                xsd_type = get_xsd_type(column['Type'])
+                if table in class_dict:
+                    for cnst in class_dict['table']:
+                        print cnst
+                        preds = [] 
+                        preds.append({'pred' : column['Field'] ,
+                                      'domain' : table ,
+                                      'range' : class_dict[table]['range']})
+                                
+                    predicate_tmpl = """
+domain:%(dom)s
+  a owl:ObjectProperty ;
+  rdfs:label "%(pred)s"@en ;
+  rdfs:comment "%(pred)s auto-generated from SQL column"@en ;
+  rdfs:domain domain:%(dom)s ; 
+  rdfs:range domain:%(rng)s .
+"""
 
-                predicate = """
-domain:%(pred)s
+                    for pred in preds: 
+                        doc.append(predicate_tmpl % pred)
+                    
+                else:
+                    # We are a datatype
+                    rng = get_type_assignment(column['Type'])
+
+                    predicate = """
+domain:%(dom)s_%(pred)s
   a owl:DatatypeProperty ;
   rdfs:label "%(pred)s"@en ;
   rdfs:comment "%(pred)s auto-generated from SQL column"@en ;
-  rdfs:domain %(class)s ; 
-  rdfs:range %(type)s .
-""" % {'pred' : column['Field'] , 'class' : c , 'type' : xsd_type}
+  rdfs:domain domain:%(dom)s ; 
+  rdfs:range domain:%(rng)s .
+""" % {'pred' : column['Field'] , 'dom' : table , 'rng' : rng}
             
-                doc.append(predicate)
+                    doc.append(predicate)
 
+    return doc
 
 def render_turtle(doc):
     print preamble
@@ -131,6 +287,10 @@ def render_turtle(doc):
         print s
 
 if __name__ == "__main__":
-    #render_turtle(doc)
+
+    parser = argparse.ArgumentParser(description='Translate from MySQL to OWL.')
+    name_table = {}
     
-    pass
+    tcd = constraints(name_table)
+    doc = run_class_construction(tcd)
+    # render_turtle(doc)
