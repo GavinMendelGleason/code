@@ -1,0 +1,126 @@
+\documentclass[a4paper,11pt]{moderncv}
+
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+
+\newcommand{\cvreference}[7]{%
+  \textbf{#1}\newline% Name
+  \ifthenelse{\equal{#2}{}}{}{\addresssymbol~#2\newline}%
+  \ifthenelse{\equal{#3}{}}{}{#3\newline}%
+  \ifthenelse{\equal{#4}{}}{}{#4\newline}%
+  \ifthenelse{\equal{#5}{}}{}{#5\newline}%
+  \ifthenelse{\equal{#6}{}}{}{\emailsymbol~\texttt{#6}\newline}%
+  \ifthenelse{\equal{#7}{}}{}{\phonesymbol~#7}}
+
+%\usepackage{hyperref}
+
+%\moderncvtheme{casual}
+%\moderncvtheme{fancy}
+%\moderncvtheme{banking}
+\moderncvtheme{classic}
+
+%\setlength{\hintscolumnwidth}{45mm}
+%\AtBeginDocument{\recomputelengths}
+
+\firstname{Dr. Gavin}
+\familyname{Mendel-Gleason}
+\title{Research Fellow}
+\address{169 St. Attracta Road}{Cabra, Dublin 7}
+\mobile{085 136 8737}
+%\phone{01 02 03 04 05}
+%\fax{01 02 03 04 05}
+\email{jacobian@gmail.com}
+%\extrainfo{Marié \\ beaucoup d'enfants}
+\photo{side-angle-single.png}
+
+%\quote{}
+
+\begin{document}
+
+\maketitle
+
+\section{Employment}
+
+\cventry{2015 -- 2018}{Research Fellow}{Trinity College Dublin}{Dublin}{}
+{
+  \begin{itemize}
+  \item Test
+  \end{itemize}
+}
+
+\cventry{2012 -- 2015}{Postdoctoral Researcher}{Dublin City University}{Dublin}{}
+{
+  \begin{itemize}
+  \item A post-doctoral position with a team of four developers including the principle investigator (Deirdre Hogan).
+  \item Lead developer for the QuAS question answering software. This project developed an information retrieval based question answering system which leveraged customer support interactions. It is a cloud based project with a web and mobile interface.
+  \item Lead developer for the Atabot project. Atabot uses machine learning techniques to recognise and classify user generated content. The classifications include intent-to-purchase or intent-to-switch-product. The identifications allow market specialists to target customers with advertisements of an appropriate nature. The project includes a full end-to-end cloud software system. The system manages the market specialist interface to classified user-generated content, the server which collects the content from Twitter and the classification by machine-learning via a plug-in architecture.
+  \end{itemize}
+}
+
+\cventry{2005 -- 2007}{Lead Software Engineer}{Cognotent Ltd.}{Dublin}{}
+{
+  \begin{itemize}
+  \item Lead developer for irishpressreleases.ie, a CMS for press releases from companies or their PR firms. I wrote a probabilistic parser for automatic data entry. The implementation of the probabilistic parser was written in Common Lisp.
+  \item Lead developer for irishblogs.ie. I implemented vector based similarity measures between blog posts were used to find clusters using an algorithm which was essentially a modified k-means. In addition I wrote a longest common sub-sequence algorithm based on a Patricia tries to extract news story titles. I architected the treatment of news stories, where clusters evolved in time as new blog posts became available using a periodiclow-time-cost algorithm that simulated re-clustering. 
+  \item All of the research, mathematical development and much of the implementation was done by myself under the direction of Roger Galligan. Most of the high speed algorithms were either implemented in C++ or in OCaML. The front end was developed in PHP.
+  \end{itemize}
+}
+
+\section{References}
+
+\subsection{Ireland}
+
+\cvreference{Dr. Declan O'Sullivan}{Professor}{School of Computer Science and Statistics}{Trinity College Dublin}{declan.osullivan@scss.tcd.ie}{}
+
+\cvreference{Dr. Kevin Feeney}{Senior Research Fellow}{School of Computer Science and Statistics}{Trinity College Dublin}{Dublin}{kevin.feeney@cs.tcd.ie}{}
+
+\cvreference{Dr. Deirdre Hogan}{Staff Applied Scientist}{}{LinkedIn}{Dublin}{deirdre.hogan@gmail.com}{}
+  
+\cvreference{Roger Galligan}{CEO}{}{Cognotent Ltd.}{Dublin}{roger.galligan@cognotent.com}{}
+
+\subsection{United States}
+
+\cvreference{Dr. Randy Gobbel}{Alumnus}{}{SRI International}{San Francisco}{gobbel@acm.org}{}
+
+
+
+%\subsection{International}
+
+%\cvlistitem{Général Alcazar}
+
+%\section{Méthodologies}
+%\cvcomputer{Humour}{Les histoires de mon oncle Anatole.}
+%           {Enfumage}{Je parle beaucoup...}
+%\cvcomputer{Opportunisme}{Toutes les occasions sont bonnes àprendre.}{}{}
+
+\section{Education}
+
+\cventry{2007 -- 2011}{PhD Computer Science}
+{Dublin City University}{Dublin}{}
+{
+  In 2007 I began a funded PhD program at Dublin City University in the School of Computing. My
+  thesis title is ``Types and Inhabitation of Infinite State Systems''. As part of my PhD I developed a supercompiler written in Haskell and mechanised proofs of correctness in the proof assistant Coq.
+}
+\cventry{1999 -- 2004}{BS Pure Math, BS Physics}{University of New Mexico}{Albuquerque, New Mexico}{}{
+  Graduated Magna Cum Laude with a Bachelor of Science in Pure Math, and a Bachelor of Science in Physics. My GPA was 3.70. I was given the ``Feynman Award'' for excellent academic achievement in modern physics, and was awarded the title of ``Best Student in Pure Math'' by the Math Dept.
+}
+
+%\section{Langues étrangères}
+%\cvlanguage{Belge}{courant}{langue maternelle}
+%\cvlanguage{Espagnol}{notions}{}
+
+%\section{Activités extra-professionnelles}
+
+%\cvline{Association}{Président du « Volant Club »}
+
+%\cvline{Association}{Président de la société philanthropique « Les Joyeux Turlurons »}
+
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{publications}                        % 'publications' is the name of a BibTeX file
+
+\end{document}
