@@ -12,6 +12,7 @@ db = MySQLdb.connect(host=config.HOST,
                      db=config.DB)        # name of the data base
 
 domain = 'http://dacura.org/%(db_name)s' % {'db_name' : config.DB }
+domain_name = config.DB
 
 def get_tables():
     cur = db.cursor()
@@ -139,7 +140,7 @@ REFERENCED_TABLE_SCHEMA = %(database)s AND REFERENCED_TABLE_NAME = %(table)s
         cur = db.cursor(MySQLdb.cursors.DictCursor)
         cur.execute(stmt, {'database' : config.DB , 'table' : table})
         for constraint in cur:
-            print constraint
+#            print constraint
             if constraint['TABLE_NAME'] in cnstrs:
                 cnstrs[constraint['TABLE_NAME']].append(constraint)
             else:
@@ -166,12 +167,13 @@ predicate.
 """
 
 preamble = """
-@prefix domain: <%(domain)s> .
+@prefix %(domain_name)s: <%(domain)s> .
 @prefix dacura: <http://dacura.scss.tcd.ie/ontology/dacura#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-""" % { 'domain' : domain }
+""" % { 'domain_name' : domain_name , 'domain' : domain }
 
 start = 0
 prefix = 'http://dacura.scss.tcd.ie/ontology/dacura#'
@@ -182,7 +184,7 @@ def genid():
     return uri
 
 def class_name(suffix):
-    return 'domain:' + suffix
+    return 'prefix:' + suffix
 
 def is_auto (column):
     return column['Extra'] == 'auto_increment'
@@ -215,77 +217,137 @@ def composite(col,cols):
     p = primary_keys(cols)
     return col in p
 
+def column_label(table,column):
+    return table + '_' + column
+
+def column_name(table,column):
+    return domain_name + ':' + column_label(table,column)
+
+def compose_label(cc,rcc):
+    return 'fk+' + cc['REFERENCED_TABLE_NAME'] + '_' + cc['REFERENCED_COLUMN_NAME']
+
+def compose_name(cc,rcc):
+    return domain_name + ':' + compose_label(cc,rcc) 
+
+def label_of(table):
+    return table
+
+def class_of(table):
+    "Currently does nothing"
+    return domain_name + ':' + label_of(table)
+
 def run_class_construction(class_dict):
     tables = get_tables()
     doc = []
     for table in tables:
         
         class_record = """ 
-domain:%(class)s 
+%(class)s 
   a owl:class ;
-  rdfs:label "%(class)s"@en ;
-  rdfs:comment "%(class)s auto-generated from SQL table"@en .
-""" % {'class' : table} 
+  rdfs:label "%(label)s"@en ;
+  rdfs:comment "%(label)s auto-generated from SQL table"@en .
+""" % {'class' : class_of(table), 'label' : label_of(table)} 
 
         doc.append(class_record)
-        print '\n\n'
-        print 'Table: %s' % table
+#        print '\n\n'
+#        print 'Table: %s' % table
         
         columns = table_columns(table) 
         for column in columns:
-            # column information
-            print column
-            if is_auto(column) or (is_primary(column) and not composite(column,columns)):
-                # We are the identifier for the object type.
-                # As such there is no need to store the column, it will be the
-                # the class itself. We will decide what to do with the
-                # datatype as needed when creating (or migrating) instances.
-                pass
-            if composite(column,columns):
-                pass
-            else:
-                if table in class_dict:
-                    for cnst in class_dict['table']:
-                        print cnst
-                        preds = [] 
-                        preds.append({'pred' : column['Field'] ,
-                                      'domain' : table ,
-                                      'range' : class_dict[table]['range']})
-                                
-                    predicate_tmpl = """
-domain:%(dom)s
-  a owl:ObjectProperty ;
-  rdfs:label "%(pred)s"@en ;
-  rdfs:comment "%(pred)s auto-generated from SQL column"@en ;
-  rdfs:domain domain:%(dom)s ; 
-  rdfs:range domain:%(rng)s .
-"""
 
-                    for pred in preds: 
-                        doc.append(predicate_tmpl % pred)
-                    
+#            print "Here? %s" % (table in class_dict)
+#            print "there %s" % class_dict[table]
+#            print "Column %s " % column
+            if (table in class_dict
+                and any(column['Field'] == c['COLUMN_NAME'] for c in class_dict[table])):
+
+                # predicates by column
+                preds = []
+
+                # First find the column constraint
+                cc = None
+                for c in class_dict[table]:
+                    if column['Field'] == c['COLUMN_NAME']:
+                        cc = c
+                        break
+
+                if cc:
+
+                    referenced_columns = table_columns(cc['REFERENCED_TABLE_NAME'])
+                    rcc = None
+                    # Find the referenced column spec
+                    for rc in referenced_columns:
+                        if rc['Field'] == cc['REFERENCED_COLUMN_NAME']:
+                            rcc = rc
+                    if rcc:
+                        # Find out the type of the reference.
+                        if is_primary(rcc):
+                            preds.append({'pred' : compose_name(cc,rcc),
+                                          'label' : compose_label(cc,rcc),
+                                          'domain' : class_of(table),
+                                          'rng' : class_of(cc['REFERENCED_TABLE_NAME'])})
+                        else:
+                            preds.append({'pred' : compose_name(cc,rcc),
+                                          'label' : compose_label(cc,rcc),
+                                          'domain' : class_of(table),
+                                          'rng' : rcc})
+                        
+                    else:
+                        pass
                 else:
-                    # We are a datatype
-                    rng = get_type_assignment(column['Type'])
+                    pass  
+                
 
-                    predicate = """
-domain:%(dom)s_%(pred)s
-  a owl:DatatypeProperty ;
-  rdfs:label "%(pred)s"@en ;
-  rdfs:comment "%(pred)s auto-generated from SQL column"@en ;
-  rdfs:domain domain:%(dom)s ; 
-  rdfs:range domain:%(rng)s .
-""" % {'pred' : column['Field'] , 'dom' : table , 'rng' : rng}
+                for pred in preds:
+                    formatted_pred = """
+%(pred)s
+  a owl:ObjectProperty ;
+  rdfs:label "%(label)s"@en ;
+  rdfs:comment "%(label)s auto-generated from SQL column"@en ;
+  rdfs:domain %(domain)s ; 
+  rdfs:range %(rng)s .
+""" % pred                     
+                    doc.append(formatted_pred)
             
-                    doc.append(predicate)
+            else:
+                # We are a datatype
+                rng = get_type_assignment(column['Type'])
+                
+                predicate = """
+%(pred)s
+  a owl:DatatypeProperty ;
+  rdfs:label "%(label)s"@en ;
+  rdfs:comment "%(label)s auto-generated from SQL column"@en ;
+  rdfs:domain %(domain)s ; 
+  rdfs:range %(rng)s .
+""" % {'pred' : column_name(table,column['Field']),
+       'label' : column_label(table,column['Field']),
+       'domain' : class_of(table) ,
+       'rng' : rng}
+            
+                doc.append(predicate)
 
     return doc
 
+def lift_instance_data(tcd):
+    triples = []
+    tables = get_tables()
+    
+    for table in tables:
+        columns = table_columns(table) 
+        for column in columns:
+            """select
+             """
+
+            
 def render_turtle(doc):
     print preamble
     for s in doc:
         print s
 
+
+#def create_triples
+        
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Translate from MySQL to OWL.')
@@ -293,4 +355,6 @@ if __name__ == "__main__":
     
     tcd = constraints(name_table)
     doc = run_class_construction(tcd)
-    # render_turtle(doc)
+    render_turtle(doc)
+    
+    lift_instance_data(tcd)

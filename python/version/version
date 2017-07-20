@@ -1,0 +1,80 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import re
+import glob
+
+
+helpscreen = """Use one of the following commands:
+version help                Prints this help screen
+version restore FILE N      Restores the Nth version of the file FILE
+version recover FILE        Restores the latest version of the file FILE
+version FILE                Version the file FILE
+"""
+
+if len(sys.argv) < 2:
+    print helpscreen
+    
+    sys.exit("Not enough arguments")
+    
+if sys.argv[1] == 'help':
+    print helpscreen
+
+if sys.argv[1] == 'restore':
+    if sys.argv < 4:
+        sys.exit("Not enough arguments for restore")
+    cwd = os.getcwd()
+    f = sys.argv[2]
+    n = sys.argv[3]    
+    p = os.path.join(cwd,f)
+
+    if os.path.exists('%s.emergency-backup' % p):
+        cmdrm = 'rm -rf %s.emergency-backup' % p
+        os.system(cmdrm)
+        
+    cmd1 = 'mv %s %s.emergency-backup' % (p,p)
+    cmd2 = 'cp -R %s.%d %s' % (p,n,p)
+    os.system(cmd1)
+    os.system(cmd2)
+    
+if sys.argv[1] == 'recover':
+    if sys.argv < 3:
+        sys.exit("Not enough arguments for recover")
+    cwd = os.getcwd()
+    f = sys.argv[2]
+    p = os.path.join(cwd,f)
+    res = glob.glob(p + '.*')
+
+    ns = []
+    for f in res:
+        m = re.search('.*\.([0-9]*)$', f)
+        if m:
+            ns.append(int(m.group(1)))
+
+    n = max(ns)
+
+    if os.path.exists('%s.emergency-backup' % p):
+        cmdrm = 'rm -rf %s.emergency-backup' % p
+        os.system(cmdrm)
+
+    cmd1 = 'mv %s %s.emergency-backup' % (p,p)
+    cmd2 = 'cp -R %s.%d %s' % (p,n,p)
+    os.system(cmd1)
+    os.system(cmd2)
+elif (sys.argv > 2):
+    cwd = os.getcwd()
+    f = sys.argv[1]
+    suffix = 1
+    NotFound=True
+    p = os.path.join(cwd,f)
+    while NotFound:
+        if os.path.exists('%s.%d' % (p,suffix)):
+            suffix+=1
+        else:
+            cmd = 'cp -R %s %s.%d' % (p,p,suffix)
+            os.system(cmd)
+            sys.exit()
+else:
+    print helpscreen
+ 
