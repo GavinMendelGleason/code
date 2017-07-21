@@ -8,7 +8,7 @@ import config
 
 
 def get_tables(global_params):
-    cur = global_params['db'].cursor()
+    cur = global_params['dbo'].cursor()
     stmt = """
 SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
 WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA=%(database)s
@@ -48,7 +48,7 @@ REFERENCED_TABLE_SCHEMA = %(database)s AND REFERENCED_TABLE_NAME = %(table)s
     """
     cnstrs = {}
     for table in tables:
-        cur = global_params['db'].cursor(MySQLdb.cursors.DictCursor)
+        cur = global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
         cur.execute(stmt, {'database' : global_params['db'] , 'table' : table})
         for constraint in cur:
 #            print constraint
@@ -63,7 +63,7 @@ def table_columns(table,global_params):
     stmt = """
 SHOW COLUMNS FROM %(table)s
     """ % {'table' : table}
-    cur = global_params['db'].cursor(MySQLdb.cursors.DictCursor)
+    cur = global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
     cur.execute(stmt)
     return cur.fetchall()
 
@@ -78,9 +78,9 @@ predicate.
 """
 
 start = 0
-def genid(seed):
+def genid(seed,args):
     global start
-    uri = domain + '#' + seed + str(start)
+    uri = args['instance'] + '#' + seed + str(start)
     start += 1 
     return uri
 
@@ -139,21 +139,21 @@ def composite(col,cols):
 def column_label(table,column):
     return table + '_' + column
 
-def column_name(table,column):
-    return domain_name + ':' + column_label(table,column)
+def column_name(table,column,args):
+    return args['domain_name'] + ':' + column_label(table,column)
 
 def compose_label(cc,rcc):
-    return 'fk+' + cc['REFERENCED_TABLE_NAME'] + '_' + cc['REFERENCED_COLUMN_NAME']
+    return 'fk-' + cc['REFERENCED_TABLE_NAME'] + '_' + cc['REFERENCED_COLUMN_NAME']
 
-def compose_name(cc,rcc):
-    return domain_name + ':' + compose_label(cc,rcc) 
+def compose_name(cc,rcc,args):
+    return args['domain_name'] + ':' + compose_label(cc,rcc) 
 
 def label_of(table):
     return table
 
-def class_of(table):
+def class_of(table,args):
     "Currently does nothing"
-    return domain_name + ':' + label_of(table)
+    return args['domain_name'] + ':' + label_of(table)
 
 def run_class_construction(class_dict,global_params):
     tables = get_tables(global_params)
@@ -165,7 +165,7 @@ def run_class_construction(class_dict,global_params):
   a owl:Class ;
   rdfs:label "%(label)s"@en ;
   rdfs:comment "%(label)s auto-generated from SQL table"@en .
-""" % {'class' : class_of(table), 'label' : label_of(table)} 
+""" % {'class' : class_of(table,global_params), 'label' : label_of(table)} 
 
         doc.append(class_record)
 #        print '\n\n'
@@ -201,14 +201,14 @@ def run_class_construction(class_dict,global_params):
                     if rcc:
                         # Find out the type of the reference.
                         if is_primary(rcc):
-                            preds.append({'pred' : compose_name(cc,rcc),
+                            preds.append({'pred' : compose_name(cc,rcc,global_params),
                                           'label' : compose_label(cc,rcc),
-                                          'domain' : class_of(table),
-                                          'rng' : class_of(cc['REFERENCED_TABLE_NAME'])})
+                                          'domain' : class_of(table, global_params),
+                                          'rng' : class_of(cc['REFERENCED_TABLE_NAME'], global_params)})
                         else:
-                            preds.append({'pred' : compose_name(cc,rcc),
+                            preds.append({'pred' : compose_name(cc,rcc, global_params),
                                           'label' : compose_label(cc,rcc),
-                                          'domain' : class_of(table),
+                                          'domain' : class_of(table, global_params),
                                           'rng' : rcc})
                         
                     else:
@@ -239,9 +239,9 @@ def run_class_construction(class_dict,global_params):
   rdfs:comment "%(label)s auto-generated from SQL column"@en ;
   rdfs:domain %(domain)s ; 
   rdfs:range %(rng)s .
-""" % {'pred' : column_name(table,column['Field']),
+""" % {'pred' : column_name(table,column['Field'],global_params),
        'label' : column_label(table,column['Field']),
-       'domain' : class_of(table) ,
+       'domain' : class_of(table, global_params) ,
        'rng' : rng}
             
                 doc.append(predicate)
@@ -256,20 +256,25 @@ def where_key(d):
     return ' and '.join(components)
 
 def lift_instance_data(tcd, global_params):
+
     triples = []
     tables = get_tables(global_params)
-    cursor = global_params['db'].cursor(MySQLdb.cursors.DictCursor)
+    cursor = global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
 
     swizzle_table = {}
 
     results = []
 
+    # Pass 1 to get swizzle table
     for table in tables:
         columns = table_columns(table, global_params)
 
         keys = primary_keys(columns)
         npk = non_primary_keys(columns)
 
+        if (len(keys) == 0):
+            keys = npk
+        
         key_names = [d['Field'] for d in keys]
         keystring = ','.join(key_names)
 
@@ -279,13 +284,36 @@ def lift_instance_data(tcd, global_params):
 
         cursor.execute(stmt)
         for row in cursor:
-            uri = genid(table)
+            uri = genid(table, global_params)
 
-            swizzle_table[str(row.values())] = uri
+            swizzle_table[table+str(row.values())] = uri
+            
+    # Pass 2 to use swizzle table
+    for table in tables:
+        columns = table_columns(table, global_params)
+
+        keys = primary_keys(columns)
+        npk = non_primary_keys(columns)
+
+        if (len(keys) == 0):
+            keys = npk
+        
+        key_names = [d['Field'] for d in keys]
+        keystring = ','.join(key_names)
+
+        stmt = """select %(keys)s from %(table)s
+        """ % { 'keys' : keystring,
+                'table' : table }
+
+        cursor.execute(stmt)
+        for row in cursor:
+
+            uri = swizzle_table[table+str(row.values())]
 
             where = where_key(row)
-            for c in npk:
-                column_cursor = global_params['db'].cursor(MySQLdb.cursors.DictCursor)
+            for c in columns:
+
+                column_cursor = global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
 
                 column_stmt = """select %(column)s , %(keys)s from %(table)s where %(where)s
                 """ % { 'keys' : keystring,
@@ -295,8 +323,43 @@ def lift_instance_data(tcd, global_params):
 
                 cursor.execute(column_stmt)
                 obj = cursor.fetchone()
-                column_val = transform_to_xsd_value(obj[c['Field']], c['Type'])
-                results.append((uri,column_name(table,c['Field']),column_val))
+
+                # \/\/ Reference lookup here
+
+                if (table in tcd
+                    and any(c['Field'] == cspec['COLUMN_NAME'] for cspec in tcd[table])):
+                    cc = None
+                    for cprime in tcd[table]:
+                        if c['Field'] == cprime['COLUMN_NAME']:
+                            cc = cprime
+                            break
+
+                    if cc:
+                        referenced_columns = table_columns(cc['REFERENCED_TABLE_NAME'], global_params)
+                        rcc = None
+                        # Find the referenced column spec
+                        for rc in referenced_columns:
+                            if rc['Field'] == cc['REFERENCED_COLUMN_NAME']:
+                                rcc = rc
+                        if rcc:
+                            # Find out the type of the reference.
+                            if is_primary(rcc):
+                                keyed_value_stmt = """select %(field)s from %(table)s 
+where %(key)s = %(val)s""" % { 'field' : rcc['Field'],
+                               'table' : cc['REFERENCED_TABLE_NAME'],
+                               'key' : rcc['Field'],
+                               'val' : obj[c['Field']]}
+
+                                cursorprime = global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
+                                cursorprime.execute(keyed_value_stmt)
+                                keyrow = cursorprime.fetchone()
+                                if cc['REFERENCED_TABLE_NAME']+str(keyrow.values()) in swizzle_table:
+                                    column_val = swizzle_table[cc['REFERENCED_TABLE_NAME']+str(keyrow.values())]
+                                    results.append((uri,compose_name(cc,rcc, global_params),column_val))
+                
+                                    
+                # ^^^^ Reference lookup here
+                results.append((uri,column_name(table,c['Field'], global_params),transform_to_xsd_value(obj[c['Field']], c['Type'])))
 
     return results
             
@@ -306,41 +369,64 @@ def render_turtle(doc,args):
         tot += s + '\n'
     return tot
 
-def render_triples(triples,args):
+def is_uri(obj):
+    return re.match('^http(s?)://', obj)
+
+def render_point(point, args):
+    for key in args:
+        point = re.sub(key + ':', args[key], point)
+
+    if is_uri(point):
+        point = "<" + point + ">"
+    else:
+        point = re.sub('\^\^(.*)$','^^<\g<1>>',point)
+
+    return point
+
+def render_triples(triples,ns):
     tot = ""
     for (x,y,z) in triples:
-        tot += x + ' ' + y + ' ' + z + '\n'
+        tot += render_point(x,ns) + ' ' + render_point(y,ns) + ' ' + render_point(z,ns) + ' .\n'
 
     return tot
 
-#def create_triples
+def render_turtle_namespace(namespace):
+    tot = ""
+    for key in namespace:
+        tot += "%s <%s> .\n" % (key , namespace[key])
+    return tot
         
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Translate from MySQL to OWL.')
     parser.add_argument('--schema-out', help='Log file', default='schema.ttl')
-    parser.add_argument('--instance-out', help='Log file', default='instance.ttl')
+    parser.add_argument('--instance-out', help='Log file', default='instance.nt')
     parser.add_argument('--db', help='Log file', default=config.DB)
     parser.add_argument('--user', help='DB User', default=config.USER)
     parser.add_argument('--passwd', help='DB passwd', default=config.PASSWORD)
     parser.add_argument('--host', help='DB host', default=config.HOST)
-    global_params = vars(parser.parse_global_params())
+    global_params = vars(parser.parse_args())
     
-    global_params['db'] = MySQLdb.connect(host=global_params['host'],
-                                          user=global_params['user'],
-                                          passwd=global_params['passwd'],  # your password
-                                          db=global_params['db'])        # name of the data base
+    global_params['dbo'] = MySQLdb.connect(host=global_params['host'],
+                                           user=global_params['user'],
+                                           passwd=global_params['passwd'],  # your password
+                                           db=global_params['db'])        # name of the data base
 
     global_params['domain'] = 'http://dacura.org/ontology/%(db_name)s' % {'db_name' : global_params['db']}
+    global_params['instance'] = 'http://dacura.org/instance/%(db_name)s' % {'db_name' : global_params['db']}
     global_params['domain_name'] = global_params['db']
 
-    global_params['preamble'] = """@prefix %(domain_name)s: <%(domain)s#> .
-@prefix dacura: <http://dacura.scss.tcd.ie/ontology/dacura#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-""" % { 'domain_name' : global_params['domain_name'] , 'domain' : global_params['domain'] }
+    global_params['namespace'] = {'dacura' : 'http://dacura.scss.tcd.ie/ontology/dacura#',
+                                  'owl' : 'http://www.w3.org/2002/07/owl#', 
+                                  'rdf' : 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                                  'rdfs' : 'http://www.w3.org/2000/01/rdf-schema#',
+                                  'xsd' : 'http://www.w3.org/2001/XMLSchema#',
+                                  global_params['domain_name'] : global_params['domain'] + '#'
+    }
+    
+    global_params['preamble'] = ("@prefix %(domain_name)s: <%(domain)s#> . " +
+                                 render_turtle_namespace(global_params['namespace'])
+    ) % { 'domain_name' : global_params['domain_name'] , 'domain' : global_params['domain'] }
 
     name_table = {}
     tcd = constraints(name_table,global_params)
@@ -352,6 +438,6 @@ if __name__ == "__main__":
 
 
     triples = lift_instance_data(tcd,global_params)
-    instance = render_triples(triples)
+    instance = render_triples(triples,global_params['namespace'])
     with open(global_params['instance_out'], "w") as text_file:
         text_file.write(instance)
