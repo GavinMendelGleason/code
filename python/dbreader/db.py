@@ -309,7 +309,10 @@ def lift_instance_data(tcd, global_params):
         for row in cursor:
 
             uri = swizzle_table[table+str(row.values())]
-
+            
+            # Add the type information to triples 
+            results.append((uri, 'rdf:type', class_of(table,global_params)))
+            
             where = where_key(row)
             for c in columns:
 
@@ -360,7 +363,8 @@ where %(key)s = %(val)s""" % { 'field' : rcc['Field'],
                                     
                 # ^^^^ Reference lookup here
                 results.append((uri,column_name(table,c['Field'], global_params),transform_to_xsd_value(obj[c['Field']], c['Type'])))
-
+            # And add the class of the elt.             
+        
     return results
             
 def render_turtle(doc,args):
