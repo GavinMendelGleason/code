@@ -1,0 +1,6 @@
+HOST="localhost"
+USER="root"
+PASSWORD="root"
+#DB="dacura_wordpress"
+#DB="parents"
+DB="ipg"

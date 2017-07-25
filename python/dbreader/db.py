@@ -163,6 +163,7 @@ def run_class_construction(class_dict,global_params):
         class_record = """ 
 %(class)s 
   a owl:Class ;
+  rdfs:subClassOf dacura:Entity ;
   rdfs:label "%(label)s"@en ;
   rdfs:comment "%(label)s auto-generated from SQL table"@en .
 """ % {'class' : class_of(table,global_params), 'label' : label_of(table)} 
@@ -397,7 +398,7 @@ def render_triples(triples,ns):
 def render_turtle_namespace(namespace):
     tot = ""
     for key in namespace:
-        tot += "%s <%s> .\n" % (key , namespace[key])
+        tot += "@prefix %s: <%s> .\n" % (key , namespace[key])
     return tot
         
 if __name__ == "__main__":
@@ -427,9 +428,8 @@ if __name__ == "__main__":
                                   'xsd' : 'http://www.w3.org/2001/XMLSchema#',
                                   global_params['domain_name'] : global_params['domain'] + '#'
     }
-    
-    global_params['preamble'] = ("@prefix %(domain_name)s: <%(domain)s#> . " +
-                                 render_turtle_namespace(global_params['namespace'])
+    #    global_params['preamble'] = ( "@prefix %(domain_name)s: <%(domain)s#> . " +
+    global_params['preamble'] = render_turtle_namespace(global_params['namespace']
     ) % { 'domain_name' : global_params['domain_name'] , 'domain' : global_params['domain'] }
 
     name_table = {}
