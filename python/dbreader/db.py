@@ -5,7 +5,8 @@ import argparse
 import MySQLdb
 import re
 import config 
-
+import codecs
+import urllib
 
 def get_tables(global_params):
     cur = global_params['dbo'].cursor()
@@ -105,16 +106,23 @@ def get_type_assignment(ty):
         return 'rdf:literal'
 
 def transform_to_xsd_value(e,ty):
+    print e
+    print ty
+    res = None
     if re.search('int', ty):
-        return ('"%d"^^xsd:integer' % e)
+        res = ('"%d"^^xsd:integer' % e)
     elif re.search('varchar', ty):
-        return ('"%s"@en' % e)
+        res = ('"%s"@en' % e)
     elif re.search('date',ty):
         " need to fix the date here." 
-        return ('"%s"^^xsd:dateTime' % e)
+        res = ('"%s"^^xsd:dateTime' % e)
+    elif re.search('text',ty):
+        res = ('"%s"@en' % e)
     else: 
-        return ("%s" % e)
-    
+        res = ("%s" % e)
+    print res
+    return res
+
 def type_is(col,ty):
     return re.search(ty,col['Type'])
 
@@ -140,12 +148,14 @@ def column_label(table,column):
     return table + '_' + column
 
 def column_name(table,column,args):
-    return args['domain_name'] + ':' + column_label(table,column)
+    cleaned_uri = urllib.quote(column_label(table,column))
+    return args['domain_name'] + ':' + cleaned_uri
 
 def compose_label(cc,rcc):
     return 'fk-' + cc['REFERENCED_TABLE_NAME'] + '_' + cc['REFERENCED_COLUMN_NAME']
 
 def compose_name(cc,rcc,args):
+    cleaned_uri = urllib.quote(compose_label(cc,rcc))
     return args['domain_name'] + ':' + compose_label(cc,rcc) 
 
 def label_of(table):
@@ -153,7 +163,8 @@ def label_of(table):
 
 def class_of(table,args):
     "Currently does nothing"
-    return args['domain_name'] + ':' + label_of(table)
+    cleaned_uri = urllib.quote(label_of(table))
+    return args['domain_name'] + ':' + cleaned_uri
 
 def run_class_construction(class_dict,global_params):
     tables = get_tables(global_params)
@@ -315,6 +326,8 @@ def lift_instance_data(tcd, global_params):
             results.append((uri, 'rdf:type', class_of(table,global_params)))
             
             where = where_key(row)
+            #print where
+            
             for c in columns:
 
                 column_cursor = global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
@@ -347,23 +360,26 @@ def lift_instance_data(tcd, global_params):
                                 rcc = rc
                         if rcc:
                             # Find out the type of the reference.
-                            if is_primary(rcc):
+                            if is_primary(rcc) and obj[c['Field']]:
                                 keyed_value_stmt = """select %(field)s from %(table)s 
 where %(key)s = %(val)s""" % { 'field' : rcc['Field'],
                                'table' : cc['REFERENCED_TABLE_NAME'],
                                'key' : rcc['Field'],
                                'val' : obj[c['Field']]}
-
+                                
                                 cursorprime = global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
                                 cursorprime.execute(keyed_value_stmt)
                                 keyrow = cursorprime.fetchone()
-                                if cc['REFERENCED_TABLE_NAME']+str(keyrow.values()) in swizzle_table:
+                                if keyrow and cc['REFERENCED_TABLE_NAME']+str(keyrow.values()) in swizzle_table:
                                     column_val = swizzle_table[cc['REFERENCED_TABLE_NAME']+str(keyrow.values())]
                                     results.append((uri,compose_name(cc,rcc, global_params),column_val))
                 
                                     
                 # ^^^^ Reference lookup here
-                results.append((uri,column_name(table,c['Field'], global_params),transform_to_xsd_value(obj[c['Field']], c['Type'])))
+
+                # skip if null
+                if obj[c['Field']]:                
+                    results.append((uri,column_name(table,c['Field'], global_params),transform_to_xsd_value(obj[c['Field']], c['Type'])))
             # And add the class of the elt.             
         
     return results
@@ -379,7 +395,8 @@ def is_uri(obj):
 
 def render_point(point, args):
     for key in args:
-        point = re.sub(key + ':', args[key], point)
+        cleaned = args[key] 
+        point = re.sub(key + ':', cleaned, point)
 
     if is_uri(point):
         point = "<" + point + ">"
@@ -391,7 +408,9 @@ def render_point(point, args):
 def render_triples(triples,ns):
     tot = ""
     for (x,y,z) in triples:
-        tot += render_point(x,ns) + ' ' + render_point(y,ns) + ' ' + render_point(z,ns) + ' .\n'
+        # kill nulls. 
+        if x and y and z:
+            tot += render_point(x,ns) + ' ' + render_point(y,ns) + ' ' + render_point(z,ns) + ' .\n'
 
     return tot
 
@@ -415,7 +434,8 @@ if __name__ == "__main__":
     global_params['dbo'] = MySQLdb.connect(host=global_params['host'],
                                            user=global_params['user'],
                                            passwd=global_params['passwd'],  # your password
-                                           db=global_params['db'])        # name of the data base
+                                           db=global_params['db'],        # name of the data base
+                                           charset='utf8')
 
     global_params['domain'] = 'http://dacura.org/ontology/%(db_name)s' % {'db_name' : global_params['db']}
     global_params['instance'] = 'http://dacura.org/instance/%(db_name)s' % {'db_name' : global_params['db']}
@@ -437,11 +457,10 @@ if __name__ == "__main__":
     doc = run_class_construction(tcd,global_params)
     schema = render_turtle(doc,global_params)
     
-    with open(global_params['schema_out'], "w") as text_file:
+    with codecs.open(global_params['schema_out'], "w", encoding='utf8') as text_file:
         text_file.write(schema)
-
 
     triples = lift_instance_data(tcd,global_params)
     instance = render_triples(triples,global_params['namespace'])
-    with open(global_params['instance_out'], "w") as text_file:
+    with codecs.open(global_params['instance_out'], "w", encoding='utf8') as text_file:
         text_file.write(instance)
