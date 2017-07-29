@@ -21,12 +21,12 @@ if len(sys.argv) < 2:
 if sys.argv[1] == 'help':
     print helpscreen
 
-if sys.argv[1] == 'restore':
+elif sys.argv[1] == 'restore':
     if sys.argv < 4:
         sys.exit("Not enough arguments for restore")
     cwd = os.getcwd()
     f = sys.argv[2]
-    n = sys.argv[3]    
+    n = int(sys.argv[3])
     p = os.path.join(cwd,f)
 
     if os.path.exists('%s.emergency-backup' % p):
@@ -38,7 +38,7 @@ if sys.argv[1] == 'restore':
     os.system(cmd1)
     os.system(cmd2)
     
-if sys.argv[1] == 'recover':
+elif sys.argv[1] == 'recover':
     if sys.argv < 3:
         sys.exit("Not enough arguments for recover")
     cwd = os.getcwd()

@@ -7,6 +7,7 @@ import re
 import config 
 import codecs
 import urllib
+import datetime
 
 def get_tables(global_params):
     cur = global_params['dbo'].cursor()
@@ -106,21 +107,21 @@ def get_type_assignment(ty):
         return 'rdf:literal'
 
 def transform_to_xsd_value(e,ty):
-    print e
-    print ty
     res = None
     if re.search('int', ty):
         res = ('"%d"^^xsd:integer' % e)
     elif re.search('varchar', ty):
         res = ('"%s"@en' % e)
     elif re.search('date',ty):
-        " need to fix the date here." 
-        res = ('"%s"^^xsd:dateTime' % e)
+        #f = '%Y-%m-%d %H:%M:%S'
+        #d = datetime.datetime.strptime(e, f)
+        datestring = e.isoformat()
+        res = ('"%s"^^xsd:dateTime' % datestring)
     elif re.search('text',ty):
         res = ('"%s"@en' % e)
     else: 
         res = ("%s" % e)
-    print res
+
     return res
 
 def type_is(col,ty):
