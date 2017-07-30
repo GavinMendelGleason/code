@@ -2,15 +2,39 @@
 
 import argparse
 # import logging
+import os
 import MySQLdb
 import re
 import config 
 import codecs
 import urllib
 import datetime
+import psycopg2
+import psycopg2.extras
+
+def get_dict_cursor(global_params):
+    if global_params['variant'] == 'postgres':
+        return global_params['dbo'].cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    elif global_params['variant'] == 'mysql':
+        return global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
+    else:
+        raise Exception("Unknown variant: %s" % global_params['variant'])
+
+def do_connect(global_params):
+    if global_params['variant'] == 'postgres':
+        global_params['dbo'] = psycopg2.connect("host='%(host)s' dbname='%(db)s' user='%(user)s' password='%(passwd)s'" % global_params)
+    elif global_params['variant'] == 'mysql':
+        global_params['dbo'] = MySQLdb.connect(host=global_params['host'],
+                                               user=global_params['user'],
+                                               passwd=global_params['passwd'],  # your password
+                                               db=global_params['db'],        # name of the data base
+                                               charset='utf8')
+    else:
+        raise Exception("Unknown variant: %s" % global_params['variant'])        
 
 def get_tables(global_params):
     cur = global_params['dbo'].cursor()
+
     stmt = """
 SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
 WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA=%(database)s
@@ -42,18 +66,40 @@ def intermediate_class_name(cs):
 
 def constraints(name_table,global_params):
     tables = get_tables(global_params)
-    stmt = """
+    stmt = None
+    
+    if global_params['variant'] == 'mysql':
+        stmt = """
 SELECT *
 FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
 WHERE
 REFERENCED_TABLE_SCHEMA = %(database)s AND REFERENCED_TABLE_NAME = %(table)s
     """
+    elif global_params['variant'] == 'postgres':
+        stmt = """
+SELECT
+    tc.table_name AS "TABLE_NAME", 
+    kcu.column_name as "COLUMN_NAME",
+    ccu.table_name AS "REFERENCED_TABLE_NAME",
+    ccu.column_name AS "REFERENCED_COLUMN_NAME"
+FROM
+    information_schema.table_constraints AS tc
+    JOIN information_schema.key_column_usage 
+        AS kcu ON tc.constraint_name = kcu.constraint_name
+    JOIN information_schema.constraint_column_usage 
+        AS ccu ON ccu.constraint_name = tc.constraint_name
+WHERE constraint_type = 'FOREIGN KEY'
+AND kcu.table_name = %(table)s 
+AND kcu.table_schema = %(database)s;
+"""
+    else:
+        raise Exception("Unknown variant")
+
     cnstrs = {}
     for table in tables:
-        cur = global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
+        cur = get_dict_cursor(global_params)
         cur.execute(stmt, {'database' : global_params['db'] , 'table' : table})
         for constraint in cur:
-#            print constraint
             if constraint['TABLE_NAME'] in cnstrs:
                 cnstrs[constraint['TABLE_NAME']].append(constraint)
             else:
@@ -62,22 +108,34 @@ REFERENCED_TABLE_SCHEMA = %(database)s AND REFERENCED_TABLE_NAME = %(table)s
     return cnstrs
 
 def table_columns(table,global_params):
-    stmt = """
+    stmt = None
+    if global_params['variant'] == 'mysql':        
+        stmt = """
 SHOW COLUMNS FROM %(table)s
     """ % {'table' : table}
-    cur = global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
-    cur.execute(stmt)
+    elif global_params['variant'] == 'postgres':
+        # A bit of acrobatics to mimic the form and content of the mysql 'show columns' command.
+        stmt = """
+SELECT co.column_name AS "Field", 
+       co.data_type AS "Type", 
+       co.is_nullable AS "Null",
+       (CASE tcu.constraint_type when 'PRIMARY KEY' THEN 'PRI' END) as "Key"
+FROM information_schema.columns AS co
+LEFT OUTER JOIN (SELECT cu.column_name, tc.constraint_name, tc.constraint_type
+		 FROM information_schema.table_constraints AS tc,
+		      information_schema.key_column_usage AS cu
+                 WHERE tc.table_name = %(table)s
+		 AND cu.constraint_name = tc.constraint_name)
+		AS tcu 
+             ON co.column_name = tcu.column_name 
+WHERE co.table_name = %(table)s;
+"""
+    else:
+        raise Exception("Unknown variant: %s" % global_params['variant'])
+        
+    cur = get_dict_cursor(global_params)
+    cur.execute(stmt, {'table' : table})
     return cur.fetchall()
-
-
-"""
-Select the primary key, and make this the object.
-
-If it is an auto increment then we need to assign a URI. 
-
-If it is not an auto increment number, we need to assign a URI and create an auxilliary 
-predicate.
-"""
 
 start = 0
 def genid(seed,args):
@@ -113,8 +171,9 @@ def transform_to_xsd_value(e,ty):
     elif re.search('varchar', ty):
         res = ('"%s"@en' % e)
     elif re.search('date',ty):
-        #f = '%Y-%m-%d %H:%M:%S'
-        #d = datetime.datetime.strptime(e, f)
+        datestring = e.isoformat()
+        res = ('"%s"^^xsd:dateTime' % datestring)
+    elif re.search('timestamp',ty):
         datestring = e.isoformat()
         res = ('"%s"^^xsd:dateTime' % datestring)
     elif re.search('text',ty):
@@ -272,7 +331,7 @@ def lift_instance_data(tcd, global_params):
 
     triples = []
     tables = get_tables(global_params)
-    cursor = global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
+    cursor = get_dict_cursor(global_params)
 
     swizzle_table = {}
 
@@ -426,17 +485,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Translate from MySQL to OWL.')
     parser.add_argument('--schema-out', help='Log file', default='schema.ttl')
     parser.add_argument('--instance-out', help='Log file', default='instance.nt')
+    parser.add_argument('--variant', help='Database variant', default=config.VARIANT)
     parser.add_argument('--db', help='Log file', default=config.DB)
     parser.add_argument('--user', help='DB User', default=config.USER)
     parser.add_argument('--passwd', help='DB passwd', default=config.PASSWORD)
     parser.add_argument('--host', help='DB host', default=config.HOST)
     global_params = vars(parser.parse_args())
-    
-    global_params['dbo'] = MySQLdb.connect(host=global_params['host'],
-                                           user=global_params['user'],
-                                           passwd=global_params['passwd'],  # your password
-                                           db=global_params['db'],        # name of the data base
-                                           charset='utf8')
 
     global_params['domain'] = 'http://dacura.org/ontology/%(db_name)s' % {'db_name' : global_params['db']}
     global_params['instance'] = 'http://dacura.org/instance/%(db_name)s' % {'db_name' : global_params['db']}
@@ -454,6 +508,9 @@ if __name__ == "__main__":
     ) % { 'domain_name' : global_params['domain_name'] , 'domain' : global_params['domain'] }
 
     name_table = {}
+
+    do_connect(global_params)
+        
     tcd = constraints(name_table,global_params)
     doc = run_class_construction(tcd,global_params)
     schema = render_turtle(doc,global_params)
