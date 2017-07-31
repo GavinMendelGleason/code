@@ -482,7 +482,7 @@ def render_turtle_namespace(namespace):
         
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='Translate from MySQL to OWL.')
+    parser = argparse.ArgumentParser(description='Translate from MySQL or PostgreSQL to OWL.')
     parser.add_argument('--schema-out', help='Log file', default='schema.ttl')
     parser.add_argument('--instance-out', help='Log file', default='instance.nt')
     parser.add_argument('--variant', help='Database variant', default=config.VARIANT)
