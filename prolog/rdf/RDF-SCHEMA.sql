@@ -16,7 +16,7 @@ CREATE TABLE quads_pos(
 	obj int NOT NULL,
 	graph int NOT NULL,
 	version int NOT NULL,
-	PRIMARY KEY(obj,pred,sub,graph,version)
+	PRIMARY KEY(sub,pred,obj,graph,version)
 );
 
 DROP TABLE IF EXISTS quads_neg;
@@ -26,7 +26,7 @@ CREATE TABLE quads_neg(
 	obj int NOT NULL,
 	graph int NOT NULL,
 	version int NOT NULL,
-	PRIMARY KEY(obj,pred,sub,graph,version)
+	PRIMARY KEY(sub,pred,obj,graph,version)
 );
 
 DROP TABLE IF EXISTS literal_pos;
@@ -91,8 +91,3 @@ CREATE TABLE texts_neg(
 	version int NOT NULL,
 	PRIMARY KEY(sub,pred,val,graph,version)
 );		
-
-DROP TABLE IF EXISTS version;
-CREATE TABLE version(
-    version int NOT NULL;
-);
