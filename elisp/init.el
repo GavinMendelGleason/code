@@ -1,5 +1,10 @@
 ;; Gavin's .emacs
 
+;; Git password control
+(setq comint-password-prompt-regexp
+      (concat comint-password-prompt-regexp
+              "\\|^Password for .*:\\s *\\'"))
+
 ;; Tabs
 (setq-default tab-width 4)
 (defvaralias 'c-basic-offset 'tab-width)
