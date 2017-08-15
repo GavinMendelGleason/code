@@ -1,6 +1,8 @@
 ;; Gavin's .emacs
 
+
 ;; Git password control
+(require 'shell)
 (setq comint-password-prompt-regexp
       (concat comint-password-prompt-regexp
               "\\|^Password for .*:\\s *\\'"))

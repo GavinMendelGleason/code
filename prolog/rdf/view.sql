@@ -62,6 +62,15 @@ AND b.uri = 'pred'
 AND c.uri = 'obj'
 AND g.uri = 'graph';
 
+-- An insert example
+INSERT INTO quads_pos
+SELECT a.id, b.id, c.id, g.id, v.lastver+1
+FROM uris a, uris b, uris c, uris g, (SELECT COALESCE(MAX(u.version),0) lastver FROM (select * from quads_pos UNION select * from  quads_neg) as u) v
+WHERE a.uri = 'sub'
+AND b.uri = 'pred'
+AND c.uri = 'obj2'
+AND g.uri = 'graph';
+
 -- A faux delete example
 INSERT INTO quads_neg
 SELECT a.id, b.id, c.id, g.id, v.lastver+1

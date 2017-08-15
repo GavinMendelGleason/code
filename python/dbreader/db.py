@@ -32,6 +32,100 @@ def do_connect(global_params):
     else:
         raise Exception("Unknown variant: %s" % global_params['variant'])        
 
+    if global_params['variant_out'] == 'postgres':
+        global_params['dbo_out'] = psycopg2.connect("host='%(host_out)s' dbname='%(db_out)s' user='%(user_out)s' password='%(passwd_out)s'" % global_params)
+
+        cur = global_params['dbo_out'].cursor()
+        
+        version_stmt = """
+SELECT COALESCE(MAX(u.version),0) lastver 
+FROM (SELECT version FROM quads_pos 
+      UNION SELECT version FROM quads_neg 
+      UNION SELECT version FROM literals_pos
+      UNION SELECT version FROM literals_neg
+      UNION SELECT version FROM texts_pos
+      UNION SELECT version FROM texts_neg
+      UNION SELECT version FROM dates_pos
+      UNION SELECT version FROM dates_neg
+      UNION SELECT version FROM ints_pos
+      UNION SELECT version FROM ints_neg) u
+"""
+        cur.execute(version_stmt)
+        [version] = cur.fetchone()
+        global_params['commit-version'] = version+1
+        
+        register_stmt = """PREPARE register_uri AS 
+INSERT INTO uris (uri)
+SELECT $1
+WHERE NOT EXISTS (
+	  SELECT uri FROM uris WHERE uri = $1
+);
+"""
+        cur.execute(register_stmt)
+
+        insert_stmt = """PREPARE insert_quad AS 
+INSERT INTO quads_pos
+SELECT a.id, b.id, c.id, g.id, $5
+FROM uris a, uris b, uris c, uris g
+WHERE a.uri = $1
+AND b.uri = $2
+AND c.uri = $3
+AND g.uri = $4;
+"""
+        cur.execute(insert_stmt)
+
+        insert_text_stmt = """PREPARE insert_text_quad AS 
+INSERT INTO texts_pos
+SELECT a.id, b.id, $3, g.id, $5
+FROM uris a, uris b, uris g
+WHERE a.uri = $1
+AND b.uri = $2
+AND g.uri = $4;
+"""
+        cur.execute(insert_text_stmt)
+
+        insert_date_stmt = """PREPARE insert_date_quad AS 
+INSERT INTO dates_pos
+SELECT a.id, b.id, $3, g.id, $5
+FROM uris a, uris b, uris g
+WHERE a.uri = $1
+AND b.uri = $2
+AND g.uri = $4;
+"""
+        cur.execute(insert_date_stmt)
+
+        insert_int_stmt = """PREPARE insert_int_quad AS 
+INSERT INTO ints_pos
+SELECT a.id, b.id, $3, g.id, $5
+FROM uris a, uris b, uris g
+WHERE a.uri = $1
+AND b.uri = $2
+AND g.uri = $4;
+"""
+        cur.execute(insert_int_stmt)
+
+        insert_literal_stmt = """PREPARE insert_literal_quad AS 
+INSERT INTO literals_pos
+SELECT a.id, b.id, $3, g.id, $5
+FROM uris a, uris b, uris g
+WHERE a.uri = $1
+AND b.uri = $2
+AND g.uri = $4;
+"""
+        cur.execute(insert_literal_stmt)
+
+    elif global_params['variant'] == 'mysql' and global_params['dbo_out']:
+        global_params['dbo_out'] = MySQLdb.connect(host=global_params['host_out'],
+                                                   user=global_params['user_out'],
+                                                   passwd=global_params['passwd_out'],  # your password
+                                                   db=global_params['db_out'],        # name of the data base
+                                                   charset='utf8')
+    else:
+        raise Exception("Unknown variant: %s" % global_params['variant'])        
+
+
+
+    
 def get_tables(global_params):
     cur = global_params['dbo'].cursor()
 
@@ -183,6 +277,17 @@ def transform_to_xsd_value(e,ty):
 
     return res
 
+# Eventually this function has to do conversion between postgres and mysql
+def convert_type(ty,params):
+    return ty
+
+#    if params['output_variant'] == 'postgres':
+#        if re.search('int', ty):
+#            pass
+#    else: 
+#        raise Exception("Only postgres output variant known")
+    
+
 def type_is(col,ty):
     return re.search(ty,col['Type'])
 
@@ -327,6 +432,53 @@ def where_key(d):
                                                    'value' : d[key]})
     return ' and '.join(components)
 
+def register_uri(uri,params):
+    if params['variant'] == 'postgres' and params['dbo_out']:
+        cur = global_params['dbo_out'].cursor()
+        cur.execute("EXECUTE register_uri (%s)", (uri,))
+    else:
+        raise Exception("Only postgres variant works as yet, non-postgres variant specified")
+
+def insert_quad(sub,pred,obj,graph,params):
+    ns = params['namespace']
+    sub = expand(sub,ns)
+    pred = expand(pred,ns)
+    obj = expand(obj,ns)
+#    print(render_point(sub,ns) + ' ' + render_point(pred,ns) + ' ' + render_point(obj,ns) + ' .\n')
+    if params['variant_out'] == 'postgres' and params['dbo_out']:
+        cur = global_params['dbo_out'].cursor()
+        #print "inserting quad"
+        cur.execute("EXECUTE insert_quad (%s,%s,%s,%s,%s)", (sub,pred,obj,graph,params['commit-version']))
+    else:
+        triple = render_point(sub,ns) + ' ' + render_point(pred,ns) + ' ' + render_point(obj,ns) + ' .\n'
+        params['instance_handle'].write(triple)
+            
+def insert_typed_quad(sub,pred,val,ty,graph,params):
+    ns = params['namespace']
+    sub = expand(sub,ns)
+    pred = expand(pred,ns)
+#    print(render_point(sub,ns) + ' ' + render_point(pred,ns) + ' ' + render_point(transform_to_xsd_value(val, ty),ns) + ' .\n')
+    if params['variant_out'] == 'postgres' and params['dbo_out']:
+        cur = global_params['dbo_out'].cursor()
+        if re.search('int', ty):
+            cur.execute("EXECUTE insert_int_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+        elif re.search('varchar', ty):
+            cur.execute("EXECUTE insert_text_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+        elif re.search('date',ty):
+            cur.execute("EXECUTE insert_date_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+        elif re.search('timestamp',ty):
+            cur.execute("EXECUTE insert_date_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+        elif re.search('text',ty):
+            cur.execute("EXECUTE insert_text_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+        else:
+            cur.execute("EXECUTE insert_literal_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+    else:
+        xsdval = transform_to_xsd_value(val, ty)
+        triple = render_point(sub,ns) + ' ' + render_point(pred,ns) + ' ' + render_point(xsdval,ns) + ' .\n'
+
+        params['instance_handle'].write(triple)
+
+
 def lift_instance_data(tcd, global_params):
 
     triples = []
@@ -335,8 +487,7 @@ def lift_instance_data(tcd, global_params):
 
     swizzle_table = {}
 
-    results = []
-
+    
     # Pass 1 to get swizzle table
     for table in tables:
         columns = table_columns(table, global_params)
@@ -362,6 +513,7 @@ def lift_instance_data(tcd, global_params):
             
     # Pass 2 to use swizzle table
     for table in tables:
+        
         columns = table_columns(table, global_params)
 
         keys = primary_keys(columns)
@@ -379,18 +531,18 @@ def lift_instance_data(tcd, global_params):
 
         cursor.execute(stmt)
         for row in cursor:
-
+            
             uri = swizzle_table[table+str(row.values())]
             
-            # Add the type information to triples 
-            results.append((uri, 'rdf:type', class_of(table,global_params)))
+            # Add the type information to triples
+            class_uri = class_of(table,global_params)
+            insert_quad(uri,'rdf:type',class_uri,global_params['instance'],global_params)
             
             where = where_key(row)
             #print where
             
             for c in columns:
-
-                column_cursor = global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
+                column_cursor = get_dict_cursor(global_params)
 
                 column_stmt = """select %(column)s , %(keys)s from %(table)s where %(where)s
                 """ % { 'keys' : keystring,
@@ -398,11 +550,10 @@ def lift_instance_data(tcd, global_params):
                         'where' : where,
                         'table' : table}
 
-                cursor.execute(column_stmt)
-                obj = cursor.fetchone()
+                column_cursor.execute(column_stmt)
+                obj = column_cursor.fetchone()
 
-                # \/\/ Reference lookup here
-
+                ###### \/\/ Object references ############################################
                 if (table in tcd
                     and any(c['Field'] == cspec['COLUMN_NAME'] for cspec in tcd[table])):
                     cc = None
@@ -426,23 +577,33 @@ where %(key)s = %(val)s""" % { 'field' : rcc['Field'],
                                'table' : cc['REFERENCED_TABLE_NAME'],
                                'key' : rcc['Field'],
                                'val' : obj[c['Field']]}
-                                
-                                cursorprime = global_params['dbo'].cursor(MySQLdb.cursors.DictCursor)
+
+                                cursorprime = get_dict_cursor(global_params)
                                 cursorprime.execute(keyed_value_stmt)
                                 keyrow = cursorprime.fetchone()
                                 if keyrow and cc['REFERENCED_TABLE_NAME']+str(keyrow.values()) in swizzle_table:
-                                    column_val = swizzle_table[cc['REFERENCED_TABLE_NAME']+str(keyrow.values())]
-                                    results.append((uri,compose_name(cc,rcc, global_params),column_val))
-                
-                                    
-                # ^^^^ Reference lookup here
+                                    pred_uri = compose_name(cc,rcc, global_params)
+                                    obj_uri = swizzle_table[cc['REFERENCED_TABLE_NAME']+str(keyrow.values())]
+                                    register_uri(uri,global_params)
+                                    register_uri(pred_uri,global_params)
+                                    register_uri(obj_uri,global_params)
+                                    insert_quad(uri,pred_uri,obj_uri,global_params['instance'],global_params)
+                ###### ^^^^ Object references ############################################
 
+                ###### \/\/ Value reference ############################################
                 # skip if null
-                if obj[c['Field']]:                
-                    results.append((uri,column_name(table,c['Field'], global_params),transform_to_xsd_value(obj[c['Field']], c['Type'])))
-            # And add the class of the elt.             
+                if obj[c['Field']]:
+                    pred_uri = column_name(table,c['Field'], global_params)
+                    val = obj[c['Field']]
+                    ty = convert_type(c['Type'],global_params)
+                    register_uri(uri,global_params)
+                    register_uri(pred_uri,global_params)          
+                    insert_typed_quad(uri,pred_uri,val,ty,global_params['instance'],global_params)
+                ###### ^^^^ Value reference ############################################
+        if global_params['dbo_out']:
+            global_params['dbo_out'].commit()        
         
-    return results
+    return True
             
 def render_turtle(doc,args):
     tot = args['preamble']
@@ -474,6 +635,16 @@ def render_triples(triples,ns):
 
     return tot
 
+def expand(point, ns):
+    for key in ns:
+        uri_base = ns[key]
+        prefix = '^' + key + ':'
+        if re.match(prefix, point):
+            point = re.sub('^' + key + ':', uri_base, point)
+            return point
+
+    return point
+
 def render_turtle_namespace(namespace):
     tot = ""
     for key in namespace:
@@ -483,13 +654,20 @@ def render_turtle_namespace(namespace):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Translate from MySQL or PostgreSQL to OWL.')
-    parser.add_argument('--schema-out', help='Log file', default='schema.ttl')
-    parser.add_argument('--instance-out', help='Log file', default='instance.nt')
-    parser.add_argument('--variant', help='Database variant', default=config.VARIANT)
+    parser.add_argument('--schema-out', help='Turtle file containing schema', default='schema.ttl')
+    parser.add_argument('--instance-out', help='N-triple format output', default='instance.nt')
+    parser.add_argument('--variant', help='Database variant (input)', default=config.VARIANT)
     parser.add_argument('--db', help='Log file', default=config.DB)
     parser.add_argument('--user', help='DB User', default=config.USER)
     parser.add_argument('--passwd', help='DB passwd', default=config.PASSWORD)
     parser.add_argument('--host', help='DB host', default=config.HOST)
+
+    parser.add_argument('--variant-out', help='Database variant (output)', default=config.VARIANT_OUT)
+    parser.add_argument('--db-out', help='', default=config.DB_OUT)
+    parser.add_argument('--user-out', help='', default=config.USER_OUT)
+    parser.add_argument('--passwd-out', help='', default=config.PASSWORD_OUT)
+    parser.add_argument('--host-out', help='', default=config.HOST_OUT)     
+
     global_params = vars(parser.parse_args())
 
     global_params['domain'] = 'http://dacura.org/ontology/%(db_name)s' % {'db_name' : global_params['db']}
@@ -510,15 +688,14 @@ if __name__ == "__main__":
     name_table = {}
 
     do_connect(global_params)
-        
+    
     tcd = constraints(name_table,global_params)
+
     doc = run_class_construction(tcd,global_params)
+
     schema = render_turtle(doc,global_params)
     
-    with codecs.open(global_params['schema_out'], "w", encoding='utf8') as text_file:
-        text_file.write(schema)
-
-    triples = lift_instance_data(tcd,global_params)
-    instance = render_triples(triples,global_params['namespace'])
-    with codecs.open(global_params['instance_out'], "w", encoding='utf8') as text_file:
-        text_file.write(instance)
+    if not global_params['db_out']:
+        global_params['instance_handle'] = codecs.open(global_params['instance_out'], "w", encoding='utf8')
+        
+    lift_instance_data(tcd,global_params)

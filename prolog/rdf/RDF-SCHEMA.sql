@@ -29,22 +29,22 @@ CREATE TABLE quads_neg(
 	PRIMARY KEY(sub,pred,obj,graph,version)
 );
 
-DROP TABLE IF EXISTS literal_pos;
 -- Bung everything not of a known subtype here. 
-CREATE TABLE literal_pos(
+DROP TABLE IF EXISTS literals_pos;
+CREATE TABLE literals_pos(
 	sub int NOT NULL,
 	pred int NOT NULL,
-	val binary NOT NULL,
+	val text NOT NULL,
 	graph int NOT NULL,
 	version int NOT NULL,	
 	PRIMARY KEY(sub,pred,val,graph,version)
 ); 
 
-DROP TABLE IF EXISTS literal_neg;
-CREATE TABLE literal_neg(
+DROP TABLE IF EXISTS literals_neg;
+CREATE TABLE literals_neg(
 	sub int NOT NULL,
 	pred int NOT NULL,
-	val binary NOT NULL,
+	val text NOT NULL,
 	graph int NOT NULL,
 	version int NOT NULL,	
 	PRIMARY KEY(sub,pred,val,graph,version)
@@ -72,7 +72,6 @@ CREATE TABLE dates_neg(
 ); 
 
 DROP TABLE IF EXISTS texts_pos;
--- Example with text
 CREATE TABLE texts_pos(
 	sub int NOT NULL,
 	pred int NOT NULL, 
@@ -87,6 +86,26 @@ CREATE TABLE texts_neg(
 	sub int NOT NULL,
 	pred int NOT NULL, 
 	val text NOT NULL,
+	graph int NOT NULL,
+	version int NOT NULL,
+	PRIMARY KEY(sub,pred,val,graph,version)
+);		
+
+DROP TABLE IF EXISTS ints_pos;
+CREATE TABLE ints_pos(
+	sub int NOT NULL,
+	pred int NOT NULL, 
+	val int NOT NULL,
+	graph int NOT NULL,
+	version int NOT NULL,
+	PRIMARY KEY(sub,pred,val,graph,version)
+);		
+
+DROP TABLE IF EXISTS ints_neg;
+CREATE TABLE ints_neg(
+	sub int NOT NULL,
+	pred int NOT NULL, 
+	val int NOT NULL,
 	graph int NOT NULL,
 	version int NOT NULL,
 	PRIMARY KEY(sub,pred,val,graph,version)
