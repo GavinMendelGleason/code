@@ -1,5 +1,9 @@
 ;; Gavin's .emacs
 
+;; Open in the RIGHT fecking window
+(add-to-list
+ 'display-buffer-alist
+ '("^\\*shell\\*$" . (display-buffer-same-window)))
 
 ;; Git password control
 (require 'shell)

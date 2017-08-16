@@ -651,7 +651,8 @@ if __name__ == "__main__":
     logging.basicConfig(filename=args['log'],level=logging.INFO,
                         format=config.LOG_FORMAT)
 
-
+    logging.info('Starting transform')
+    
     global_params['domain'] = 'http://dacura.org/ontology/%(db_name)s' % {'db_name' : global_params['db']}
     global_params['instance'] = 'http://dacura.org/instance/%(db_name)s' % {'db_name' : global_params['db']}
     global_params['domain_name'] = global_params['db']

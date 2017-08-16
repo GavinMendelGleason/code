@@ -1,27 +1,5 @@
 -- This file provides the view on the DB from which we see the current quads
 
-CREATE VIEW quads AS
-SELECT maximum.sub, maximum.pred, maximum.obj, maximum.graph, MAX(maximum.version) lastver FROM
- (SELECT p.sub, p.pred, p.obj, p.graph, p.version
-  FROM quads_pos p
-  WHERE NOT EXISTS
-  (SELECT n.sub, n.pred, n.obj, n.graph
-   FROM quads_neg n
-   WHERE n.sub = p.sub
-   AND n.pred = p.pred
-   AND n.obj = p.obj
-   AND n.graph = p.graph
-   AND n.version >= p.version)) AS maximum 
- GROUP BY maximum.sub, maximum.pred, maximum.obj, maximum.graph;
-
-CREATE VIEW rdf_quad AS
-SELECT a.uri sub, b.uri pred, c.uri obj, g.uri graph
-FROM uris a, uris b, uris c, uris g, quads q
-WHERE a.id = q.sub
-AND b.id = q.pred
-AND c.id = q.obj
-AND g.id = q.graph;
-
 -- Example query for uri insert - all uris have to be registered prior to use in inserts
 INSERT INTO uris (uri)
 SELECT 'sub'
