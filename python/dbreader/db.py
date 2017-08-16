@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-# import logging
+import logging
 import os
 import MySQLdb
 import re
@@ -258,35 +258,9 @@ def get_type_assignment(ty):
     else:
         return 'rdf:literal'
 
-def transform_to_xsd_value(e,ty):
-    res = None
-    if re.search('int', ty):
-        res = ('"%d"^^xsd:integer' % e)
-    elif re.search('varchar', ty):
-        res = ('"%s"@en' % e)
-    elif re.search('date',ty):
-        datestring = e.isoformat()
-        res = ('"%s"^^xsd:dateTime' % datestring)
-    elif re.search('timestamp',ty):
-        datestring = e.isoformat()
-        res = ('"%s"^^xsd:dateTime' % datestring)
-    elif re.search('text',ty):
-        res = ('"%s"@en' % e)
-    else: 
-        res = ("%s" % e)
-
-    return res
-
 # Eventually this function has to do conversion between postgres and mysql
 def convert_type(ty,params):
     return ty
-
-#    if params['output_variant'] == 'postgres':
-#        if re.search('int', ty):
-#            pass
-#    else: 
-#        raise Exception("Only postgres output variant known")
-    
 
 def type_is(col,ty):
     return re.search(ty,col['Type'])
@@ -444,11 +418,15 @@ def insert_quad(sub,pred,obj,graph,params):
     sub = expand(sub,ns)
     pred = expand(pred,ns)
     obj = expand(obj,ns)
-#    print(render_point(sub,ns) + ' ' + render_point(pred,ns) + ' ' + render_point(obj,ns) + ' .\n')
+
+    # print()
     if params['variant_out'] == 'postgres' and params['dbo_out']:
         cur = global_params['dbo_out'].cursor()
-        #print "inserting quad"
-        cur.execute("EXECUTE insert_quad (%s,%s,%s,%s,%s)", (sub,pred,obj,graph,params['commit-version']))
+        try: 
+            cur.execute("EXECUTE insert_quad (%s,%s,%s,%s,%s)", (sub,pred,obj,graph,params['commit-version']))
+        except Exception, e:
+            logging.info("Failed to write point:\n")
+            logging.info(render_point(sub,'URI') + ' ' + render_point(pred,'URI') + ' ' + render_point(obj,'URI') + ' .\n')
     else:
         triple = render_point(sub,ns) + ' ' + render_point(pred,ns) + ' ' + render_point(obj,ns) + ' .\n'
         params['instance_handle'].write(triple)
@@ -457,25 +435,32 @@ def insert_typed_quad(sub,pred,val,ty,graph,params):
     ns = params['namespace']
     sub = expand(sub,ns)
     pred = expand(pred,ns)
-#    print(render_point(sub,ns) + ' ' + render_point(pred,ns) + ' ' + render_point(transform_to_xsd_value(val, ty),ns) + ' .\n')
+
     if params['variant_out'] == 'postgres' and params['dbo_out']:
         cur = global_params['dbo_out'].cursor()
-        if re.search('int', ty):
-            cur.execute("EXECUTE insert_int_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
-        elif re.search('varchar', ty):
-            cur.execute("EXECUTE insert_text_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
-        elif re.search('date',ty):
-            cur.execute("EXECUTE insert_date_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
-        elif re.search('timestamp',ty):
-            cur.execute("EXECUTE insert_date_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
-        elif re.search('text',ty):
-            cur.execute("EXECUTE insert_text_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
-        else:
-            cur.execute("EXECUTE insert_literal_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
-    else:
-        xsdval = transform_to_xsd_value(val, ty)
-        triple = render_point(sub,ns) + ' ' + render_point(pred,ns) + ' ' + render_point(xsdval,ns) + ' .\n'
+        try: 
+            if re.search('int', ty):            
+                cur.execute("EXECUTE insert_int_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+            elif re.search('varchar', ty):
+                cur.execute("EXECUTE insert_text_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+            elif re.search('date',ty):
+                cur.execute("EXECUTE insert_date_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+            elif re.search('timestamp',ty):
+                cur.execute("EXECUTE insert_date_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+            elif re.search('text',ty):
+                cur.execute("EXECUTE insert_text_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+            else:
+                cur.execute("EXECUTE insert_literal_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+        except Exception, e:
+            logging.info("Failed to write point:\n")
+            xsdty = get_type_assignment(ty)
+            xsdtyex = expand(xsdty,ns)
+            logging.info(render_point(sub,'URI') + ' ' + render_point(pred,'URI') + ' ' + render_point(val,xsdtyex) + ' .\n')
 
+    else:
+        xsdty = get_type_assignment(ty)
+        xsdtyex = expand(xsdty,ns)
+        triple = render_point(sub,'URI') + ' ' + render_point(pred,'URI') + ' ' + render_point(val,xsdtyex) + ' .\n'
         params['instance_handle'].write(triple)
 
 
@@ -614,26 +599,13 @@ def render_turtle(doc,args):
 def is_uri(obj):
     return re.match('^http(s?)://', obj)
 
-def render_point(point, args):
-    for key in args:
-        cleaned = args[key] 
-        point = re.sub(key + ':', cleaned, point)
-
-    if is_uri(point):
+def render_point(point, ty):
+    if ty == 'URI'
         point = "<" + point + ">"
     else:
-        point = re.sub('\^\^(.*)$','^^<\g<1>>',point)
+        point = point + "^^<"+ ty +">"
 
     return point
-
-def render_triples(triples,ns):
-    tot = ""
-    for (x,y,z) in triples:
-        # kill nulls. 
-        if x and y and z:
-            tot += render_point(x,ns) + ' ' + render_point(y,ns) + ' ' + render_point(z,ns) + ' .\n'
-
-    return tot
 
 def expand(point, ns):
     for key in ns:
@@ -666,9 +638,19 @@ if __name__ == "__main__":
     parser.add_argument('--db-out', help='', default=config.DB_OUT)
     parser.add_argument('--user-out', help='', default=config.USER_OUT)
     parser.add_argument('--passwd-out', help='', default=config.PASSWORD_OUT)
-    parser.add_argument('--host-out', help='', default=config.HOST_OUT)     
-
+    parser.add_argument('--host-out', help='', default=config.HOST_OUT)
+    parser.add_argument('--log', help='run logging', action='store_true')
+    parser.add_argument('--log-file', help='Log location', default=config.LOG_PATH)
     global_params = vars(parser.parse_args())
+
+    # set up logging
+    root = logging.getLogger()
+    if root.handlers:
+        for handler in root.handlers:
+            root.removeHandler(handler)
+    logging.basicConfig(filename=args['log'],level=logging.INFO,
+                        format=config.LOG_FORMAT)
+
 
     global_params['domain'] = 'http://dacura.org/ontology/%(db_name)s' % {'db_name' : global_params['db']}
     global_params['instance'] = 'http://dacura.org/instance/%(db_name)s' % {'db_name' : global_params['db']}

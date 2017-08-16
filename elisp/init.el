@@ -55,7 +55,7 @@
 (load-file "/home/francoisbabeuf/.emacs.d/lib/abella/lprolog.el")
 
 ;; Twelf
- (setq twelf-root "/home/francoisbabeuf/Documents/build/twelf/")
+(setq twelf-root "/home/francoisbabeuf/Documents/build/twelf/")
 (load (concat twelf-root "emacs/twelf-init.el"))
 
 ;; Event ML
@@ -88,7 +88,6 @@
 
 ;; Fstar
 (setq fstar-executable "/home/francoisbabeuf/.opam/system/bin/fstar.exe")
-
 
 
 ;; RedPRL
