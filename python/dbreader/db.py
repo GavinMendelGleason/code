@@ -409,7 +409,14 @@ def where_key(d):
 def register_uri(uri,params):
     if params['variant'] == 'postgres' and params['dbo_out']:
         cur = global_params['dbo_out'].cursor()
-        cur.execute("EXECUTE register_uri (%s)", (uri,))
+        try:
+            cur.execute("EXECUTE register_uri (%s)", (uri,))
+        except Exception, e:
+            logging.info("Failed to register the uri %s with %s" % (uri,str(e)))
+            # Try to restart after a bit,
+            # this probably has to go outside so we can re-obtain the cursor, but fuck it
+            time.sleep(10)            
+            do_connect(params)
     else:
         raise Exception("Only postgres variant works as yet, non-postgres variant specified")
 
@@ -573,6 +580,9 @@ where %(key)s = %(val)s""" % { 'field' : rcc['Field'],
                                     register_uri(pred_uri,global_params)
                                     register_uri(obj_uri,global_params)
                                     insert_quad(uri,pred_uri,obj_uri,global_params['instance'],global_params)
+                                    if global_params['dbo_out']:
+                                        global_params['dbo_out'].commit()        
+
                 ###### ^^^^ Object references ############################################
 
                 ###### \/\/ Value reference ############################################
@@ -584,9 +594,12 @@ where %(key)s = %(val)s""" % { 'field' : rcc['Field'],
                     register_uri(uri,global_params)
                     register_uri(pred_uri,global_params)          
                     insert_typed_quad(uri,pred_uri,val,ty,global_params['instance'],global_params)
+                    if global_params['dbo_out']:
+                        global_params['dbo_out'].commit()        
                 ###### ^^^^ Value reference ############################################
-        if global_params['dbo_out']:
-            global_params['dbo_out'].commit()        
+        # For testing purposes we will do commit per insert, instead of here...
+        #if global_params['dbo_out']:
+        #    global_params['dbo_out'].commit()        
         
     return True
             
@@ -600,7 +613,7 @@ def is_uri(obj):
     return re.match('^http(s?)://', obj)
 
 def render_point(point, ty):
-    if ty == 'URI'
+    if ty == 'URI':
         point = "<" + point + ">"
     else:
         point = point + "^^<"+ ty +">"
@@ -648,7 +661,7 @@ if __name__ == "__main__":
     if root.handlers:
         for handler in root.handlers:
             root.removeHandler(handler)
-    logging.basicConfig(filename=args['log'],level=logging.INFO,
+    logging.basicConfig(filename=global_params['log_file'],level=logging.INFO,
                         format=config.LOG_FORMAT)
 
     logging.info('Starting transform')
