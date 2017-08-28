@@ -58,3 +58,16 @@ AND b.uri = 'pred'
 AND c.uri = 'obj'
 AND g.uri = 'graph';
 
+
+
+
+CREATE OR REPLACE FUNCTION nuquery()
+RETURNS TABLE (sub int, obj int, pred int)
+LANGUAGE plpgsql
+AS $$
+BEGIN      
+    RETURN QUERY SELECT * ;
+	IF ct < THEN
+	    RETURN QUERY SELECT * FROM nuquery();
+    END IF;
+END $$; 

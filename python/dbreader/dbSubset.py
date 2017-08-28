@@ -479,6 +479,97 @@ def insert_typed_quad(sub,pred,val,ty,graph,params):
         triple = render_point(sub,'URI') + ' ' + render_point(pred,'URI') + ' ' + render_point(val,xsdtyex) + ' .\n'
         params['instance_handle'].write(triple)
 
+def register_object(table,columns,keys,row,swizzle_table,global_params):
+
+    cache_misses = []
+    uri = swizzle_table[table+str(row.values())]
+    
+    # Add the type information to triples
+    class_uri = class_of(table,global_params)
+    register_uri(class_uri,global_params)
+    insert_quad(uri,'rdf:type',class_uri,global_params['instance'],global_params)
+    if global_params['dbo_out']:
+        global_params['dbo_out'].commit()        
+    
+    where = where_key(row)
+
+    key_names = [d['Field'] for d in keys]
+    keystring = ','.join(key_names)
+    
+    for c in columns:
+        column_cursor = get_dict_cursor(global_params)
+
+        column_stmt = """select %(column)s , %(keys)s from %(table)s where %(where)s
+        """ % { 'keys' : keystring,
+                'column' : c['Field'],
+                'where' : where,
+                'table' : table}
+
+        column_cursor.execute(column_stmt)
+        obj = column_cursor.fetchone()
+
+        ###### \/\/ Object references ############################################
+        if (table in tcd
+            and any(c['Field'] == cspec['COLUMN_NAME'] for cspec in tcd[table])):
+            cc = None
+            for cprime in tcd[table]:
+                if c['Field'] == cprime['COLUMN_NAME']:
+                    cc = cprime
+                    break
+
+            if cc:
+                referenced_columns = table_columns(cc['REFERENCED_TABLE_NAME'], global_params)
+                rcc = None
+                # Find the referenced column spec
+                for rc in referenced_columns:
+                    if rc['Field'] == cc['REFERENCED_COLUMN_NAME']:
+                        rcc = rc
+                if rcc:
+                    # Find out the type of the reference.
+                    if is_primary(rcc) and obj[c['Field']]:
+                        keyed_value_stmt = """select %(field)s from %(table)s 
+where %(key)s = %(val)s""" % { 'field' : rcc['Field'],
+                       'table' : cc['REFERENCED_TABLE_NAME'],
+                       'key' : rcc['Field'],
+                       'val' : obj[c['Field']]}
+
+                        cursorprime = get_dict_cursor(global_params)
+                        cursorprime.execute(keyed_value_stmt)
+                        keyrow = cursorprime.fetchone()
+                        if keyrow and cc['REFERENCED_TABLE_NAME']+str(keyrow.values()) in swizzle_table:
+                            pred_uri = compose_name(cc,rcc, global_params)
+                            obj_uri = swizzle_table[cc['REFERENCED_TABLE_NAME']+str(keyrow.values())]
+                            register_uri(uri,global_params)
+                            register_uri(pred_uri,global_params)
+                            register_uri(obj_uri,global_params)
+                            insert_quad(uri,pred_uri,obj_uri,global_params['instance'],global_params)
+                            if global_params['dbo_out']:
+                                global_params['dbo_out'].commit()
+                        else:
+                            miss = {'table' : cc['REFERENCED_TABLE_NAME'],
+                                    'keyrow' : keyrow}
+                            print("Cache miss: %s" % (miss,))
+                            cache_misses.append(miss)
+
+        ###### ^^^^ Object references ############################################
+
+        ###### \/\/ Value reference ############################################
+        # skip if null
+        if obj[c['Field']]:
+            pred_uri = column_name(table,c['Field'], global_params)
+            val = obj[c['Field']]
+            ty = convert_type(c['Type'],global_params)
+            register_uri(uri,global_params)
+            register_uri(pred_uri,global_params)          
+            insert_typed_quad(uri,pred_uri,val,ty,global_params['instance'],global_params)
+            if global_params['dbo_out']:
+                global_params['dbo_out'].commit()        
+        ###### ^^^^ Value reference ############################################
+
+    if global_params['dbo_out']:
+        global_params['dbo_out'].commit()        
+
+    return cache_misses
 
 def lift_instance_data(tcd, global_params):
 
@@ -492,6 +583,13 @@ def lift_instance_data(tcd, global_params):
     register_uri(global_params['instance'],global_params)
     # also put rdf:type in the db
     register_uri('rdf:type',global_params)
+
+    if global_params['fragment']:
+        limit = " LIMIT 1000"
+    else:
+        limit = ""
+    # Store information about ids which we didn't load
+    cache_misses = []
     
     # Pass 1 to get swizzle table
     for table in tables:
@@ -506,16 +604,18 @@ def lift_instance_data(tcd, global_params):
         key_names = [d['Field'] for d in keys]
         keystring = ','.join(key_names)
 
-        stmt = """select %(keys)s from %(table)s
+        stmt = """select %(keys)s from %(table)s %(limit)s
         """ % { 'keys' : keystring,
-                'table' : table }
+                'table' : table,
+                'limit' : limit }
 
         cursor.execute(stmt)
         for row in cursor:
             uri = genid(table, global_params)
-            register_uri(uri,global_params)
+
             swizzle_table[table+str(row.values())] = uri
-            
+
+    cache_misses = []
     # Pass 2 to use swizzle table
     for table in tables:
         
@@ -530,90 +630,40 @@ def lift_instance_data(tcd, global_params):
         key_names = [d['Field'] for d in keys]
         keystring = ','.join(key_names)
 
-        stmt = """select %(keys)s from %(table)s
+        stmt = """select %(keys)s from %(table)s %(limit)s
         """ % { 'keys' : keystring,
-                'table' : table }
+                'table' : table,
+                'limit' : limit }
 
         cursor.execute(stmt)
+        print("Processing table: %s" % (table,))
         for row in cursor:
+            missed = register_object(table,columns,keys,row,swizzle_table,global_params)
+            cache_misses += missed
+
+    # Final pass for cache misses
+    # Actually requires that we achieve a fixed-point where no references are misses.
+    while cache_misses != []:
+        print "Processing cache misses..."
+        
+        new_cache_misses = []
+        for elt in cache_misses:
+            print elt
+            print cache_misses
+            table = elt['table']                    
+            columns = table_columns(table, global_params)
+            keys = primary_keys(columns)
+
+            row = elt['keyrow']
+            uri = genid(table, global_params)
+            register_uri(uri,global_params)
+            print row
+
+            swizzle_table[table+str(row.values())] = uri
+            missed = register_object(table,columns,keys,row,swizzle_table,global_params)
+            new_cache_misses.append(missed)
             
-            uri = swizzle_table[table+str(row.values())]
-            
-            # Add the type information to triples
-            class_uri = class_of(table,global_params)
-            register_uri(class_uri,global_params)
-            insert_quad(uri,'rdf:type',class_uri,global_params['instance'],global_params)
-            if global_params['dbo_out']:
-                global_params['dbo_out'].commit()        
-            
-            where = where_key(row)
-            #print where
-            
-            for c in columns:
-                column_cursor = get_dict_cursor(global_params)
-
-                column_stmt = """select %(column)s , %(keys)s from %(table)s where %(where)s
-                """ % { 'keys' : keystring,
-                        'column' : c['Field'],
-                        'where' : where,
-                        'table' : table}
-
-                column_cursor.execute(column_stmt)
-                obj = column_cursor.fetchone()
-
-                ###### \/\/ Object references ############################################
-                if (table in tcd
-                    and any(c['Field'] == cspec['COLUMN_NAME'] for cspec in tcd[table])):
-                    cc = None
-                    for cprime in tcd[table]:
-                        if c['Field'] == cprime['COLUMN_NAME']:
-                            cc = cprime
-                            break
-
-                    if cc:
-                        referenced_columns = table_columns(cc['REFERENCED_TABLE_NAME'], global_params)
-                        rcc = None
-                        # Find the referenced column spec
-                        for rc in referenced_columns:
-                            if rc['Field'] == cc['REFERENCED_COLUMN_NAME']:
-                                rcc = rc
-                        if rcc:
-                            # Find out the type of the reference.
-                            if is_primary(rcc) and obj[c['Field']]:
-                                keyed_value_stmt = """select %(field)s from %(table)s 
-where %(key)s = %(val)s""" % { 'field' : rcc['Field'],
-                               'table' : cc['REFERENCED_TABLE_NAME'],
-                               'key' : rcc['Field'],
-                               'val' : obj[c['Field']]}
-
-                                cursorprime = get_dict_cursor(global_params)
-                                cursorprime.execute(keyed_value_stmt)
-                                keyrow = cursorprime.fetchone()
-                                if keyrow and cc['REFERENCED_TABLE_NAME']+str(keyrow.values()) in swizzle_table:
-                                    pred_uri = compose_name(cc,rcc, global_params)
-                                    obj_uri = swizzle_table[cc['REFERENCED_TABLE_NAME']+str(keyrow.values())]
-                                    register_uri(uri,global_params)
-                                    register_uri(pred_uri,global_params)
-                                    register_uri(obj_uri,global_params)
-                                    insert_quad(uri,pred_uri,obj_uri,global_params['instance'],global_params)
-                                    if global_params['dbo_out']:
-                                        global_params['dbo_out'].commit()        
-
-                ###### ^^^^ Object references ############################################
-
-                ###### \/\/ Value reference ############################################
-                # skip if null
-                if obj[c['Field']]:
-                    pred_uri = column_name(table,c['Field'], global_params)
-                    val = obj[c['Field']]
-                    ty = convert_type(c['Type'],global_params)
-                    register_uri(uri,global_params)
-                    register_uri(pred_uri,global_params)          
-                    insert_typed_quad(uri,pred_uri,val,ty,global_params['instance'],global_params)
-                    if global_params['dbo_out']:
-                        global_params['dbo_out'].commit()        
-                ###### ^^^^ Value reference ############################################
-        # For testing purposes we will do commit per insert, instead of here...
+        cache_misses = new_cache_misses
         
     if global_params['dbo_out']:
         global_params['dbo_out'].commit()        
@@ -674,6 +724,7 @@ if __name__ == "__main__":
     parser.add_argument('--host-out', help='', default=config.HOST_OUT)
     parser.add_argument('--log', help='run logging', action='store_true')
     parser.add_argument('--log-file', help='Log location', default=config.LOG_PATH)
+    parser.add_argument('--fragment', help='Log location', action='store_true')
     global_params = vars(parser.parse_args())
 
     # set up logging
