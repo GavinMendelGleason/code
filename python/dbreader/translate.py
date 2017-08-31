@@ -11,6 +11,7 @@ blob = open(ifilename).read()
 m = magic.open(magic.MAGIC_MIME_ENCODING)
 m.load()
 encoding = m.buffer(blob)
+print encoding
 
 ## read at that type
 fh = codecs.open(ifilename, 'r', encoding=encoding)
