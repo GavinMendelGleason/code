@@ -11,6 +11,7 @@ import urllib
 import datetime
 import psycopg2
 import psycopg2.extras
+import sys
 
 def get_dict_cursor(global_params):
     if global_params['variant'] == 'postgres':
@@ -29,12 +30,13 @@ def do_connect(global_params):
                                                passwd=global_params['passwd'],  # your password
                                                db=global_params['db'],        # name of the data base
                                                charset='utf8')
+        global_params['dbo'].set_client_encoding('UTF8')
     else:
         raise Exception("Unknown variant: %s" % global_params['variant'])        
 
     if global_params['variant_out'] == 'postgres':
         global_params['dbo_out'] = psycopg2.connect("host='%(host_out)s' dbname='%(db_out)s' user='%(user_out)s' password='%(passwd_out)s'" % global_params)
-
+        global_params['dbo_out'].set_client_encoding('UTF8')
         cur = global_params['dbo_out'].cursor()
         
         version_stmt = """
@@ -114,14 +116,17 @@ AND g.uri = $4;
 """
         cur.execute(insert_literal_stmt)
 
-    elif global_params['variant'] == 'mysql' and global_params['dbo_out']:
+    elif global_params['variant_out'] == 'mysql' and global_params['dbo_out']:
         global_params['dbo_out'] = MySQLdb.connect(host=global_params['host_out'],
                                                    user=global_params['user_out'],
                                                    passwd=global_params['passwd_out'],  # your password
                                                    db=global_params['db_out'],        # name of the data base
                                                    charset='utf8')
+    elif global_params['variant_out'] == 'ntriples':
+        # this is fine
+        pass
     else:
-        raise Exception("Unknown variant: %s" % global_params['variant'])        
+        raise Exception("Unknown variant: %s" % global_params['variant_out'])        
 
 
 
@@ -408,7 +413,7 @@ def where_key(d):
 
 def register_uri(uri,params):
     uri = expand(uri,params['namespace'])
-    if params['variant'] == 'postgres' and params['dbo_out']:
+    if params['variant_out'] == 'postgres' and params['dbo_out']:
         cur = global_params['dbo_out'].cursor()
         try:
             cur.execute("EXECUTE register_uri (%s)", (uri,))
@@ -418,6 +423,9 @@ def register_uri(uri,params):
             # this probably has to go outside so we can re-obtain the cursor, but fuck it
             time.sleep(10)            
             do_connect(params)
+    elif params['variant_out'] == 'ntriples':
+        # this is fine
+        pass
     else:
         raise Exception("Only postgres variant works as yet, non-postgres variant specified")
 
@@ -439,7 +447,7 @@ def insert_quad(sub,pred,obj,graph,params):
             logging.info("Failed to write point:\n")
             logging.info(render_point(sub,'URI') + ' ' + render_point(pred,'URI') + ' ' + render_point(obj,'URI') + ' .\n')
     else:
-        triple = render_point(sub,ns) + ' ' + render_point(pred,ns) + ' ' + render_point(obj,ns) + ' .\n'
+        triple = render_point(sub,'URI') + u' ' + render_point(pred,'URI') + u' ' + render_point(obj,'URI') + u' .\n'
         params['instance_handle'].write(triple)
             
 def insert_typed_quad(sub,pred,val,ty,graph,params):
@@ -476,9 +484,102 @@ def insert_typed_quad(sub,pred,val,ty,graph,params):
     else:
         xsdty = get_type_assignment(ty)
         xsdtyex = expand(xsdty,ns)
-        triple = render_point(sub,'URI') + ' ' + render_point(pred,'URI') + ' ' + render_point(val,xsdtyex) + ' .\n'
+        triple = render_point(sub,'URI') + u' ' + render_point(pred,'URI') + u' ' + render_point(val,xsdtyex) + u' .\n'
+
         params['instance_handle'].write(triple)
 
+def register_object(table,columns,keys,row,swizzle_table,global_params):
+
+    cache_misses = []
+    uri = swizzle_table[table+str(row.values())]
+    
+    # Add the type information to triples
+    class_uri = class_of(table,global_params)
+    register_uri(class_uri,global_params)
+    insert_quad(uri,'rdf:type',class_uri,global_params['instance'],global_params)
+    
+    if 'dbo_out' in global_params and global_params['dbo_out']:
+        global_params['dbo_out'].commit()        
+    
+    where = where_key(row)
+
+    key_names = [d['Field'] for d in keys]
+    keystring = ','.join(key_names)
+    
+    for c in columns:
+        column_cursor = get_dict_cursor(global_params)
+
+        column_stmt = """select %(column)s , %(keys)s from %(table)s where %(where)s
+        """ % { 'keys' : keystring,
+                'column' : c['Field'],
+                'where' : where,
+                'table' : table}
+
+        column_cursor.execute(column_stmt)
+        obj = column_cursor.fetchone()
+
+        ###### \/\/ Object references ############################################
+        if (table in tcd
+            and any(c['Field'] == cspec['COLUMN_NAME'] for cspec in tcd[table])):
+            cc = None
+            for cprime in tcd[table]:
+                if c['Field'] == cprime['COLUMN_NAME']:
+                    cc = cprime
+                    break
+
+            if cc:
+                referenced_columns = table_columns(cc['REFERENCED_TABLE_NAME'], global_params)
+                rcc = None
+                # Find the referenced column spec
+                for rc in referenced_columns:
+                    if rc['Field'] == cc['REFERENCED_COLUMN_NAME']:
+                        rcc = rc
+                if rcc:
+                    # Find out the type of the reference.
+                    if is_primary(rcc) and obj[c['Field']]:
+                        keyed_value_stmt = """select %(field)s from %(table)s 
+where %(key)s = %(val)s""" % { 'field' : rcc['Field'],
+                       'table' : cc['REFERENCED_TABLE_NAME'],
+                       'key' : rcc['Field'],
+                       'val' : obj[c['Field']]}
+
+                        cursorprime = get_dict_cursor(global_params)
+                        cursorprime.execute(keyed_value_stmt)
+                        keyrow = cursorprime.fetchone()
+                        if keyrow and cc['REFERENCED_TABLE_NAME']+str(keyrow.values()) in swizzle_table:
+                            pred_uri = compose_name(cc,rcc, global_params)
+                            obj_uri = swizzle_table[cc['REFERENCED_TABLE_NAME']+str(keyrow.values())]
+                            register_uri(uri,global_params)
+                            register_uri(pred_uri,global_params)
+                            register_uri(obj_uri,global_params)
+                            insert_quad(uri,pred_uri,obj_uri,global_params['instance'],global_params)
+                            if 'dbo_out' in global_params and global_params['dbo_out']:
+                                global_params['dbo_out'].commit()
+                        else:
+                            miss = {'table' : cc['REFERENCED_TABLE_NAME'],
+                                    'keyrow' : keyrow}
+                            print("Cache miss: %s" % (miss,))
+                            cache_misses.append(miss)
+
+        ###### ^^^^ Object references ############################################
+
+        ###### \/\/ Value reference ############################################
+        # skip if null
+        if obj[c['Field']]:
+            pred_uri = column_name(table,c['Field'], global_params)
+            val = obj[c['Field']]
+            ty = convert_type(c['Type'],global_params)
+            register_uri(uri,global_params)
+            register_uri(pred_uri,global_params)          
+            insert_typed_quad(uri,pred_uri,val,ty,global_params['instance'],global_params)
+            if 'dbo_out' in global_params and global_params['dbo_out']:
+                global_params['dbo_out'].commit()        
+        ###### ^^^^ Value reference ############################################
+
+    if 'dbo_out' in global_params and global_params['dbo_out']:
+        global_params['dbo_out'].commit()        
+
+    return cache_misses
 
 def lift_instance_data(tcd, global_params):
 
@@ -492,6 +593,13 @@ def lift_instance_data(tcd, global_params):
     register_uri(global_params['instance'],global_params)
     # also put rdf:type in the db
     register_uri('rdf:type',global_params)
+
+    if global_params['fragment']:
+        limit = " LIMIT 1000"
+    else:
+        limit = ""
+    # Store information about ids which we didn't load
+    cache_misses = []
     
     # Pass 1 to get swizzle table
     for table in tables:
@@ -506,16 +614,18 @@ def lift_instance_data(tcd, global_params):
         key_names = [d['Field'] for d in keys]
         keystring = ','.join(key_names)
 
-        stmt = """select %(keys)s from %(table)s
+        stmt = """select %(keys)s from %(table)s %(limit)s
         """ % { 'keys' : keystring,
-                'table' : table }
+                'table' : table,
+                'limit' : limit }
 
         cursor.execute(stmt)
         for row in cursor:
             uri = genid(table, global_params)
-            register_uri(uri,global_params)
+
             swizzle_table[table+str(row.values())] = uri
-            
+
+    cache_misses = []
     # Pass 2 to use swizzle table
     for table in tables:
         
@@ -530,92 +640,42 @@ def lift_instance_data(tcd, global_params):
         key_names = [d['Field'] for d in keys]
         keystring = ','.join(key_names)
 
-        stmt = """select %(keys)s from %(table)s
+        stmt = """select %(keys)s from %(table)s %(limit)s
         """ % { 'keys' : keystring,
-                'table' : table }
+                'table' : table,
+                'limit' : limit }
 
         cursor.execute(stmt)
+        print("Processing table: %s" % (table,))
         for row in cursor:
-            
-            uri = swizzle_table[table+str(row.values())]
-            
-            # Add the type information to triples
-            class_uri = class_of(table,global_params)
-            register_uri(class_uri,global_params)
-            insert_quad(uri,'rdf:type',class_uri,global_params['instance'],global_params)
-            if global_params['dbo_out']:
-                global_params['dbo_out'].commit()        
-            
-            where = where_key(row)
-            #print where
-            
-            for c in columns:
-                column_cursor = get_dict_cursor(global_params)
+            missed = register_object(table,columns,keys,row,swizzle_table,global_params)
+            cache_misses += missed
 
-                column_stmt = """select %(column)s , %(keys)s from %(table)s where %(where)s
-                """ % { 'keys' : keystring,
-                        'column' : c['Field'],
-                        'where' : where,
-                        'table' : table}
-
-                column_cursor.execute(column_stmt)
-                obj = column_cursor.fetchone()
-
-                ###### \/\/ Object references ############################################
-                if (table in tcd
-                    and any(c['Field'] == cspec['COLUMN_NAME'] for cspec in tcd[table])):
-                    cc = None
-                    for cprime in tcd[table]:
-                        if c['Field'] == cprime['COLUMN_NAME']:
-                            cc = cprime
-                            break
-
-                    if cc:
-                        referenced_columns = table_columns(cc['REFERENCED_TABLE_NAME'], global_params)
-                        rcc = None
-                        # Find the referenced column spec
-                        for rc in referenced_columns:
-                            if rc['Field'] == cc['REFERENCED_COLUMN_NAME']:
-                                rcc = rc
-                        if rcc:
-                            # Find out the type of the reference.
-                            if is_primary(rcc) and obj[c['Field']]:
-                                keyed_value_stmt = """select %(field)s from %(table)s 
-where %(key)s = %(val)s""" % { 'field' : rcc['Field'],
-                               'table' : cc['REFERENCED_TABLE_NAME'],
-                               'key' : rcc['Field'],
-                               'val' : obj[c['Field']]}
-
-                                cursorprime = get_dict_cursor(global_params)
-                                cursorprime.execute(keyed_value_stmt)
-                                keyrow = cursorprime.fetchone()
-                                if keyrow and cc['REFERENCED_TABLE_NAME']+str(keyrow.values()) in swizzle_table:
-                                    pred_uri = compose_name(cc,rcc, global_params)
-                                    obj_uri = swizzle_table[cc['REFERENCED_TABLE_NAME']+str(keyrow.values())]
-                                    register_uri(uri,global_params)
-                                    register_uri(pred_uri,global_params)
-                                    register_uri(obj_uri,global_params)
-                                    insert_quad(uri,pred_uri,obj_uri,global_params['instance'],global_params)
-                                    if global_params['dbo_out']:
-                                        global_params['dbo_out'].commit()        
-
-                ###### ^^^^ Object references ############################################
-
-                ###### \/\/ Value reference ############################################
-                # skip if null
-                if obj[c['Field']]:
-                    pred_uri = column_name(table,c['Field'], global_params)
-                    val = obj[c['Field']]
-                    ty = convert_type(c['Type'],global_params)
-                    register_uri(uri,global_params)
-                    register_uri(pred_uri,global_params)          
-                    insert_typed_quad(uri,pred_uri,val,ty,global_params['instance'],global_params)
-                    if global_params['dbo_out']:
-                        global_params['dbo_out'].commit()        
-                ###### ^^^^ Value reference ############################################
-        # For testing purposes we will do commit per insert, instead of here...
+    # Final pass for cache misses
+    # Actually requires that we achieve a fixed-point where no references are misses.
+    while cache_misses != []:
+        print "Processing cache misses..."
         
-    if global_params['dbo_out']:
+        new_cache_misses = []
+        for elt in cache_misses:
+            print elt
+            print cache_misses
+            table = elt['table']                    
+            columns = table_columns(table, global_params)
+            keys = primary_keys(columns)
+
+            row = elt['keyrow']
+            uri = genid(table, global_params)
+            register_uri(uri,global_params)
+            print row
+
+            swizzle_table[table+str(row.values())] = uri
+            missed = register_object(table,columns,keys,row,swizzle_table,global_params)
+            new_cache_misses.append(missed)
+            
+        cache_misses = new_cache_misses
+        
+    if 'dbo_out' in global_params and global_params['dbo_out']:
         global_params['dbo_out'].commit()        
         
     return True
@@ -630,13 +690,16 @@ def is_uri(obj):
     return re.match('^http(s?)://', obj)
 
 def render_point(point, ty):
+    if isinstance(point,str):
+        point = point.decode("utf8") # didn't convert yet
+
     if ty == 'URI':
         if point:
-            point = "<" + point + ">"
+            point = u"<" + point + u">"
         else:
-            point = "<http://www.w3.org/2002/07/owl#Nothing>"
+            point = u"<http://www.w3.org/2002/07/owl#Nothing>"
     else:
-        point = '"%s"^^<%s>' % (point, ty)
+        point = u'"%s"^^<%s>' % (point, ty)
 
     return point
 
@@ -667,15 +730,19 @@ if __name__ == "__main__":
     parser.add_argument('--passwd', help='DB passwd', default=config.PASSWORD)
     parser.add_argument('--host', help='DB host', default=config.HOST)
 
-    parser.add_argument('--variant-out', help='Database variant (output)', default=config.VARIANT_OUT)
+    parser.add_argument('--variant-out', help='Database variant (output). One of \'postgres\',\'mysql\',\'ntriples\'', default=config.VARIANT_OUT)
     parser.add_argument('--db-out', help='', default=config.DB_OUT)
     parser.add_argument('--user-out', help='', default=config.USER_OUT)
     parser.add_argument('--passwd-out', help='', default=config.PASSWORD_OUT)
     parser.add_argument('--host-out', help='', default=config.HOST_OUT)
     parser.add_argument('--log', help='run logging', action='store_true')
     parser.add_argument('--log-file', help='Log location', default=config.LOG_PATH)
+    parser.add_argument('--fragment', help='Number of records to process (-1 == all)', action='store_true')
     global_params = vars(parser.parse_args())
 
+    # might need this
+    # sys.setdefaultencoding('utf8')
+    
     # set up logging
     root = logging.getLogger()
     if root.handlers:
@@ -710,8 +777,10 @@ if __name__ == "__main__":
     doc = run_class_construction(tcd,global_params)
 
     schema = render_turtle(doc,global_params)
-    
-    if not global_params['db_out']:
+    with codecs.open(global_params['schema_out'], "w", encoding='utf8') as f:
+        f.write(schema)
+        
+    if global_params['variant_out'] == 'ntriples':
         global_params['instance_handle'] = codecs.open(global_params['instance_out'], "w", encoding='utf8')
         
     lift_instance_data(tcd,global_params)
