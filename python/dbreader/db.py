@@ -260,8 +260,12 @@ def get_type_assignment(ty):
         return 'xsd:string'
     elif re.search('date',ty):
         return 'xsd:dateTime'
+    elif re.search('timestamp without time zone', ty):
+        return 'xsd:dateTime'        
     else:
-        return 'rdf:literal'
+        print "About to spew literal, what's up?"
+        raise Exception('buzz kill')
+        return 'rdf:Literal'
 
 # Eventually this function has to do conversion between postgres and mysql
 def convert_type(ty,params):
@@ -288,26 +292,37 @@ def composite(col,cols):
     p = primary_keys(cols)
     return col in p
 
-def column_label(table,column):
+def column_id(table,column):
     return table + '_' + column
 
+def column_label(table,column):
+    name = column_id(table,column)
+    name = re.sub('_',' ', name)
+    return name
+
 def column_name(table,column,args):
-    cleaned_uri = urllib.quote(column_label(table,column))
+    cleaned_uri = urllib.quote(column_id(table,column))
     return args['domain_name'] + ':' + cleaned_uri
 
-def compose_label(cc,rcc):
+def compose_id(cc,rcc):
     return 'fk-' + cc['REFERENCED_TABLE_NAME'] + '_' + cc['REFERENCED_COLUMN_NAME']
 
+def compose_label(cc,rcc):
+    name = compose_id(cc,rcc)
+    name = re.sub('_',' ', name)
+    name = re.sub('-',' ', name)
+    return name
+
 def compose_name(cc,rcc,args):
-    cleaned_uri = urllib.quote(compose_label(cc,rcc))
-    return args['domain_name'] + ':' + compose_label(cc,rcc) 
+    cleaned_uri = urllib.quote(compose_id(cc,rcc))
+    return args['domain_name'] + ':' + cleaned_uri
 
 def label_of(table):
+    table = re.sub('_',' ', table)
     return table
 
 def class_of(table,args):
-    "Currently does nothing"
-    cleaned_uri = urllib.quote(label_of(table))
+    cleaned_uri = urllib.quote(table)
     return args['domain_name'] + ':' + cleaned_uri
 
 def run_class_construction(class_dict,global_params):
@@ -386,6 +401,7 @@ def run_class_construction(class_dict,global_params):
             
             else:
                 # We are a datatype
+                print("We are a datatype: %s " % (column,))
                 rng = get_type_assignment(column['Type'])
                 
                 predicate = """
