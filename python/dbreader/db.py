@@ -401,7 +401,7 @@ def run_class_construction(class_dict,global_params):
             
             else:
                 # We are a datatype
-                print("We are a datatype: %s " % (column,))
+                #print("We are a datatype: %s " % (column,))
                 rng = get_type_assignment(column['Type'])
                 
                 predicate = """
@@ -482,13 +482,13 @@ def insert_typed_quad(sub,pred,val,ty,graph,params):
             if re.search('int', ty):            
                 cur.execute("EXECUTE insert_int_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
             elif re.search('varchar', ty):
-                cur.execute("EXECUTE insert_text_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+                cur.execute("EXECUTE insert_text_quad (%s,%s,%s,%s,%s,%s)", (sub,pred,val,'en',graph,params['commit-version']))
             elif re.search('date',ty):
                 cur.execute("EXECUTE insert_date_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
             elif re.search('timestamp',ty):
                 cur.execute("EXECUTE insert_date_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
             elif re.search('text',ty):
-                cur.execute("EXECUTE insert_text_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
+                cur.execute("EXECUTE insert_text_quad (%s,%s,%s,%s,%s,%s)", (sub,pred,val,'en',graph,params['commit-version']))
             else:
                 cur.execute("EXECUTE insert_literal_quad (%s,%s,%s,%s,%s)", (sub,pred,val,graph,params['commit-version']))
         except Exception, e:
