@@ -239,7 +239,9 @@ WHERE co.table_name = %(table)s;
 start = 0
 def genid(seed,args):
     global start
-    uri = args['instance'] + '#' + seed + str(start)
+    # go for blank nodes
+    #uri = args['instance'] + '#' + seed + str(start)
+    uri = '_:' + seed + str(start)
     start += 1 
     return uri
 
