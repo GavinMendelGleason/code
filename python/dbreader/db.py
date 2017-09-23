@@ -717,6 +717,11 @@ def render_point(point, ty):
         else:
             point = u"<http://www.w3.org/2002/07/owl#Nothing>"
     else:
+        if ty == 'http://www.w3.org/2001/XMLSchema#dateTime':
+            point = point.isoformat()
+        elif ty == 'http://www.w3.org/2001/XMLSchema#string':
+            point = point.replace('\\','\\\\')
+            point = point.replace('"','\\"')
         point = u'"%s"^^<%s>' % (point, ty)
 
     return point
