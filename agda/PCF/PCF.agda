@@ -295,15 +295,53 @@ progressLemma (if p p₁ p₂) | inj₂ (t' * rel) = inj₂ (if t' p₁ p₂ * F
  
 open import Coinduction
  
-data _↝*_ {Γ} {τ} : (p : Γ ⊢ τ) (q : Γ ⊢ τ) → Set where
-  ↝*val : (p : Γ ⊢ τ) → WHNF? p → p ↝* p
-  ↝*step : (p q s : Γ ⊢ τ) → ∞ (p ↝* q) → q ↝ s → p ↝* s
+data _⊢_↝*_ : ∀ Γ {τ} (p : Γ ⊢ τ) (q : Γ ⊢ τ) → Set where
+  ↝*val : ∀ Γ {τ} → (p : Γ ⊢ τ) → WHNF? p → Γ ⊢ p ↝* p
+  ↝*step : ∀ Γ {τ} → (p q s : Γ ⊢ τ) → ∞ (Γ ⊢ p ↝* q) → q ↝ s → Γ ⊢ p ↝* s 
  
-try : (_↝*_ {ε} {bool}) true true
-try = ↝*val true tt
+try : ε ⊢ true ↝* true
+try = ↝*val ε true tt
+
+data _⊢_⇓ : ∀ Γ {τ} (p : Γ ⊢ τ) → Set where
+  ⇓val : ∀ Γ {τ} → (p : Γ ⊢ τ) → Σ (Γ ⊢ τ) (λ q → Γ ⊢ p ↝* q × WHNF? q) → Γ ⊢ p ⇓
+
+-- _□_ : 
+
+{-
+data _·_⊢_≾_Ctx : ∀ Γ Δ {α} (t t' : Γ ++ Δ ⊢ α) → Set where
+  base : ∀ Γ Δ {α} (t t' : Γ ++ Δ ⊢ α) →
+                    (∀ (c : Γ ⊢⟪ Δ ⊨ α ⟫ bool) → Γ ⊢ (c ⟦ t ⟧) ↝* true → Γ ⊢ (c ⟦ t' ⟧) ↝* true) →
+                    Γ · Δ ⊢ t ≾ t' Ctx
  
-data _≅_Ctx {Γ Δ α} : ∀ (t t' : Γ ++ Δ ⊢ α) → Set where
-  base : ∀ (c : Γ ⊢⟪ Δ ⊨ α ⟫ bool) → (t t' : Γ ++ Δ ⊢ α) → (c ⟦ t ⟧) ↝* true → (c ⟦ t' ⟧) ↝* true → t ≅ t Ctx
- 
-data _≅_Exp {Γ α} : ∀ (t t' : Γ ⊢ α) → Set where
-  base : ∀ (e : Γ ⊢⟪ α ⟫ bool) → (t t' : Γ ⊢ α) → (e ⟦ t ⟧exp) ↝* true → (e ⟦ t' ⟧exp) ↝* true → t ≅ t Exp
+data _⊢_≾_Exp : ∀ Γ {α} (t t' : Γ ⊢ α) → Set where
+  base : ∀ Γ {α} (t t' : Γ ⊢ α) →
+                  (∀ (e : Γ ⊢⟪ α ⟫ bool) → Γ ⊢ (e ⟦ t ⟧exp) ↝* true → Γ ⊢ (e ⟦ t' ⟧exp) ↝* true) →
+                  Γ ⊢ t ≾ t' Exp
+
+exp⇒ctx : ∀ τ α (e : ε ⊢⟪ α ⟫ τ) (t : ε ⊢ α) → ε ⊢ e ⟦ t ⟧exp ↝* p → Σ (ε ⊢⟪ ε ⊨ α ⟫ τ) (λ c → ε ⊢ c ⟦ t ⟧ ↝* true)
+exp⇒ctx τ α e p = ? 
+-}
+
+
+{- 
+Some inspiration here: https://www.cl.cam.ac.uk/teaching/0910/L16/semhl-15-ann.pdf
+-}
+
+{- Demonstrate that they are equivalent? 
+
+exp⇒ctx : ∀ τ α (e : ε ⊢⟪ α ⟫ τ) (t : ε ⊢ α) → ε ⊢ e ⟦ t ⟧exp ↝* p → Σ (ε ⊢⟪ ε ⊨ α ⟫ τ) (λ c → ε ⊢ c ⟦ t ⟧ ↝* true)
+exp⇒ctx τ α e p = ? 
+
+ExperimentSufficiencyLemma : ∀ α (t t' : ε ⊢ α) → ε · ε ⊢ t ≾ t' Ctx → ε ⊢ t ≾ t' Exp
+ExperimentSufficiencyLemma nat t t' (base .ε .ε .t .t' x) = base ε t t' (λ e x₁ → {!!})
+ExperimentSufficiencyLemma bool t t' (base .ε .ε .t .t' x) = base ε {!!} {!!} (λ e x₁ → {!!})
+ExperimentSufficiencyLemma (α ⇒ α₁) t t' (base .ε .ε .t .t' x) = base ε {!!} {!!} (λ e x₁ → {!!})
+
+ContextSufficiencyLemma : ∀ Γ Δ α (t t' : Γ ++ Δ ⊢ α) → Γ · Δ ⊢ t ≾ t' Ctx → (Γ ++ Δ) ⊢ t ≾ t' Exp
+ContextSufficiencyLemma Γ Δ α t t' (base .Γ .Δ .t .t' x) = 
+  let h e r = {!!} in base (Γ ++ Δ) t t' h
+  where telescope : ∀ Γ Δ α → Γ ⊢⟪ Δ ⊨ α ⟫ bool
+        telescope Γ Δ α = {! !}
+        transmuteExperiment : ∀ Γ Δ t (e : (Γ ++ Δ) ⊢⟪ α ⟫ bool) → (Γ ++ Δ) ⊢ e ⟦ t ⟧exp ↝* true → Σ (Γ ⊢⟪ Δ ⊨ α ⟫ bool) (λ c → Γ ⊢ c ⟦ t ⟧ ↝* true)
+        transmuteExperiment Γ Δ t₁ e red = {!!}
+-}

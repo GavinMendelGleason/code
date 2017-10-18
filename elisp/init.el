@@ -89,7 +89,6 @@
 	(setq merlin-command 'opam)))
 
 
-
 ;; Fstar
 (setq fstar-executable "/home/francoisbabeuf/.opam/system/bin/fstar.exe")
 
@@ -107,6 +106,41 @@
 (add-to-list 'load-path "/home/francoisbabeuf/share/emacs/site-lisp/csp-mode")
 (load "csp-mode-startup")
 
+;; Mercury mode
+(add-to-list 'load-path "/home/francoisbabeuf/.emacs/lib/prolog-mode/")
+(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
+(autoload 'mercury-mode "prolog" "Major mode for editing Mercury programs." t)
+(setq prolog-system 'mercury)
+(add-to-list 'load-path
+			 "/usr/local/mercury-rotd-2017-06-22/lib/mercury/elisp")
+(autoload 'mdb "gud" "Invoke the Mercury debugger" t)
+
+(defvar *flymake-mercury-checker* "/home/francoisbabeuf/bin/mercury-checker.sh")
+
+(defun flymake-mercury-init ()
+  (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                     'flymake-create-temp-inplace))
+         (local-file (file-relative-name
+                      temp-file
+                      (file-name-directory buffer-file-name))))
+    (list *flymake-mercury-checker* (list local-file))))
+
+(eval-after-load 'flycheck
+  '(progn
+	 (require 'flycheck-mercury)
+	 (push '("\\([^:]*\\):\\([0-9]+\\):[0-9]+: \\(.*\\)" 1 2 nil 3) flymake-err-line-patterns)
+	 (add-to-list 'flymake-allowed-file-name-masks '("\\.m\\'" flymake-mercury-init nil flymake-get-real-file-name))))
+
+(add-hook 'mercury-mode-hook
+          '(lambda ()
+			 (if (not (null buffer-file-name)) (flymake-mode))))
+
+(add-to-list 'auto-mode-alist '("\\.m\\'" . mercury-mode))
+(eval-after-load 'flycheck
+  '(require 'flycheck-mercury))
+
+;; Customisations
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -121,6 +155,22 @@
  '(custom-safe-themes
    (quote
 	("23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
+ '(package-selected-packages
+   (quote
+	(flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
+ '(prolog-compile-string
+   (quote
+	((eclipse "[%f].")
+	 (mercury "mmc ")
+	 (sicstus
+	  (eval
+	   (if
+		   (prolog-atleast-version
+			(quote
+			 (3 . 7)))
+		   "prolog:zap_file(%m,%b,compile,%l)." "prolog:zap_file(%m,%b,compile).")))
+	 (swi "[%f].")
+	 (t "compile(%f)."))))
  '(safe-local-variable-values
    (quote
 	((eval progn
