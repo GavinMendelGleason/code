@@ -9,6 +9,8 @@ module Monotonic
   (Atom : Set)
   (eqAtom : DecEq Atom)
   (eqC : DecEq C)
+  (D : Set)
+  (eqD : DecEq D)
   where
 
 open import Relation.Binary.PropositionalEquality hiding (inspect ; [_])
@@ -28,7 +30,7 @@ open import Membership
 
 
 import Database as DB
-module DBmodule = DB Atom C eqAtom eqC
+module DBmodule = DB Atom C eqAtom eqC D eqD
 open DBmodule public
 
 Interpretation : Set
@@ -56,7 +58,7 @@ data Φ+ : Set where
 
 
 module Positivity where
-  module WFAtom = FinSet.WF⊂mod Atom eqAtom
+  module WFAtom = FinSet.WF⊂mod Atom eqAtom D eqD
   --open WFAtom using (_∪_)
 
   data Polarity : Φ → List Atom → List Atom → Set where
@@ -126,7 +128,7 @@ module Positivity where
   
 module ModalTransitionSystem (𝓣 : Transitions) where
 
-  module WFX = FinSet.WF⊂mod C eqC
+  module WFX = FinSet.WF⊂mod C eqC D eqD
   open WFX
 
   _[_≔_] : Interpretation → Atom → Subjects → Interpretation
@@ -141,7 +143,7 @@ module ModalTransitionSystem (𝓣 : Transitions) where
   𝓥 : Predicate → Subjects
   𝓥 f = ⟪ s ∈ 𝓢 ∣ f s ⟫
 
-  open import Relation C eqC
+  open import Relation C eqC D eqD
   
   mutual
 
@@ -162,7 +164,7 @@ module ModalTransitionSystem (𝓣 : Transitions) where
 
 
   open Positivity
-  open import MonotonicProperties C eqC
+  open import MonotonicProperties C eqC D eqD
   
   mutual
   

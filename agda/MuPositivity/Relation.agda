@@ -3,6 +3,8 @@ open import Utils
 module Relation
   (C : Set)
   (eqC : DecEq C)
+  (D : Set)
+  (eqD : DecEq D)
   where
 
 open import Data.List
@@ -19,12 +21,12 @@ open import Function
 open import FinSet
 open import Membership
 
-open import Database C C eqC eqC 
+open import Database C C eqC eqC D eqD
 
-module WFTrans = FinSet.WF⊂mod Transition eqTrans
+module WFTrans = FinSet.WF⊂mod Transition eqTrans Terminal eqTerminal
 open WFTrans renaming (_∈?_ to _∈?_)
 
-module WFC = FinSet.WF⊂mod C eqC
+module WFC = FinSet.WF⊂mod C eqC D eqD
 
 -- Right restriction (at property a)
 _⟨_⟩▹_ : ∀ (R : Transitions) (a : C) (A : List C)  → Transitions

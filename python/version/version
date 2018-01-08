@@ -14,15 +14,15 @@ version FILE                Version the file FILE
 """
 
 if len(sys.argv) < 2:
-    print helpscreen
+    print(helpscreen)
     
     sys.exit("Not enough arguments")
     
 if sys.argv[1] == 'help':
-    print helpscreen
+    print(helpscreen)
 
 elif sys.argv[1] == 'restore':
-    if sys.argv < 4:
+    if len(sys.argv) < 4:
         sys.exit("Not enough arguments for restore")
     cwd = os.getcwd()
     f = sys.argv[2]
@@ -39,7 +39,7 @@ elif sys.argv[1] == 'restore':
     os.system(cmd2)
     
 elif sys.argv[1] == 'recover':
-    if sys.argv < 3:
+    if len(sys.argv) < 3:
         sys.exit("Not enough arguments for recover")
     cwd = os.getcwd()
     f = sys.argv[2]
@@ -62,7 +62,7 @@ elif sys.argv[1] == 'recover':
     cmd2 = 'cp -R %s.%d %s' % (p,n,p)
     os.system(cmd1)
     os.system(cmd2)
-elif (sys.argv > 2):
+elif (len(sys.argv) > 1):
     cwd = os.getcwd()
     f = sys.argv[1]
     suffix = 1
@@ -76,5 +76,5 @@ elif (sys.argv > 2):
             os.system(cmd)
             sys.exit()
 else:
-    print helpscreen
+    print(helpscreen)
  

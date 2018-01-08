@@ -3,6 +3,8 @@ open import Utils
 module MonotonicProperties
   (C : Set)
   (eqC : DecEq C)
+  (D : Set)
+  (eqD : DecEq D)
   where
 
 open import Data.List
@@ -21,11 +23,11 @@ open import Data.Sum
 open import Membership
 open import FinSet
 
-module WFX = FinSet.WF⊂mod C eqC
+module WFX = FinSet.WF⊂mod C eqC D eqD 
 open WFX
-open import Database C C eqC eqC
+open import Database C C eqC eqC D eqD 
 
-open import Relation C eqC
+open import Relation C eqC D eqD 
 
 α⟨⟩-Monotonic : ∀ {S A B a} {𝓣 : Transitions} → A ⊆ B → 
    ⟪ s ∈ S ∣ ∃[ t ∈ S ] ⌊ (s , a , t) ∈trans? 𝓣 ⌋ ∧ ⌊ t ∈? A ⌋ ⟫ ⊆  

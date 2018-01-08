@@ -7,6 +7,8 @@ module Database
   (X : Set)
   (eqAtom : DecEq Atom)
   (eqX : DecEq X)
+  (D : Set)
+  (eqD : DecEq D)
   where
 
 open import Relation.Binary.PropositionalEquality hiding (inspect ; [_])
@@ -26,6 +28,7 @@ open import Data.Empty
 open import Membership
 
 Transition = X × X × X
+Terminal = X × X × D
 
 ,-inv₁ : ∀ {ℓ m} {A : Set ℓ} {B : Set m} {x y : A} {w z : B} →  ¬ x ≡ y →  ¬ (x , w) ≡ (y , z)
 ,-inv₁ f refl = f refl
@@ -65,6 +68,12 @@ eqTrans = DecEqPair eqX (DecEqPair eqX eqX)
 Transitions : Set
 Transitions = List Transition
 
+eqTerminal : DecEq Terminal
+eqTerminal = DecEqPair eqX (DecEqPair eqX eqD)
+
+Terminals : Set
+Terminals = List Terminal
+
 Subjects : Set
 Subjects = List X
 
@@ -89,6 +98,8 @@ obj (_ , _ , l) = l
 𝓡 : Transitions → Subjects
 𝓡 Ξ = Data.List.map obj Ξ
 
+Database = Transitions × Terminals
+
 open import Data.List
 
 any-syntax = any
@@ -102,3 +113,6 @@ infix 2 all-syntax
 
 _∈trans?_ : (x : Transition) → (L : Transitions) → Dec (x ∈ L)
 x ∈trans? S = eq2in eqTrans x S
+
+_∈term?_ : (x : Terminal) → (L : Terminals) → Dec (x ∈ L)
+x ∈term? S = eq2in eqTerminal x S

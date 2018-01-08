@@ -10,7 +10,7 @@ open import Relation.Nullary
 open import Relation.Binary.PropositionalEquality hiding (inspect ; [_])
 open import Relation.Nullary.Negation using () renaming (contradiction to _↯_)
 
-open import Monotonic ℕ ℕ ℕ _≟_ _≟_
+open import Monotonic ℕ ℕ _≟_ _≟_ ℕ _≟_
 
 A = 0
 B = 1

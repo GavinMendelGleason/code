@@ -26,9 +26,6 @@
 ;; Colour theme 
 (load-theme 'suscolors t)
 
-;; prolog mode
-(setq auto-mode-alist (cons (cons "\\.pl" 'prolog-mode) auto-mode-alist))
-
 ;; Web-mode
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
@@ -106,11 +103,14 @@
 (add-to-list 'load-path "/home/francoisbabeuf/share/emacs/site-lisp/csp-mode")
 (load "csp-mode-startup")
 
-;; Mercury mode
-(add-to-list 'load-path "/home/francoisbabeuf/.emacs/lib/prolog-mode/")
+;; Mercury / Prolog mode
+(load-file "/home/francoisbabeuf/.emacs.d/lib/prolog-mode/prolog.el")
 (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
 (autoload 'mercury-mode "prolog" "Major mode for editing Mercury programs." t)
 (setq prolog-system 'mercury)
+
+(setq auto-mode-alist (cons (cons "\\.pl" 'prolog-mode) auto-mode-alist))
+
 (add-to-list 'load-path
 			 "/usr/local/mercury-rotd-2017-06-22/lib/mercury/elisp")
 (autoload 'mdb "gud" "Invoke the Mercury debugger" t)

@@ -27,7 +27,7 @@ open import Induction.WellFounded
         aux .(suc y) y ≤′-refl = ℕ-wf y
         aux .(suc x) y (≤′-step {x} p) = aux x y p 
 
-module WF⊂mod (C : Set) (eq : DecEq C) where
+module WF⊂mod (C : Set) (eq : DecEq C) (D : Set) (eqD : DecEq D) where
 
   ∣_∣ : List C → ℕ
   ∣ S ∣ = ∣ S ∣⟨ eq ⟩ 
@@ -229,7 +229,7 @@ module WF⊂mod (C : Set) (eq : DecEq C) where
           hereOrThere S A⊆B here = here
           hereOrThere S A⊆B (there y∈S̸B) = there $ NegationLaw S A⊆B _ y∈S̸B
 
-  open import Database C C eq eq
+  open import Database C C eq eq D eqD
 
   ImpliesAbstract : ∀ {P Q R} → T (Q ⇒ R) → T (P ⇒ Q) → T (P ⇒ R)
   ImpliesAbstract {false} Q⇒R P⇒R = tt

@@ -1,9 +1,11 @@
 :- module load.
-
 :- interface.
-:- import_module io.
 
-:- import_module dcg.
+:- import_module io.
+:- import_module list.
+:- import module char.
+
+%:- import_module dcg.
 
 :- pred main(io::di, io::uo) is det.
 
@@ -25,28 +27,51 @@
    o(string,string,string)
    ; l(string,string,literal).
 
-:- pred space(string::in, string::out) is semidet.
+:- pred digit(int::out,list(char)::in,list(char)::out).
+digit("0") --> "0".
+digit("1") --> "1".
+digit("2") --> "2".
+digit("3") --> "3".
+digit("4") --> "4".
+digit("5") --> "5".
+digit("6") --> "6".
+digit("7") --> "7".
+digit("8") --> "8".
+digit("9") --> "9".
+
+alphaUpper --> charRange('A','Z') .
+
+alphaLower --> charRange('a','z') .
+
+alpha --> alphaUpper .
+alpha --> alphaLower .
+
+:- pred space(list(char)::in, list(char)::out) is semidet.
 space --> " " .
 space --> "\n" .
 space --> "\t" .
 space --> "\r" .
 
-:- pred whitespace(string::in, string::out) is semidet.
+:- pred whitespace(list(char)::in, list(char)::out) is semidet.
 whitespace --> space, whitespace .
 whitespace --> "" .
 
-htmlchar --> 
-:- pred anyBut(char::in, char::out, string::in, string::out) is semidet.
-anyBut(C,C1,[C1|T],T) -->
-   \+ C = C1.
+:- pred htmlchar(list(char)::in, list(char)::out) is semidet.
+htmlchar --> alpha.
+htmlchar --> digit(_).
+htmlchar --> anyOf("/:?&#=").
+
+:- pred anyOf(list(char)::in, list(char)::in, list(char)::out) is semidet.
+anyOf(S, [H|T], T) :-
+	atom_codes(S,C), member(H,C) .
 
 uriString(Sin,Sout,[C|U]) :- anybut(">",C,Sin,Sinter), uriString(Sinter,Sout,U).
 
-:- pred uri(string::in, string::out, string::out) is semidet.
-uri(Sin,Sout,U) -->
+:- pred uri(list(char)::out,list(char)::in, list(char)::out) is semidet.
+uri(U) -->
   "<", uriString(U), ">".
 
-:- pred triple(string::in, string::in, triple::out) is semidet.
+:- pred makeTriple(list(char)::in, list(char)::in, triple::out) is semidet.
 makeTriple(S,"http://www.w3.org/2001/XMLSchema#integer",l_int(I)) :-
 	parse_int(S,I).
 makeTriple(S,"http://www.w3.org/2001/XMLSchema#dateTime",l_date(D)) :-
@@ -54,7 +79,7 @@ makeTriple(S,"http://www.w3.org/2001/XMLSchema#dateTime",l_date(D)) :-
 makeTriple(S,"http://www.w3.org/2001/XMLSchema#string",l_string(L)) :-
 	parse_string(S,L).
 
-:- pred triple(string::in, string::out, triple::out) is semidet.
+:- pred triple(list(char)::in, list(char)::out, triple::out) is semidet.
 triple(Triple) -->
 	uri(US), ">", spaces, "<", uri(UP), ">",
     ( "<", uri(UO), ">", { Triple=o(US,UP,UO) }
@@ -62,7 +87,7 @@ triple(Triple) -->
 	  ( "@", str(L), { Triple=lang(S,L) }
 	  ; "^^", str(T) { makeTriple(S,T,Triple) })).
 
-:- pred read_triple(io:di,io:uo,triple) is semidet.
+:- pred read_triple(io:di,io:uo,triple::out) is semidet.
 read_triple(!IO,Triple) :-
 	io.read_line_as_string(Result, !IO),
 	(if Result=ok(String),

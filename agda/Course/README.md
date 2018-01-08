@@ -9,6 +9,8 @@ The terms which prove termination at a value, double as runable evaluation funct
 Structure
 ---------
 
+* **Topic 0:** Some basic functional programming in a dependently typed language.
+
 * **Topic 1:** Operational semantics for simple arithmetic expressions.
 
 The examples given in the slides are contained in the file: **OperationalSemantics.agda**
