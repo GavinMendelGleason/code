@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Solution for "West of Loathing" elevator
+
 import sys
 
 a = 411
