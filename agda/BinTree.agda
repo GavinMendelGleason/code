@@ -76,7 +76,7 @@ insert' a lf p = exists (nd a lf lf) < < tt , tt > , < tt , tt > >
 insert' a (nd b bl br) < < ag , psl > , < al , psr > > with tot a b 
 insert' a (nd b bl br) < < ag , psl > , < al , psr > > | inl p1 with insert' a br psr
 insert' a (nd b bl br) < < ag , psl > , < al , psr > > | inl p1 | exists br' p' = 
-  exists (nd b bl br') < < ag , psl > , < all-leq-trans {!!} {!!} br' {!!} {!!} , p' > >
+  exists (nd b bl br') < < ag , psl > , < all-leq-trans b {!!} br' {!!} {!!} , p' > >
 insert' a (nd b bl br) < < ag , psl > , < al , psr > > | inr p1 with insert' a bl psl
 insert' a (nd b bl br) < < ag , psl > , < al , psr > > | inr p1 | exists bl' p' = 
   exists (nd b bl' br) < < all-geq-trans {!!} {!!} bl' {!!} {!!} , p' > , < al , psr > >

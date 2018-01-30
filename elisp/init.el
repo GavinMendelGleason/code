@@ -1,5 +1,14 @@
-;; Gavin's .emacs
+;;; Gavin's .emacs
 
+;;; *******************************************
+;;; MELPA
+(require 'package) ;; You might already have this line
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+(package-initialize) ;; You might already have this line
+
+;;; *******************************************
+;;; Fixes
 ;; Open in the RIGHT fecking window
 (add-to-list
  'display-buffer-alist
@@ -15,16 +24,17 @@
 (setq-default tab-width 4)
 (defvaralias 'c-basic-offset 'tab-width)
 (defvaralias 'cperl-indent-level 'tab-width)
-(setq indent-tabs-mode t)
-
-;;; MELPA
-(require 'package) ;; You might already have this line
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
-(package-initialize) ;; You might already have this line
+(setq indent-tabs-mode nil)
 
 ;; Colour theme 
 (load-theme 'suscolors t)
+
+;; unicode-fonts
+(require 'unicode-fonts)
+(unicode-fonts-setup)
+
+;;; *******************************************
+;;; Languages
 
 ;; Web-mode
 (require 'web-mode)
@@ -47,10 +57,6 @@
 ;; RDF (n3 mode)
 (require 'n3-mode)
 (add-to-list 'auto-mode-alist '("\\.ttl\\'" . n3-mode))
-
-;; unicode-fonts
-(require 'unicode-fonts)
-(unicode-fonts-setup)
 
 ;; Abella
 (load-file "/home/francoisbabeuf/.emacs.d/lib/abella/lprolog.el")
@@ -89,11 +95,11 @@
 ;; Fstar
 (setq fstar-executable "/home/francoisbabeuf/.opam/system/bin/fstar.exe")
 
-
 ;; RedPRL
 ;;(load-file "/home/francoisbabeuf/.emacs.d/lib/redprl/redprl-mode.el")
 ;;(load-file "/home/francoisbabeuf/.emacs.d/lib/redprl/ob-redprl.el")
 ;;(load-file "/home/francoisbabeuf/.emacs.d/lib/redprl/redprl.el")
+(setq redprl-command "/home/francoisbabeuf/Documents/build/sml-redprl/bin/redprl")
 
 ;; Agda
 (load-file (let ((coding-system-for-read 'utf-8))
@@ -110,6 +116,10 @@
 (setq prolog-system 'mercury)
 
 (setq auto-mode-alist (cons (cons "\\.pl" 'prolog-mode) auto-mode-alist))
+
+(add-hook 'prolog-mode-hook
+          (lambda ()
+            (setq indent-tabs-mode nil)))
 
 (add-to-list 'load-path
 			 "/usr/local/mercury-rotd-2017-06-22/lib/mercury/elisp")
@@ -139,7 +149,8 @@
 (eval-after-load 'flycheck
   '(require 'flycheck-mercury))
 
-;; Customisations
+;;; ************************************************
+;;; Customisations
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
