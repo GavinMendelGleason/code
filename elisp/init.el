@@ -41,6 +41,11 @@
 (require 'unicode-fonts)
 (unicode-fonts-setup)
 
+;; Frame buffer name in titlebar
+(setq frame-title-format
+      (list (format "%s %%S: %%j " (system-name))
+        '(buffer-file-name "%f" (dired-directory dired-directory "%b"))))
+
 ;;; *******************************************
 ;;; Languages
 
