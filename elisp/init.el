@@ -29,6 +29,14 @@
 ;; Colour theme 
 (load-theme 'suscolors t)
 
+;; Tramp Colour
+;;(setq tramp-theme-face-remapping-alist '(background . "Purple"))
+(require 'tramp-theme)
+(setq tramp-theme-face-remapping-alist
+			'((nil "^root$" (fringe (:inherit fringe :inverse-video t)))
+				("^spartacus$" nil (default (:background "DarkPurple")))
+				("^gaius$" nil (default (:background "DarkGreen")))))
+
 ;; unicode-fonts
 (require 'unicode-fonts)
 (unicode-fonts-setup)
@@ -109,10 +117,9 @@
 (add-to-list 'load-path "/home/francoisbabeuf/share/emacs/site-lisp/csp-mode")
 (load "csp-mode-startup")
 
-;; Mercury / Prolog mode
+;; Prolog mode
 (load-file "/home/francoisbabeuf/.emacs.d/lib/prolog-mode/prolog.el")
 (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
-(autoload 'mercury-mode "prolog" "Major mode for editing Mercury programs." t)
 (setq prolog-system 'mercury)
 
 (setq auto-mode-alist (cons (cons "\\.pl" 'prolog-mode) auto-mode-alist))
@@ -121,8 +128,13 @@
           (lambda ()
             (setq indent-tabs-mode nil)))
 
+(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
+
+;; Mercury
 (add-to-list 'load-path
 			 "/usr/local/mercury-rotd-2017-06-22/lib/mercury/elisp")
+(autoload 'mercury-mode "prolog" "Major mode for editing Mercury programs." t)
+
 (autoload 'mdb "gud" "Invoke the Mercury debugger" t)
 
 (defvar *flymake-mercury-checker* "/home/francoisbabeuf/bin/mercury-checker.sh")
@@ -168,7 +180,7 @@
 	("23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
  '(package-selected-packages
    (quote
-	(flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
+	(tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
  '(prolog-compile-string
    (quote
 	((eclipse "[%f].")
@@ -221,3 +233,4 @@
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+(put 'downcase-region 'disabled nil)
