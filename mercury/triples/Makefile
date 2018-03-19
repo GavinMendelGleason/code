@@ -4,11 +4,9 @@ all: clean
 	mmc --make main
 
 debug: clean
-	mmc --use-grade-subdirs --decl-debug --stack-segments adts.m
-	mmc --use-grade-subdirs --decl-debug --stack-segments parser.m
-	mmc --use-grade-subdirs --decl-debug --stack-segments main.m
+	mmc --make --grade=asm_fast.gc.debug.stseg --debug main
 
 clean:
 	rm -rf Mercury
-	rm -f *.mh *.init *.o *.c *.d *.err *.c_date *.a *.so
+	rm -f main *.mh *.init *.o *.c *.d *.err *.c_date *.a *.so
 
