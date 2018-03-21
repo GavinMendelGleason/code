@@ -168,21 +168,17 @@ format_triple(o(S1,S2,S3),SO) :-
 	SO = "<" ++ S1 ++ "> <" ++ S2 ++ "> <" ++ S3 ++ "> .\n".
 format_triple(l(S1,S2,L),SO) :-
 	StringPrefix = "<" ++ S1 ++ "> <" ++ S2 ++ ">",
-	(L=l_int(I)
-	-> SO=StringPrefix ++ "\"" ++ to_string(I) ++ "\"" ++
-		  "^^<http://www.w3.org/2001/XMLSchema#integer> .\n" 
-	; L=l_string(S)
-	  ->
+	( L=l_int(I),
+	  SO=StringPrefix ++ "\"" ++ to_string(I) ++ "\"" ++
+		 "^^<http://www.w3.org/2001/XMLSchema#integer> .\n" 
+	; L=l_string(S),
 	  SO=StringPrefix ++ "\"" ++ S ++ "\"" ++ "^^<http://www.w3.org/2001/XMLSchema#string> .\n" 
-	; L=l_dateTime(D)
-	  ->
+	; L=l_dateTime(D),
 	  dateTime_to_string(D,DS),
 	  SO=StringPrefix ++ "\"" ++ DS ++ "\"" ++ "^^<http://www.w3.org/2001/XMLSchema#dateTime> .\n"
-    ; L=l_boolean(yes)
-      ->
+    ; L=l_boolean(yes),
 	  SO=StringPrefix ++ "\"true\"" ++ "^^<http://www.w3.org/2001/XMLSchema#bool> .\n"
-    ; L=l_boolean(no)
-      ->
+    ; L=l_boolean(no),
 	  SO=StringPrefix ++ "\"false\"" ++ "^^<http://www.w3.org/2001/XMLSchema#bool> .\n"
 	; SO="Malformed (not possible)").
 	  

@@ -16,5 +16,5 @@
    ; l_lang(string,string).
 
 :- type triple --->
-   o(string,string,string)
+     o(string,string,string)
    ; l(string,string,literal).

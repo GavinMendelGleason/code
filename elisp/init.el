@@ -135,6 +135,39 @@
 
 (setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
 
+;; Automatic Etags for prolog
+(setq tags-table-list
+	  '("~/Documents/build/ClioPatria/cpack/dacura"))
+
+(defun create-prolog-tags (dir-name)
+  "Create prolog tags file."
+  (interactive "DDirectory: ")
+  (eshell-command 
+   (format "cd %s; find %s -type f -name \"*.pl\" | etags -l prolog -"
+		   dir-name dir-name)))
+
+(defadvice xref--find-definitions (around refresh-etags activate)
+  "Rerun etags and reload tags if tag not found and redo find-tag.              
+    If buffer is modified, ask about save before running etags."
+  (let ((extension (file-name-extension (buffer-file-name))))
+	(condition-case err
+ 		ad-do-it
+	  (error (and (buffer-modified-p)
+				  (not (ding))
+				  (y-or-n-p "Buffer is modified, save it? ")
+				  (save-buffer))
+			 (er-refresh-etags extension)
+			 ad-do-it))))
+
+(defun er-refresh-etags (&optional extension)
+  "Run etags on all peer files in current dir and reload them silently."
+  (let ((my-tags-file (locate-dominating-file default-directory "TAGS")))
+	(when my-tags-file
+	  (message "Loading tags file: %s" my-tags-file)	  
+	  (let ((tags-dir (file-name-directory my-tags-file)))
+		(create-prolog-tags tags-dir)
+  		(visit-tags-table my-tags-file)))))
+
 ;; Mercury
 (add-to-list 'load-path
 			 "/usr/local/mercury-rotd-2017-06-22/lib/mercury/elisp")

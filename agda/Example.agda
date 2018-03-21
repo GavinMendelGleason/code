@@ -40,7 +40,6 @@ decproof (succ x) (succ y) with decproof x y
 decproof (succ x) (succ y) | no p = no (λ x₁ → p (invsucc x₁))
 decproof (succ x) (succ y) | yes p = yes (leNext x y p) 
 
-
 _≤?_ : Nat → Nat → Bool 
 x ≤? y with decproof x y 
 x ≤? y | yes p = true 

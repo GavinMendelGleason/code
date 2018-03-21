@@ -41,6 +41,6 @@ data ⊥ : Set where
 one : ⊥ → ⊥ 
 one ()  
 
-μ X . 1 + X 
+-- μ X . 1 + X 
 
 
