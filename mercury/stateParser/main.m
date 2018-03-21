@@ -42,9 +42,10 @@ s(_TestString,parseError(Msg,Char,Linenum),parseError(Msg,Char,Linenum)).
 aaas --> s("aaa").
 
 :- pred newline(parserState::in, parserState::out) is nondet.
-newline(State0,State2) :-
-    s("\n",State0,State1),
-    State2 = status(State1 ^ string, State1 ^ charnum, (State1 ^ linenum) + 1).
+newline(!State) :-
+    s("\n",!State),
+    !:State = !.State,
+    !State ^ linenum := (!.State ^ linenum) + 1.
 
 :- pred space(parserState::in, parserState::out) is multi.
 space --> s(" ").
