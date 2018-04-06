@@ -10,7 +10,7 @@ Monotonicity
 
 In order to show that fixed points are well defined, we need to know
 that the functions associated with formulae of a given free variable
-in the modal μ-calculus are monotonic. That is for a function f on
+in the modal μ-calculus are monotonic. That is for a function `⟦φ⟧` on
 the the power set of a set `U` the following hold:
 
 ~~~
