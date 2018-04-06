@@ -65,7 +65,7 @@ for a given term.
 ~~~ 
 
 Since it is possible to have variables in a mixed polarity (both
-positive and negative), posivity for a free variable x can be defined
+positive and negative), posivity for a free variable `x` can be defined
 as a polarity in which the variable is not in a negative poliarity for
 the formula. This also allows the variable to not be free in a
 positive position since it is not necessary to refer to a variable,
@@ -77,7 +77,7 @@ Positive x φ ≔ Polarity φ 𝓟 𝓝 ∧ x ∉ 𝓝
 
 ~~~
 
-Given a positive formulae φ we can ensure monotonicity and thereby
+Given a positive formulae `φ` we can ensure monotonicity and thereby
 fixed-points.
 
 Cardinality 
@@ -158,8 +158,8 @@ Y₂ : Subjects
 Y₂ = C ∷ F ∷ ∅
 ~~~
 
-We have that the formula `φ` with one free variable a and a
-cardinality of 1 off of the transition B defined as:
+We have that the formula `φ` with one free variable `a` and a
+cardinality of 1 off of the transition `B` defined as:
 
 ~~~
 φ⟨_⟩ : (a : ℕ) → Φ+
