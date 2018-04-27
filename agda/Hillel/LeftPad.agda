@@ -6,6 +6,7 @@ open import Data.List
 open import Data.List.Properties
 open import Data.Nat
 open import Relation.Binary.PropositionalEquality hiding (inspect)
+open import Data.Product
 
 String : Set
 String = List Char
@@ -47,3 +48,7 @@ n∸l+l≡max·l·m (suc n) (suc l) rewrite n+suc≡sucn (n ∸ l) l
 leftPadSize : ∀ c n s → length (leftPad c n s) ≡ max (length s) n
 leftPadSize c n s rewrite length-++ (times (n ∸ length s) c) {ys = s} | timeslen (n ∸ length s) c
   | n∸l+l≡max·l·m n (length s) = refl
+
+-- This is pointless and self evident
+stringSuffix : ∀ c n s → Σ[ m ∈ String ] leftPad c n s ≡ m ++ s
+stringSuffix c n s = times (n ∸ length s) c , refl
