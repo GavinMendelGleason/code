@@ -137,8 +137,11 @@
 
 ;; Automatic Etags for prolog
 (setq tags-table-list
-	  '("~/Documents/build/ClioPatria/cpack/dacura"))
+	  '("~/Documents/build/ClioPatria/cpack/dqs"))
 
+;; Run this the first time you use tags
+;; (create-prolog-tags "~/Documents/build/ClioPatria/cpack/dqs")
+;;
 (defun create-prolog-tags (dir-name)
   "Create prolog tags file."
   (interactive "DDirectory: ")

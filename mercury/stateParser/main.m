@@ -38,33 +38,76 @@ s(TestString,status(Buffer,CharNum,LineNum),parseError(Msg,CharNum,LineNum)) :-
     Msg = "Unable to consume "++TestString++" in "++Buffer++"\n".
 s(_TestString,parseError(Msg,Char,Linenum),parseError(Msg,Char,Linenum)).
 
-:- pred aaas(parserState::in, parserState::out) is multi.
-aaas --> s("aaa").
-
 :- pred newline(parserState::in, parserState::out) is nondet.
-newline(!State) :-
-    s("\n",!State),
-    !:State = !.State,
-    !State ^ linenum := (!.State ^ linenum) + 1.
+newline(State0,State1) :-
+    s("\n",State0,State1),
+    State1 = status(State0 ^ buffer,
+                    (State0 ^  linenum) + 1,
+                    (State0 ^ charnum) + 1).
 
 :- pred space(parserState::in, parserState::out) is multi.
 space --> s(" ").
 
+:- pred whitespace(parserState::in, parserState::out) is multi.
+whitespace(status(Buffer,CharNum,LineNum), State1) :- 
+    string.between(Buffer, CharNum, CharNum + 1, S),
+    (
+        S = "\n",
+        State1 = status(Buffer, CharNum + 1, LineNum + 1)
+    ;   S = "\t",
+        State1 = status(Buffer, CharNum + 1, LineNum)
+    ;   S = "\r",
+        State1 = status(Buffer, CharNum + 1, LineNum)
+    ;   S = " ",
+        State1 = status(Buffer, CharNum + 1, LineNum)
+    ;   State1 = parseError("Could not consume whitespace", CharNum, LineNum)
+    ).
+whitespace(parseError(Msg,CharNum,LineNum),parseError(Msg,CharNum,LineNum)).
+
+:- pred choose(pred(parserState, parserState),
+               pred(parserState, parserState),
+               parserState,
+               parserState).
+:- mode choose(pred(in, out) is multi, pred(in, out) is multi, in, out) is multi.
+choose(P1,P2,S0,Sn) :-
+    P1(S0,S1),
+    (
+        S1 = status(_Msg,_CharNum,_LineNum),
+        Sn = S1
+    ;   S1 = parseError(_Msg,_CharNum,_LineNum),
+        P2(S0,Sn)
+    ).
+
+:- pred whitespaces(parserState::in, parserState::out) is multi.
+whitespaces(!S) :-
+    choose(
+        whitespace,
+        % <+>
+        (pred(State0 :: in ,State2 :: out) is multi :-
+             whitespace(State0,State1), whitespaces(State1,State2)),
+        !S
+    ).
+
+:- pred aaas(parserState::in, parserState::out) is multi.
+aaas --> s("aaa").
+
 :- pred example(parserState::in, parserState::out) is multi.
-example --> aaas, space, aaas.
+example --> aaas, whitespaces, aaas.
 
 :- pred newParserState(string::in, parserState::out) is det.
 newParserState(String,status(String,0,0)).
 
 main(!IO) :-
-    S = "aaa bbb aaa",
-    (if promise_equivalent_solutions [State1] (newParserState(S,State0),
-                                               example(State0,State1))
-     then (State1 = parseError(Msg,CharNum,_LineNum),
-           string.int_to_string(CharNum,CharNumString),
-           io.write_string("Failed with "++Msg++" "++" at char "++CharNumString++"\n",!IO)
-         ; State1 = status(Rest,_CharNum,_LineNum),
-           io.write_string("consumed entire string "++Rest++"\n",!IO)
-         )
-     else io.write_string("Example failed ",!IO)).
+    S = "aaa\t\t\taaa",
+    promise_equivalent_solutions [State1] (newParserState(S,State0),
+                                           example(State0,State1)), 
+    (
+        State1 = parseError(Msg,CharNum,_LineNum),
+        string.int_to_string(CharNum,CharNumString),
+        io.write_string("Failed with "++Msg++" "++" at char "++CharNumString++"\n",!IO)
+    ;
+        State1 = status(Rest,_CharNum,_LineNum),
+        io.write_string("consumed entire string "++Rest++"\n",!IO)
+    ).
+     
       

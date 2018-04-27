@@ -257,7 +257,8 @@ data _↝_ {Γ} {τ} : (p : Γ ⊢ τ) (q : Γ ⊢ τ) → Set where
   F : ∀ {α} (e : Γ ⊢⟪ α ⟫ τ) {t t' : Γ ⊢ α} {p : Γ ⊢ τ} → e ⟦ t ⟧exp ≡ p → t ↝ t' → p ↝ (e ⟦ t' ⟧exp)
  
 open import Data.Sum
- 
+
+-- Preservation is built into the reduction relation - once we have progress, (weak) soundness immediately follows.
 progressLemma : ∀ {τ} → (p : ε ⊢ τ) → (WHNF? p ⊎ (Σ[ q ∈ ε ⊢ τ ] p ↝ q))
 progressLemma (var ())
 progressLemma (lam p) = inj₁ tt
@@ -292,7 +293,7 @@ progressLemma (if false p₁ p₂) | inj₁ x = inj₂ (p₂ * Efalse)
 progressLemma (if (case p p₁ p₂) p₃ p₄) | inj₁ ()
 progressLemma (if (if p p₁ p₂) p₃ p₄) | inj₁ ()
 progressLemma (if p p₁ p₂) | inj₂ (t' * rel) = inj₂ (if t' p₁ p₂ * F (eif e○ p₁ p₂) refl rel)
- 
+
 open import Coinduction
  
 data _⊢_↝*_ : ∀ Γ {τ} (p : Γ ⊢ τ) (q : Γ ⊢ τ) → Set where
@@ -304,6 +305,26 @@ try = ↝*val ε true tt
 
 data _⊢_⇓ : ∀ Γ {τ} (p : Γ ⊢ τ) → Set where
   ⇓val : ∀ Γ {τ} → (p : Γ ⊢ τ) → Σ (Γ ⊢ τ) (λ q → Γ ⊢ p ↝* q × WHNF? q) → Γ ⊢ p ⇓
+
+data _⊢_≾_Exp : ∀ Γ {α} (t t' : Γ ⊢ α) → Set where
+  base : ∀ Γ {α} (t t' : Γ ⊢ α) →
+                  (∀ (e : Γ ⊢⟪ α ⟫ bool) → Γ ⊢ (e ⟦ t ⟧exp) ↝* true → Γ ⊢ (e ⟦ t' ⟧exp) ↝* true) →
+                  Γ ⊢ t ≾ t' Exp
+
+data _⊢_∼_Exp : ∀ Γ {α} (t t' : Γ ⊢ α) → Set where
+  bisimilar : ∀ Γ {α} (t t' : Γ ⊢ α) → (Γ ⊢ t ≾ t' Exp) → (Γ ⊢ t' ≾ t Exp) → Γ ⊢ t ∼ t' Exp
+
+∼-Exp-refl : ∀ Γ {α} (t : Γ ⊢ α) → Γ ⊢ t ∼ t Exp
+∼-Exp-refl Γ t = bisimilar Γ t t (base Γ t t (λ e z → z)) (base Γ t t (λ e z → z))
+
+∼-Exp-sym : ∀ Γ {α} (t t' : Γ ⊢ α) → Γ ⊢ t ∼ t' Exp → Γ ⊢ t' ∼ t Exp
+∼-Exp-sym Γ t t' (bisimilar _ _ _ x x₁) = bisimilar Γ t' t x₁ x
+
+∼-Exp-trans : ∀ Γ {α} (t s u : Γ ⊢ α) → Γ ⊢ t ∼ s Exp → Γ ⊢ s ∼ u Exp → Γ ⊢ t ∼ u Exp
+∼-Exp-trans Γ t s u (bisimilar _ _ _ (base _ _ _ x) (base _ _ _ x₁))
+                    (bisimilar _ _ _ (base _ _ _ x₂) (base _ _ _ x₃)) =
+  bisimilar Γ t u (base Γ t u (λ e z → x₂ e (x e z)))
+                  (base Γ u t (λ e z → x₁ e (x₃ e z)))
 
 -- _□_ : 
 
