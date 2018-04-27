@@ -53,6 +53,7 @@ m<∶l⇒m⊆l empty = λ x z → z
 m<∶l⇒m⊆l (skip p x₁) = λ x z → there (m<∶l⇒m⊆l p x z)
 m<∶l⇒m⊆l {m} {l} (add p x₁) with m<∶l⇒m⊆l p
 m<∶l⇒m⊆l {m} {l} (add p x₁) | res = λ x → m⊆l⇒x∷m⊆x∷l res x 
+
 m<∶l⇒l⊆m : ∀ {m l} → m <∶ l → l ⊆ m
 m<∶l⇒l⊆m empty = λ x z → z
 m<∶l⇒l⊆m (skip p x₁) with m<∶l⇒l⊆m p
