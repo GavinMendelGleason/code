@@ -104,9 +104,15 @@
 	;; Use opam switch to lookup ocamlmerlin binary
 	(setq merlin-command 'opam)))
 
+;; Flymake (prep for other things which use flymake)
+(flymake-mode-on)
+(defadvice flymake-post-syntax-check (before flymake-force-check-was-interrupted)
+  (setq flymake-check-was-interrupted t))
+(ad-activate 'flymake-post-syntax-check)
 
 ;; Fstar
 (setq fstar-executable "/home/francoisbabeuf/.opam/system/bin/fstar.exe")
+;; (setq fstar-executable "/home/francoisbabeuf/Documents/build/FStar/bin/fstar.exe")
 
 ;; RedPRL
 ;;(load-file "/home/francoisbabeuf/.emacs.d/lib/redprl/redprl-mode.el")
@@ -117,6 +123,11 @@
 ;; Agda
 (load-file (let ((coding-system-for-read 'utf-8))
                 (shell-command-to-string "agda-mode locate")))
+
+;;'(agda2-include-dirs
+;;   (quote
+;;	("." "/usr/share/agda-stdlib" "/home/francoisbabeuf/Documents/code/agda/agda-stdlib/" "/home/francoisbabeuf/Documents/code/agda/finset/")))
+
 
 ;; load csp-mode setup code
 (add-to-list 'load-path "/home/francoisbabeuf/share/emacs/site-lisp/csp-mode")
@@ -212,16 +223,16 @@
  ;; If there is more than one, they won't work right.
  '(agda2-include-dirs
    (quote
-	("." "/usr/share/agda-stdlib" "/home/francoisbabeuf/Documents/code/agda/agda-stdlib/" "/home/francoisbabeuf/Documents/code/agda/finset/")))
+	("." "/home/francoisbabeuf/lib/agda-prelude/" "/home/francoisbabeuf/lib/agda-stdlib/")))
  '(agda2-program-args
    (quote
-	("--include-path=/home/francoisbabeuf/lib/agda-stdlib/src/" "--include-path=/home/francoisbabeuf/lib/parser-combinators.code/" "--include-path=.")))
+	("--include-path=/home/francoisbabeuf/lib/agda-prelude/src/" "--include-path=.")))
  '(custom-safe-themes
    (quote
 	("23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
  '(package-selected-packages
    (quote
-	(tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
+	(auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
  '(prolog-compile-string
    (quote
 	((eclipse "[%f].")
