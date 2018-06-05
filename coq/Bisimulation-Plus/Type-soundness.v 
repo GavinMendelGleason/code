@@ -1,0 +1,197 @@
+Require Import SystemF.
+Require Import List.
+Require Import Utils.
+Require Import Bisimulation. 
+  
+Section TypeSound.
+
+  Variable Delta : nat -> Term.
+  Variable Xi : nat -> Ty.  
+  Variable Prog : forall n l m, Derivation Xi [n ; l |= F m @ Xi m] -> Derivation Xi [n ; l |= Delta m @ Xi m]. 
+  Variable ProgTy : forall m, valid (Xi m) 0.
+
+  Variable R : nat -> Term -> Ty -> Prop.
+
+  Inductive Admissible : Term -> Term -> Type := 
+  | AdOr1 : forall s t u, Admissible s (Case t s u) 
+  | AdOr2 : forall s t u, Admissible s (Case t u s) 
+  | AdAnd : forall s t, Admissible s (Split t s)
+  | AdAll : forall s, Admissible s (Lam s)
+  | AdMu : forall s A, Admissible s (Fold s (Mu A))
+  | AdTrans : forall s t u, Admissible s t -> Admissible t u -> Admissible s u. 
+
+  Inductive Guarded : Term -> Term -> Type := 
+  | GNu : forall s A, Guarded s (Fold s (Nu A))
+  | GOrL : forall s A B, Guarded s (Inl s (Or A B))
+  | GOrR : forall s A B, Guarded s (Inr s (Or A B))
+  | GAndL : forall s t, Guarded s (Pair s t)
+  | GAndR : forall s t, Guarded s (Pair t s)
+  | GLam : forall s, Guarded s (Lam s)
+  | GImp : forall s A, Guarded s (Abs A s)
+  | GAdleft : forall s t u, Guarded s t -> Admissible t u -> Guarded s u
+  | GAdright : forall s t u, Admissible s t -> Guarded t u -> Guarded s u.
+
+  Inductive Structless : Term -> Term -> Type :=
+  | StructLam : forall s, Structless s (Lam s) 
+  | StructAbs : forall s A, Structless s (Abs A s)
+  | StructAndL : forall s t, Structless s (Pair s t) 
+  | StructAndS : forall s t, Structless s (Pair t s) 
+  | StructOrL : forall s A, Structless s (Inl s A) 
+  | StructOrR : forall s A, Structless s (Inr s A) 
+  | StructFoldNu : forall s A, Structless s (Fold s (Mu A))
+  | StructTrans : forall s t u, Structless s t -> Structless t u -> Structless s u.
+
+  Variable Rplus : Term -> Ty -> Term -> Ty -> Prop.
+
+  CoInductive Sound : Term -> Ty -> Type := 
+  | SImp : forall a A B, 
+    (forall c t, Derivation Xi [0 ; nil |= c @ A] -> trans Delta Xi a (lt c) t -> Sound t B) -> Sound a (Imp A B)
+  | SAll : forall a A, 
+    (forall C t, valid C 0 -> trans Delta Xi a (lty C) t -> Sound t (tysub A 0 C)) -> Sound a (All A) 
+  | SAnd : forall a t s A B, 
+    trans Delta Xi a fst t -> Sound t A -> trans Delta Xi a snd s -> Sound s B -> Sound a (And A B)
+  | SOrL : forall a t A B, 
+    trans Delta Xi a lft t -> Sound t A -> Sound a (Or A B)
+  | SOrR : forall a t A B, 
+    trans Delta Xi a rgt t -> Sound t B -> Sound a (Or A B)
+  | SFoldnu : forall a t A, 
+    trans Delta Xi a fld t -> Sound t (tysub A 0 (Nu A)) -> Sound a (Nu A)
+  | SFoldmu : forall a t A, 
+    trans Delta Xi a fld t -> Sound t (tysub A 0 (Mu A)) -> Sound a (Mu A)
+  | SRecNu : forall t A B, {s : Term & Rplus s t -> Sound s A} -> Sound t A.
+
+
+  | SRecMu : forall a t theta A, exists s theta, R s t -> forall (r,T), In (r,T) theta -> Sound r T -> Sound a A
+
+
+  Definition Conat := Nu (Or One (TV 0)). 
+
+  Definition Delta := 
+    (fun x => match x with 
+                | O => (Abs Conat (Fold (Inr (App (F 0) (V 0)) (Or One Conat)) Conat))
+                | S n => Unit
+              end).
+
+  Definition Xi := 
+    (fun x => match x with 
+                | O => Zero
+                | S n => One
+              end).
+
+  
+  Notation "t ~> t'" := (Ev Delta t t') (at level 60).  
+  Notation "t ~>+ t'" := (Evplus Delta t t') (at level 60).
+  Notation "t ~>* t'" := (Evstar Delta t t') (at level 60). 
+  
+  Notation " a :<: b " := (simulates Delta Xi a b) (at level 90). 
+
+  Theorem Prog : forall m n l, Derivation Xi [n ; l |= F m @ Xi m] -> Derivation Xi [n ; l |= Delta m @ Xi m].
+  Proof.
+    induction m ; intros n l HF.
+    simpl. auto.
+    simpl. 
+    typecheck.
+  Defined.
+  
+  Theorem ProgTy : forall m, valid (Xi m) 0.
+  Proof.
+    induction m ; simpl ; auto. 
+  Defined.
+
+
+
+
+
+
+  
+  Axiom SoundF : forall m, Sound (F m) (Xi m).
+
+  Axiom Sub_axiom: forall A B C n, tysub A n C = tysub A n B -> (tysub A n C = A) + (B = C). 
+
+  Axiom Nonsense : forall A B : Ty, A = B.
+
+  Theorem DerImpSound : forall t A, Derivation Xi [0; nil |= t @ A] -> Sound t A.
+  Proof.
+    cofix f.
+    intros.
+    inversion H ; subst. 
+    apply SoundF.
+    
+    (* abs *) 
+    apply SImp.
+    intros. 
+    
+    induction H1 ; try (inversion H ; fail).
+    apply type_unique with (ty1:=Imp A B) in H. inversion H ; subst.
+    inversion d. subst.
+    apply sub_preservation_basic with (s := t2) in H10.
+    apply f in H10. auto.
+
+    intros. auto. auto.  auto. 
+
+    apply IHtrans. 
+    apply Eval.evstar_preservation with (Delta:=Delta) (t:=t1). auto. auto. auto. auto.
+
+    (* app *)
+    Focus 2.
+
+    (* All *) 
+    apply SAll.
+    intros.
+
+    cut (trans Delta Xi (Lam t0) (lty C) t) ; intros ; auto.
+    apply trans_lam_ty with (A := ty) (B:=C) in H3.
+    
+    induction H2 ; try (inversion H1 ; fail). 
+    apply type_unique with (ty2:=Imp A B) in H. inversion H ; auto. auto.
+    cut (ty0=C) ; intros ; subst. 
+    apply f.
+    change 0 with (0 + 0). change (nil (A:=Ty)) with (map (fun ty => tysub ty 0 C) nil). 
+    apply tysub_all. auto. auto. simpl. inversion H ; auto. 
+    apply Nonsense.
+    apply type_unique with (ty2:=Or A B) in H. inversion H ; auto. auto.
+    apply type_unique with (ty2:=Or A B) in H. inversion H ; auto. auto.
+    apply type_unique with (ty2:=And A B) in H. inversion H ; auto. auto.
+    apply type_unique with (ty2:=And A B) in H. inversion H ; auto. auto.
+    inversion d ; subst. 
+    apply type_unique with (ty2:=Mu A) in H. inversion H ; auto. auto.
+    apply type_unique with (ty2:=Nu A) in H. inversion H ; auto. auto.
+    apply IHtrans. 
+    apply Eval.evstar_preservation with (Delta:=Delta) (t:=t1). auto. auto. auto. auto. auto. auto. auto. auto. auto.
+
+    Focus 4.
+    (* And *) 
+    apply SAnd with (t:=t0) (s:=s).
+    apply trans_fst with (A:=A0) (B:=B). auto. 
+    apply f. auto. 
+    apply trans_snd with (A:=A0) (B:=B). auto.
+    apply f. auto.
+
+    Focus 5.
+    (* Inl *) 
+    apply SOrL with (t:=t0).
+    apply trans_inl with (A:=A0) (B:=B) ; auto.
+    apply f ; auto.
+
+    Focus 5.
+    (* Inr *) 
+    apply SOrR with (t:=t0).
+    apply trans_inr with (A:=A0) (B:=B) ; auto.
+    apply f ; auto.
+    
+    Focus 6.
+    (* Mu *) 
+    apply SFoldmu with (t:=t0).
+    apply trans_fold ; auto.
+    apply f ; auto.  
+ 
+
+    inversion H.  inversion H. inversion H. inversion H. inversion H. inversion H.
+
+    apply type_unique with (ty1:=All A) in H.  inversion H. 
+    apply type_unique with (ty1:=All A) in H.  inversion H. 
+    apply type_unique with (ty1:=All A) in H.  inversion H.
+    apply type_unique with (ty1:=All A) in H.  inversion H.
+    apply type_unique with (ty1:=All A) in H.  inversion H.   
+   
+   inversion H3. simpl. subst. inversion H1.   

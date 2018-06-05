@@ -1,0 +1,65 @@
+Require Import SystemF.
+Require Import List.
+Require Import Utils.
+Require Import Bisimulation. 
+  
+Section TypeSound.
+
+  Variable Delta : nat -> Term.
+  Variable Xi : nat -> Ty.  
+  Variable Prog : forall n l m, Derivation Xi [n ; l |= F m @ Xi m] -> Derivation Xi [n ; l |= Delta m @ Xi m]. 
+  Variable ProgTy : forall m, valid (Xi m) 0.
+
+  Inductive Acc : Ty -> label -> Ty -> Type := 
+  | acc_imp : forall t A B, 
+    Derivation Xi [0; nil |= t @ A] -> 
+    Acc (Imp A B) (lt t) B
+  | acc_all : forall A B,
+    valid B 0 -> 
+    Acc (All A) (lty B) (tysub A 0 B).
+
+  CoInductive sound : Term -> Ty -> Type := 
+  | sound_base : forall a A, 
+    (forall a' A' l, 
+      Acc A l A' -> 
+      trans Delta Xi a l a' -> sound a' A') -> sound a A.
+
+Definition List (A : Ty) := Nu (Or One (And A (TV 0))).
+
+Definition ID1 := (Lam (Abs (TV 0) (V 0))).
+
+Lemma sound_id1 : sound ID1 (All (Imp (TV 0) (TV 0))).
+Proof.
+  cofix sound_at_id1.
+  apply sound_base.
+  intros.
+  inversion H. subst. simpl in *.
+  inversion H0. subst. simpl in *.
+  apply sound_base. 
+  intros. 
+  inversion H1. subst.
+  inversion H3. subst.
+  simpl in *. 
+  typecheck.
+  intros.
+  simpl.
+  apply R_imp.
+  typecheck.
+  case_eq (valid_dec X 0) ; intros ; auto ; [ try elimtype False ; congruence ].
+  intros. apply wellR in H0.
+  simpl. auto.
+Defined.
+  
+Lemma r_at_id1 : R [0 ; nil |= ID1 @ (All (Imp (TV 0) (TV 0)))].
+Proof.
+  cofix r_at_id1.
+  apply R_all.
+  typecheck.
+  intros.
+  simpl.
+  apply R_imp.
+  typecheck.
+  case_eq (valid_dec X 0) ; intros ; auto ; [ try elimtype False ; congruence ].
+  intros. apply wellR in H0.
+  simpl. auto.
+Defined.  
