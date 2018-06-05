@@ -1,0 +1,65 @@
+||| Some games!
+Infix 100 "∈" := member.
+Infix 100 "~" := ceq.
+Infix 100 "×" := prod.
+Postfix 11 "⇓" := has-value.
+
+|||Infix 7 "∈" := member.
+|||Infix 7 "×" := cross.
+
+Operator cross : (0;0).
+
+[cross(A; B)] =def= [prod(A; _.B)].
+
+
+Theorem LUnit : [ fun(U{i}; A.
+                  fun(cross(unit;A) ; _.
+                     A)) ] {
+ intro ; [ unfold <cross> , unfold <member> ; eq-cd ] ;
+ intro ; [ elim #2  ; hypothesis #4 , auto ]
+}.
+
+Theorem RUnit : [ fun(U{i}; A.
+                  fun(cross(A;unit) ; _.
+                     A)) ] {
+  intro ; unfold <cross> ; auto ; elim #2 ; auto
+}.
+
+Theorem InjRight : [ fun(U{i}; A.
+                   fun(A ; _.
+                   cross(unit;A))) ] {
+  intro ; [ intro ; unfold <cross> ;
+            [ intro ; [ witness [<>] ;
+                        unfold <member> ; eq-cd
+                      , hypothesis #2 ]
+            , unfold <member> ; eq-cd ]
+          , unfold <member> ; eq-cd ] 
+}.
+
+Theorem InjLeft : [ fun(U{i}; A.
+                    fun(A ; _.
+                    cross(A;unit))) ] {
+   intro ; [ intro ; unfold <cross> ; auto
+           , unfold <member> ; eq-cd ] 
+}.
+
+Theorem AssocL : [ fun(U{i}; A. fun(U{i}; B. fun(U{i}; C.
+                   fun(cross(A;cross(B;C)); _.
+                   cross(cross(A;B);C))))) ] {
+  intro ; auto ;
+  unfold <cross> ; auto ; elim #4 ; auto ; elim #6 ; auto
+}.
+
+Theorem AssocR : [ fun(U{i}; A. fun(U{i}; B. fun(U{i}; C.
+                   fun(cross(cross(A;B);C); _.
+                   cross(A;cross(B;C)))))) ] {
+  intro ; auto ;
+  unfold <cross> ; auto ; elim #4 ; auto ; elim #5 ; auto
+}.
+
+Print AssocL.
+
+
+|||Operator cross : (0;0).
+
+|||[cross(A; B)] =def= [prod(A; _.B)].

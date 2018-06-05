@@ -1,0 +1,1051 @@
+@prefix dacura: <http://dacura.scss.tcd.ie/ontology/dacura#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+dacura:Entity
+  a owl:Class ;
+  rdfs:label "Entity"@en ;
+  rdfs:comment "The designator for primary objects"@en .
+
+dacura:Enumerated
+  a owl:Class ;
+  rdfs:label "Enumerated Set"@en ;
+  rdfs:comment "Any number of possible particular elements"@en .
+
+dacura:Box
+  a owl:Class ;
+  rdfs:label "Box"@en ;
+  rdfs:comment "Box super-class to facilitiate user-interface design."@en .
+
+dacura:AnySimpleType
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "anySimpleType Box"@en ;
+  rdfs:comment "The xsd:anySimpleType box"@en .
+
+dacura:anySimpleType
+  a owl:DatatypeProperty ;
+  rdfs:label "anySimpleType"@en ;
+  rdfs:comment "An xsd:anySimpleType datatype."@en ;
+  rdfs:domain dacura:AnySimpleType ;
+  rdfs:range xsd:anySimpleType .
+
+dacura:String
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "string Box"@en ;
+  rdfs:comment "The xsd:string box"@en .
+
+dacura:string
+  a owl:DatatypeProperty ;
+  rdfs:label "string"@en ;
+  rdfs:comment "An xsd:string datatype."@en ;
+  rdfs:domain dacura:String ;
+  rdfs:range xsd:string .
+
+dacura:Boolean
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "boolean Box"@en ;
+  rdfs:comment "The xsd:boolean box"@en .
+
+dacura:boolean
+  a owl:DatatypeProperty ;
+  rdfs:label "boolean"@en ;
+  rdfs:comment "An xsd:boolean datatype."@en ;
+  rdfs:domain dacura:Boolean ;
+  rdfs:range xsd:boolean .
+
+dacura:Decimal
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "decimal Box"@en ;
+  rdfs:comment "The xsd:decimal box"@en .
+
+dacura:decimal
+  a owl:DatatypeProperty ;
+  rdfs:label "decimal"@en ;
+  rdfs:comment "An xsd:decimal datatype."@en ;
+  rdfs:domain dacura:Decimal ;
+  rdfs:range xsd:decimal .
+
+dacura:Double
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "double Box"@en ;
+  rdfs:comment "The xsd:double box"@en .
+
+dacura:double
+  a owl:DatatypeProperty ;
+  rdfs:label "double"@en ;
+  rdfs:comment "An xsd:double datatype."@en ;
+  rdfs:domain dacura:Double ;
+  rdfs:range xsd:double .
+
+dacura:Float
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "float Box"@en ;
+  rdfs:comment "The xsd:float box"@en .
+
+dacura:float
+  a owl:DatatypeProperty ;
+  rdfs:label "float"@en ;
+  rdfs:comment "An xsd:float datatype."@en ;
+  rdfs:domain dacura:Float ;
+  rdfs:range xsd:float .
+
+dacura:Time
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "time Box"@en ;
+  rdfs:comment "The xsd:time box"@en .
+
+dacura:time
+  a owl:DatatypeProperty ;
+  rdfs:label "time"@en ;
+  rdfs:comment "An xsd:time datatype."@en ;
+  rdfs:domain dacura:Time ;
+  rdfs:range xsd:time .
+
+dacura:Date
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "date Box"@en ;
+  rdfs:comment "The xsd:date box"@en .
+
+dacura:date
+  a owl:DatatypeProperty ;
+  rdfs:label "date"@en ;
+  rdfs:comment "An xsd:date datatype."@en ;
+  rdfs:domain dacura:Date ;
+  rdfs:range xsd:date .
+
+dacura:DateTime
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "dateTime Box"@en ;
+  rdfs:comment "The xsd:dateTime box"@en .
+
+dacura:dateTime
+  a owl:DatatypeProperty ;
+  rdfs:label "dateTime"@en ;
+  rdfs:comment "An xsd:dateTime datatype."@en ;
+  rdfs:domain dacura:DateTime ;
+  rdfs:range xsd:dateTime .
+
+dacura:DateTimeStamp
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "dateTimeStamp Box"@en ;
+  rdfs:comment "The xsd:dateTimeStamp box"@en .
+
+dacura:dateTimeStamp
+  a owl:DatatypeProperty ;
+  rdfs:label "dateTimeStamp"@en ;
+  rdfs:comment "An xsd:dateTimeStamp datatype."@en ;
+  rdfs:domain dacura:DateTimeStamp ;
+  rdfs:range xsd:dateTimeStamp .
+
+dacura:GYear
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "gYear Box"@en ;
+  rdfs:comment "The xsd:gYear box"@en .
+
+dacura:gYear
+  a owl:DatatypeProperty ;
+  rdfs:label "gYear"@en ;
+  rdfs:comment "An xsd:gYear datatype."@en ;
+  rdfs:domain dacura:GYear ;
+  rdfs:range xsd:gYear .
+
+dacura:GMonth
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "gMonth Box"@en ;
+  rdfs:comment "The xsd:gMonth box"@en .
+
+dacura:gMonth
+  a owl:DatatypeProperty ;
+  rdfs:label "gMonth"@en ;
+  rdfs:comment "An xsd:gMonth datatype."@en ;
+  rdfs:domain dacura:GMonth ;
+  rdfs:range xsd:gMonth .
+
+dacura:GDay
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "gDay Box"@en ;
+  rdfs:comment "The xsd:gDay box"@en .
+
+dacura:gDay
+  a owl:DatatypeProperty ;
+  rdfs:label "gDay"@en ;
+  rdfs:comment "An xsd:gDay datatype."@en ;
+  rdfs:domain dacura:GDay ;
+  rdfs:range xsd:gDay .
+
+dacura:GYearMonth
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "gYearMonth Box"@en ;
+  rdfs:comment "The xsd:gYearMonth box"@en .
+
+dacura:gYearMonth
+  a owl:DatatypeProperty ;
+  rdfs:label "gYearMonth"@en ;
+  rdfs:comment "An xsd:gYearMonth datatype."@en ;
+  rdfs:domain dacura:GYearMonth ;
+  rdfs:range xsd:gYearMonth .
+
+dacura:GMonthDay
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "gMonthDay Box"@en ;
+  rdfs:comment "The xsd:gMonthDay box"@en .
+
+dacura:gMonthDay
+  a owl:DatatypeProperty ;
+  rdfs:label "gMonthDay"@en ;
+  rdfs:comment "An xsd:gMonthDay datatype."@en ;
+  rdfs:domain dacura:GMonthDay ;
+  rdfs:range xsd:gMonthDay .
+
+dacura:Duration
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "duration Box"@en ;
+  rdfs:comment "The xsd:duration box"@en .
+
+dacura:duration
+  a owl:DatatypeProperty ;
+  rdfs:label "duration"@en ;
+  rdfs:comment "An xsd:duration datatype."@en ;
+  rdfs:domain dacura:Duration ;
+  rdfs:range xsd:duration .
+
+dacura:YearMonthDuration
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "yearMonthDuration Box"@en ;
+  rdfs:comment "The xsd:yearMonthDuration box"@en .
+
+dacura:yearMonthDuration
+  a owl:DatatypeProperty ;
+  rdfs:label "yearMonthDuration"@en ;
+  rdfs:comment "An xsd:yearMonthDuration datatype."@en ;
+  rdfs:domain dacura:YearMonthDuration ;
+  rdfs:range xsd:yearMonthDuration .
+
+dacura:DayTimeDuration
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "dayTimeDuration Box"@en ;
+  rdfs:comment "The xsd:dayTimeDuration box"@en .
+
+dacura:dayTimeDuration
+  a owl:DatatypeProperty ;
+  rdfs:label "dayTimeDuration"@en ;
+  rdfs:comment "An xsd:dayTimeDuration datatype."@en ;
+  rdfs:domain dacura:DayTimeDuration ;
+  rdfs:range xsd:dayTimeDuration .
+
+dacura:Byte
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "byte Box"@en ;
+  rdfs:comment "The xsd:byte box"@en .
+
+dacura:byte
+  a owl:DatatypeProperty ;
+  rdfs:label "byte"@en ;
+  rdfs:comment "An xsd:byte datatype."@en ;
+  rdfs:domain dacura:Byte ;
+  rdfs:range xsd:byte .
+
+dacura:Short
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "short Box"@en ;
+  rdfs:comment "The xsd:short box"@en .
+
+dacura:short
+  a owl:DatatypeProperty ;
+  rdfs:label "short"@en ;
+  rdfs:comment "An xsd:short datatype."@en ;
+  rdfs:domain dacura:Short ;
+  rdfs:range xsd:short .
+
+dacura:Integer
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "integer Box"@en ;
+  rdfs:comment "The xsd:integer box"@en .
+
+dacura:integer
+  a owl:DatatypeProperty ;
+  rdfs:label "integer"@en ;
+  rdfs:comment "An xsd:integer datatype."@en ;
+  rdfs:domain dacura:Integer ;
+  rdfs:range xsd:integer .
+
+dacura:Long
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "long Box"@en ;
+  rdfs:comment "The xsd:long box"@en .
+
+dacura:long
+  a owl:DatatypeProperty ;
+  rdfs:label "long"@en ;
+  rdfs:comment "An xsd:long datatype."@en ;
+  rdfs:domain dacura:Long ;
+  rdfs:range xsd:long .
+
+dacura:UnsignedByte
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "unsignedByte Box"@en ;
+  rdfs:comment "The xsd:unsignedByte box"@en .
+
+dacura:unsignedByte
+  a owl:DatatypeProperty ;
+  rdfs:label "unsignedByte"@en ;
+  rdfs:comment "An xsd:unsignedByte datatype."@en ;
+  rdfs:domain dacura:UnsignedByte ;
+  rdfs:range xsd:unsignedByte .
+
+dacura:UnsignedInt
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "unsignedInt Box"@en ;
+  rdfs:comment "The xsd:unsignedInt box"@en .
+
+dacura:unsignedInt
+  a owl:DatatypeProperty ;
+  rdfs:label "unsignedInt"@en ;
+  rdfs:comment "An xsd:unsignedInt datatype."@en ;
+  rdfs:domain dacura:UnsignedInt ;
+  rdfs:range xsd:unsignedInt .
+
+dacura:UnsignedLong
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "unsignedLong Box"@en ;
+  rdfs:comment "The xsd:unsignedLong box"@en .
+
+dacura:unsignedLong
+  a owl:DatatypeProperty ;
+  rdfs:label "unsignedLong"@en ;
+  rdfs:comment "An xsd:unsignedLong datatype."@en ;
+  rdfs:domain dacura:UnsignedLong ;
+  rdfs:range xsd:unsignedLong .
+
+dacura:PositiveInteger
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "positiveInteger Box"@en ;
+  rdfs:comment "The xsd:positiveInteger box"@en .
+
+dacura:positiveInteger
+  a owl:DatatypeProperty ;
+  rdfs:label "positiveInteger"@en ;
+  rdfs:comment "An xsd:positiveInteger datatype."@en ;
+  rdfs:domain dacura:PositiveInteger ;
+  rdfs:range xsd:positiveInteger .
+
+dacura:NonNegativeInteger
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "nonNegativeInteger Box"@en ;
+  rdfs:comment "The xsd:nonNegativeInteger box"@en .
+
+dacura:nonNegativeInteger
+  a owl:DatatypeProperty ;
+  rdfs:label "nonNegativeInteger"@en ;
+  rdfs:comment "An xsd:nonNegativeInteger datatype."@en ;
+  rdfs:domain dacura:NonNegativeInteger ;
+  rdfs:range xsd:nonNegativeInteger .
+
+dacura:NegativeInteger
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "negativeInteger Box"@en ;
+  rdfs:comment "The xsd:negativeInteger box"@en .
+
+dacura:negativeInteger
+  a owl:DatatypeProperty ;
+  rdfs:label "negativeInteger"@en ;
+  rdfs:comment "An xsd:negativeInteger datatype."@en ;
+  rdfs:domain dacura:NegativeInteger ;
+  rdfs:range xsd:negativeInteger .
+
+dacura:NonPositiveInteger
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "nonPositiveInteger Box"@en ;
+  rdfs:comment "The xsd:nonPositiveInteger box"@en .
+
+dacura:nonPositiveInteger
+  a owl:DatatypeProperty ;
+  rdfs:label "nonPositiveInteger"@en ;
+  rdfs:comment "An xsd:nonPositiveInteger datatype."@en ;
+  rdfs:domain dacura:NonPositiveInteger ;
+  rdfs:range xsd:nonPositiveInteger .
+
+dacura:Base64Binary
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "base64Binary Box"@en ;
+  rdfs:comment "The xsd:base64Binary box"@en .
+
+dacura:base64Binary
+  a owl:DatatypeProperty ;
+  rdfs:label "base64Binary"@en ;
+  rdfs:comment "An xsd:base64Binary datatype."@en ;
+  rdfs:domain dacura:Base64Binary ;
+  rdfs:range xsd:base64Binary .
+
+dacura:AnyURI
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "anyURI Box"@en ;
+  rdfs:comment "The xsd:anyURI box"@en .
+
+dacura:anyURI
+  a owl:DatatypeProperty ;
+  rdfs:label "anyURI"@en ;
+  rdfs:comment "An xsd:anyURI datatype."@en ;
+  rdfs:domain dacura:AnyURI ;
+  rdfs:range xsd:anyURI .
+
+dacura:Language
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "language Box"@en ;
+  rdfs:comment "The xsd:language box"@en .
+
+dacura:language
+  a owl:DatatypeProperty ;
+  rdfs:label "language"@en ;
+  rdfs:comment "An xsd:language datatype."@en ;
+  rdfs:domain dacura:Language ;
+  rdfs:range xsd:language .
+
+dacura:NormalizedString
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "normalizedString Box"@en ;
+  rdfs:comment "The xsd:normalizedString box"@en .
+
+dacura:normalizedString
+  a owl:DatatypeProperty ;
+  rdfs:label "normalizedString"@en ;
+  rdfs:comment "An xsd:normalizedString datatype."@en ;
+  rdfs:domain dacura:NormalizedString ;
+  rdfs:range xsd:normalizedString .
+
+dacura:Token
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "token Box"@en ;
+  rdfs:comment "The xsd:token box"@en .
+
+dacura:token
+  a owl:DatatypeProperty ;
+  rdfs:label "token"@en ;
+  rdfs:comment "An xsd:token datatype."@en ;
+  rdfs:domain dacura:Token ;
+  rdfs:range xsd:token .
+
+dacura:NMTOKEN
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "NMTOKEN Box"@en ;
+  rdfs:comment "The xsd:NMTOKEN box"@en .
+
+dacura:nMTOKEN
+  a owl:DatatypeProperty ;
+  rdfs:label "NMTOKEN"@en ;
+  rdfs:comment "An xsd:NMTOKEN datatype."@en ;
+  rdfs:domain dacura:NMTOKEN ;
+  rdfs:range xsd:NMTOKEN .
+
+dacura:Name
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "Name Box"@en ;
+  rdfs:comment "The xsd:Name box"@en .
+
+dacura:name
+  a owl:DatatypeProperty ;
+  rdfs:label "Name"@en ;
+  rdfs:comment "An xsd:Name datatype."@en ;
+  rdfs:domain dacura:Name ;
+  rdfs:range xsd:Name .
+
+dacura:NCName
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "NCName Box"@en ;
+  rdfs:comment "The xsd:NCName box"@en .
+
+dacura:nCName
+  a owl:DatatypeProperty ;
+  rdfs:label "NCName"@en ;
+  rdfs:comment "An xsd:NCName datatype."@en ;
+  rdfs:domain dacura:NCName ;
+  rdfs:range xsd:NCName .
+
+dacura:NOTATION
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "NOTATION Box"@en ;
+  rdfs:comment "The xsd:NOTATION box"@en .
+
+dacura:nOTATION
+  a owl:DatatypeProperty ;
+  rdfs:label "NOTATION"@en ;
+  rdfs:comment "An xsd:NOTATION datatype."@en ;
+  rdfs:domain dacura:NOTATION ;
+  rdfs:range xsd:NOTATION .
+
+dacura:QName
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "QName Box"@en ;
+  rdfs:comment "The xsd:QName box"@en .
+
+dacura:qName
+  a owl:DatatypeProperty ;
+  rdfs:label "QName"@en ;
+  rdfs:comment "An xsd:QName datatype."@en ;
+  rdfs:domain dacura:QName ;
+  rdfs:range xsd:QName .
+
+dacura:ID
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "ID Box"@en ;
+  rdfs:comment "The xsd:ID box"@en .
+
+dacura:iD
+  a owl:DatatypeProperty ;
+  rdfs:label "ID"@en ;
+  rdfs:comment "An xsd:ID datatype."@en ;
+  rdfs:domain dacura:ID ;
+  rdfs:range xsd:ID .
+
+dacura:IDREF
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "IDREF Box"@en ;
+  rdfs:comment "The xsd:IDREF box"@en .
+
+dacura:iDREF
+  a owl:DatatypeProperty ;
+  rdfs:label "IDREF"@en ;
+  rdfs:comment "An xsd:IDREF datatype."@en ;
+  rdfs:domain dacura:IDREF ;
+  rdfs:range xsd:IDREF .
+
+dacura:ENTITY
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "ENTITY Box"@en ;
+  rdfs:comment "The xsd:ENTITY box"@en .
+
+dacura:eNTITY
+  a owl:DatatypeProperty ;
+  rdfs:label "ENTITY"@en ;
+  rdfs:comment "An xsd:ENTITY datatype."@en ;
+  rdfs:domain dacura:ENTITY ;
+  rdfs:range xsd:ENTITY .
+
+dacura:CoordinatePolygon
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "CoordinatePolygon Box"@en ;
+  rdfs:comment "The xdd:coordinatePolygon box"@en .
+
+dacura:coordinatePolygon
+  a owl:DatatypeProperty ;
+  rdfs:label "CoordinatePolygon"@en ;
+  rdfs:comment "An xdd:coordinatePolygon datatype."@en ;
+  rdfs:domain dacura:CoordinatePolygon ;
+  rdfs:range xdd:coordinatePolygon .
+
+@prefix seshat: <http://dacura.scss.tcd.ie/ontology/seshat#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dc11: <http://purl.org/dc/elements/1.1/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dacura: <http://dacura.scss.tcd.ie/ontology/dacura#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+seshat:
+  a owl:Ontology ;
+  dc11:title "Seshat Global History Databank Ontology"@en ;
+  rdfs:comment "The Seshat Global History Databank ontology is designed to describe human societies throughout time."@en ;
+  rdfs:label "Seshat Global History Databank Ontology"@en ;
+  owl:versionInfo "0.1.17"@en ;
+  dc11:date "2015-12-22"@en ;
+  dc11:creator "Rob Brennan"@en, "Kevin Feeney"@en, "Gavin Mendel-Gleason"@en ;
+  dc11:contributor "Odhran Gavin"@en, "Bojan Bozic"@en, "Pieter Francois"@en, "Harvey Whitehouse"@en, "Arkadiusz Marciniak"@en, "Thomas E. Currie"@en, "Christopher Chase-Dunn"@en, "Jack A. Goldstone"@en, "J. G. Manning"@en, "Peter N. Peregrine"@en, "Frances Reynolds"@en, "Peter J. Richerson"@en, "Enrico Spolaore"@en, "Romain Wacziarg"@en, "Douglas R. White"@en, "David S. Wilson"@en, "Andrey Korotayev"@en, "David Baker"@en, "Johannes Preiser-Kapeller"@en, "Nikolay Kradin"@en, "Daniel Hoyer"@en, "Peter Turchin"@en ;
+  dc11:rights "This ontology is distributed under a Creative Commons Attribution License - http://creativecommons.org/licenses/by/3.0"@en ;
+  dc11:description "This ontology will be used by the Evolution Institute and its partners to describe time series data collected about all human societies."@en .
+
+seshat:EphemeralEntity
+  a owl:Class ;
+  rdfs:subClassOf dacura:Entity ;
+  rdfs:coment "The class of entities that has temporal boundaries on their existence - a birth date and/or a demise date"@en ;
+  rdfs:label "Ephemeral Entity"@en .
+
+seshat:Organisation
+  a owl:Class ;
+  rdfs:subClassOf seshat:EphemeralEntity ;
+  owl:disjointWith seshat:Territory ;
+  rdfs:label "Organisation"@en ;
+  rdfs:comment "An abstract concept describing human social groups."@en .
+
+seshat:PoliticalAuthority
+  a owl:Class ;
+  rdfs:subClassOf seshat:Organisation ;
+  rdfs:label "Political Authority"@en ;
+  rdfs:comment "A derived concept covering human social groups with some self-governing powers."@en .
+
+seshat:Polity
+  a owl:Class ;
+  rdfs:subClassOf seshat:PoliticalAuthority ;
+  rdfs:label "Polity"@en ;
+  rdfs:comment "A polity is defined as an independent political unit. Kinds of polities range from villages (local communities) through simple and complex chiefdoms to states and empires. A polity can be either centralized or not (e.g., organized as a confederation). What distinguishes a polity from other human groupings and organizations is that it is politically independent of any overarching authority; it possesses sovereignty. Polities are defined spatially by the area enclosed within a boundary on the world map. There may be more than one such areas. Polities are dynamical entities, and thus their geographical extent may change with time. Thus, typically each polity will be defined by a set of multiple boundaries, each for a specified period of time. For prehistoric periods and for NGAs populated by a multitude of small-scale polities we use a variant called quasi-polity."@en .
+
+seshat:SupraculturalEntity
+  a owl:Class ;
+  rdfs:subClassOf seshat:Organisation ;
+  rdfs:label "Supracultural Entity"@en ;
+  rdfs:comment "Political Authority entities are often embedded within larger-scale cultural groupings of polities or quasipolities. These are sometimes referred to as 'civilizations'. For example, medieval European kingdoms were part of Latin Christendom. During the periods of disunity in China, warring states there, nevertheless, belonged to the same Chinese cultural sphere. Archaeologists often use 'archaeological traditions' to denote such large-scale cultural entities (for example, Peregrine's Atlas of Cultural Evolution). Note, 'supracultural entity' refers to cultural interdependence, and is distinct from a political confederation or alliance, which should be coded under 'supra-polity relations.'."@en .
+
+seshat:SubPolity
+  a owl:Class ;
+  rdfs:subClassOf seshat:PoliticalAuthority ;
+  rdfs:label "Sub-polity"@en ;
+  rdfs:comment "A derived concept covering human social groups that are temporal, geographic or political components of other human social groups."@en .
+
+seshat:QuasiPolity
+  a owl:Class ;
+  rdfs:subClassOf seshat:PoliticalAuthority ;
+  rdfs:label "Quasi-polity"@en ;
+  rdfs:comment " The polity-based approach is not feasible for those periods when a NGA is divided up among a multitude of small-scale polities (e.g., independent villages or even many small chiefdoms). In this instance we use the concept of 'quasi-polity'. Similarly, for societies known only archaeologically we may not be able to establish the boundaries of polities, even approximately. Quasi-polity is defined as a cultural area with some degree of cultural (including linguistic, if known) homogeneity that is distinct from surrounding areas. For example, the Marshall Islands before German occupation had no overarching native or colonial authority (chiefs controlled various subsets of islands and atolls) and therefore it was not a polity. But it was a quasi-polity because of the significant cultural and linguistic uniformity. The idea is to collect data for the quasi-polity as a whole. This way we can integrate over (often patchy) data from different sites and different polities to estimate what a 'generic' polity was like. Accordingly, when coding, for example, social complexity variables, enter data not for the whole NGA but for a 'typical' polity in it. For example, when coding for a quasi-polity polity territory is not the area of the NGA as a whole, but the average or typical area of polities within the NGA."@en .
+
+seshat:InterestGroup
+  a owl:Class ;
+  rdfs:subClassOf seshat:Organisation ;
+  rdfs:label "Interest group"@en ;
+  rdfs:comment "An Interest Group(IG) is a social group that pursues some common interest, so that its members are united by a common goal or goals. Polities and religious cults are also interest groups, but the IG category is broader. It also includes ethnic groups, professional associations, warrior bands, solidarity associations, mutual aid societies, firms and banks (including their premodern variants), etc. The IG is defined sociologically, not geographically. However, if desired, a geographic area, enclosed within a boundary, may be associated with it in the same way as with a polity or a Religious System(RS). "@en .
+
+seshat:ReligiousSystem
+  a owl:Class ;
+  rdfs:subClassOf seshat:InterestGroup ;
+  rdfs:label "Religious system"@en ;
+  rdfs:comment "Religious System (RS). This unit is defined in ways that are analogous to a polity, except it reflects religious, rather than political authority. Religious systems are dynamical and are typically defined by a set of dated boundaries. Unlike polities, religious systems often overlap with each other."@en .
+
+seshat:City
+  a owl:Class ;
+  rdfs:subClassOf seshat:Organisation ;
+  rdfs:label "city"@en ;
+  rdfs:comment "Cities are represented by a single point on the map that doesn’t change with time. Although it is possible to reflect their spatial expansion dynamically, we chose not to do so in the current implementation."@en .
+
+seshat:Building
+  a seshat:Entity ;
+  rdfs:label "Building"@en ;
+  rdfs:comment "Used to describe impressive/costly buildings that are then associated with the Polities that built them and the NGAs in which they are placed. They have 3 dimensions and a narrative paragraph."@en .
+
+seshat:Territory
+  a owl:Class ;
+  rdfs:subClassOf dacura:Entity ;
+  owl:disjointWith seshat:Organisation ;
+  rdfs:label "Unit of territory"@en ;
+  rdfs:comment "An abstract concept describing geographical locations or areas."@en .
+
+seshat:CollectionOfTerritories
+  a owl:Class ;
+  rdfs:subClassOf seshat:Territory ;
+  rdfs:label "collection of territories"@en ;
+  rdfs:comment "A container class for a group of units of territories."@en .
+
+seshat:FreeFormArea
+  a owl:Class ;
+  rdfs:subClassOf seshat:Territory ;
+  rdfs:label "Free form area"@en ;
+  rdfs:comment "Freeform area (FA). This is an area enclosed within a boundary, or a dated set of boundaries. Basically, it is our method for treating an arbitrary shape on the map to which a historical expert wishes to tie certain values of coded variables. Examples include a province within an empire, something with a hole in it, or a ‘southeast corner of a region."@en .
+
+seshat:NGA
+  a owl:Class ;
+  rdfs:subClassOf seshat:FreeFormArea ;
+  rdfs:label "NGA, Natural geographic area"@en ;
+  rdfs:comment "Natural Geographic Area (NGA). This type of unit is defined spatially by the area enclosed within a boundary drawn on the world map. It does not change with time. Its rough spatial scale is 100 km × 100 km (+/- 50%). Examples: Latium, Upper Egypt, Middle Yellow River Valley. "@en .
+
+seshat:Event
+  a owl:Class ;
+  rdfs:subClassOf seshat:EphemeralEntity ;
+  rdfs:label "event"@en ;
+  rdfs:comment "An abstract class describing historical events."@en .
+
+seshat:War
+  a owl:Class ;
+  rdfs:subClassOf seshat:Event ;
+  rdfs:label "war"@en ;
+  rdfs:comment "A derived concept covering historical wars."@en .
+
+seshat:Battle
+  a owl:Class ;
+  rdfs:subClassOf seshat:Event ;
+  rdfs:label "battle"@en ;
+  rdfs:comment "A derived concept covering historical battles."@en .
+
+seshat:NavalEngagement
+  a owl:Class ;
+  rdfs:subClassOf seshat:Battle ;
+  rdfs:label "Naval Engagement"@en ;
+  rdfs:comment "A derived concept covering historical naval engagements."@en .
+
+seshat:LandBattle
+  a owl:Class ;
+  rdfs:subClassOf seshat:Battle ;
+  rdfs:label "Land battle"@en ;
+  rdfs:comment "A derived concept covering historical land battles."@en .
+
+seshat:Siege
+  a owl:Class ;
+  rdfs:subClassOf seshat:Event ;
+  rdfs:label "Siege"@en ;
+  rdfs:comment "Note that 'siege' is a generic name for any interaction between an army and a settlement belonging to opposing factions. If an army entered a hostile city without resistance, this is siege. "@en .
+
+seshat:MetaConflict
+  a owl:Class ;
+  rdfs:subClassOf seshat:Event ;
+  rdfs:label "Meta-conflict"@en ;
+  rdfs:comment "Is this war part of a group of conflicts that span a much larger timeframe between the belligerents? For example, the 'First', 'Second' and 'Third Punic' wars are conflicts within the Roman-Carthage meta-conflict. These wars are coded as separate wars, rather than grouped together and coded as a single 'Roman-Carthage' war."@en .
+
+seshat:DegreeOfCentralization
+  a owl:Class ;
+  rdfs:label "Degree of Centralization"@en ;
+  rdfs:comment "The degree of centralisation of an organisation"@en .
+
+seshat:EpistemicState
+  a owl:Class ;
+  rdfs:label "Epistemic State"@en ;
+  rdfs:comment "The epistemic state of some variable"@en .
+
+seshat:utmZone
+  rdfs:domain dacura:Entity ;
+  rdfs:comment "List only one, usually where the capital city is located"@en ;
+  rdfs:label "UTM zone"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:string ;
+  dacura:pattern "UTM zone♣General_variables"@en ;
+  dacura:units ""@en .
+
+seshat:originalName
+  rdfs:domain seshat:Polity ;
+  rdfs:comment "The original name chosen to represent the polity when it was first created, before the advent of codes. Normally some small variation of the common name for the polity. "@en ;
+  rdfs:label "Original name"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:string ;
+  dacura:pattern "Original name♣General_variables"@en ;
+  dacura:units ""@en .
+
+seshat:alternativeNames
+  rdfs:domain dacura:Entity ;
+  rdfs:comment "Used in the historical literature; also supply the most common names used by the historical inhabitants and their local ancestors"@en ;
+  rdfs:label "Alternative names"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:string ;
+  dacura:pattern "Alternative names♣General_variables"@en ;
+  dacura:units ""@en .
+
+seshat:peakDate
+  rdfs:domain seshat:EphemeralEntity ;
+  rdfs:comment "The period when the polity was at its peak, whether militarily, in terms of the size of territory controlled, or the degree of cultural development. This variable has a subjective element, but typically historians agree when the peak was. "@en ;
+  rdfs:label "Peak Date"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:gYear ;
+  dacura:pattern "Peak Date♣General_variables"@en ;
+  dacura:units ""@en .
+
+seshat:Duration a owl:Class .
+seshat:duration
+  rdfs:domain seshat:EphemeralEntity ;
+  rdfs:comment "The starting and ending dates covered by this coding sheet. Briefly explain the significance of each date. For example, the starting date could be the establishment of a long-ruling dynasty, while the ending date may be the year when the polity was conquered by an aggressive neighbor. In cases when starting and/or ending dates are fuzzy, as explained above, use the earliest possible starting date and the latest possible ending date. This approach will result in a temporal overlap, so that some NGAs for some periods will be coded as belonging to two polities simultaneously (e.g., to a disintegrating overarching polity and to the rising regional subpolity). Such overlap is acceptable, and will be dealt with at the analysis stage."@en ;
+  rdfs:label "Duration"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:Duration ;
+  dacura:pattern "Duration♣General_variables"@en .
+
+seshat:degreeOfCentralization
+  rdfs:domain seshat:Organisation ;
+  rdfs:comment "unknown/ quasipolity/ nominal/ loose/ confederated state /unitary state </p> <ul><li>'quasipolity' = or 'none'. Use if the NGA is inhabited by many politically independent groups</li> <li>'nominal' = regional rulers pay only nominal allegiance to the overall ruler and maintain independence on all important aspects of governing, including taxation and warfare. (example: Japan during the Sengoku period)</li> <li>'loose' = the central government exercises a certain degree of control, especially over military matters and international relations. Otherwise the regional rulers are left alone (example: European 'feudalism' after the collapse of the Carolingian empire)</li> <li>'confederated state' = regions enjoy a large degree of autonomy in internal (regional) government. In particular, the regional governors are either hereditary rulers, or are elected by regional elites or by the population of the region; and regional governments can levy and dispose of regional taxes. Use this category for the more centralized 'feudal states'.</li> <li>'unitary state' = regional governors are appointed and removed by the central authorities, taxes are imposed by, and transmitted to the center</li></ul>"@en ;
+  rdfs:label "Degree of centralization"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:DegreeOfCentralization ;
+  dacura:pattern "Degree of centralization♣General_variables"@en .
+
+seshat:precedingQuasipolity
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "A pointer to the preceding polity (or other political authority or quasi-polity which this authority succeeded. This code is based on the core region of the current polity (not the NGA region). E.g. Achaemenid Empire's core region was Persia, where they were preceded by the Median Empire."@en ;
+  rdfs:label "preceding (quasi)polity"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:PoliticalAuthority ;
+  dacura:pattern "preceding (quasi)polity♣General_variables"@en .
+
+seshat:succeedingQuasipolity
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Name. Only name it here and don't code the nature of change (it's coded on the page of the succeeding quasipolity). This code is based on the core region of the current polity (not the NGA region). E.g. Achaemenid Empire's core region was Persia, where they were succeeded by the Macedonian Empire. blah blah"@en ;
+  rdfs:label "succeeding (quasi)polity"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:PoliticalAuthority ;
+  dacura:pattern "succeeding (quasi)polity♣General_variables"@en .
+
+seshat:supraculturalEntity
+  rdfs:domain seshat:Organisation ;
+  rdfs:comment "Name it. Our quasipolity are often embedded within larger-scale cultural groupings of polities or quasipolities. These are sometimes referred to as \"civilizations\". For example, medieval European kingdoms were part of Latin Christendom. During the periods of disunity in China, warring states there, nevertheless, belonged to the same Chinese cultural sphere. Archaeologists often use \"archaeological traditions\" to denote such large-scale cultural entities (for example, Peregrine's Atlas of Cultural Evolution). Note, 'supracultural entity' refers to cultural interdependence, and is distinct from a political confederation or alliance, which should be coded under 'supra-polity relations.'</dd></dl> <p>In the narrative paragraph details the types of supracultural links between the coded polity and the supracultural entity: trade, religion, ritual, demographic (e.g., migration, colonization), artistic/symbolic, technological, spousal/marriage (especially between the elites)"@en ;
+  rdfs:label "Supracultural entity"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:string ;
+  dacura:pattern "Supracultural entity♣General_variables"@en ;
+  dacura:units ""@en .
+
+seshat:scaleOfSupraculturalInteraction
+  rdfs:domain seshat:Organisation ;
+  rdfs:comment "An estimate of the area encompassed by the supracultural entity with which the cultural unit interacted. "@en ;
+  rdfs:label "scale of supra-cultural interaction"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:integer ;
+  dacura:pattern "scale of supra-cultural interaction♣General_variables"@en ;
+  dacura:units "km squared"@en .
+
+seshat:capital
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "The city where the ruler spends most of its time. If there were more than one capital supply all names and enclose in curly braces. For example, {Susa; Pasargadae; Persepolis; Ecbatana; Babylon}. Note that the capital may be different from the largest city (see below). <p>'Capital' may be difficult to code for archaeologically known societies. If there is reasonable basis to believe that the largest known settlement was the seat of the ruler code it as capital (and indicate uncertainty in the narrative paragraph). Archaeologists are able to recognize special architectural structures, such as a ceremonial centres and some kind of citadels or palaces. These features could be recognized with certainty after a careful study of the whole region and the settlement network. If such an inference cannot be made, code as 'unknown' (again, the largest settlement is coded elsewhere).</p>"@en ;
+  rdfs:label "Capital"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:City ;
+  dacura:pattern "Capital♣General_variables"@en .
+
+seshat:territory
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "The territory encompassed by the political authority. "@en ;
+  rdfs:label "Polity territory"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:string ;
+  dacura:pattern "Polity territory♣Social_Scale"@en ;
+  dacura:units "km squared"@en .
+
+seshat:population
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Estimated population of the polity; can change as a result of both adding/losing new territories or by population growth/decline within a region"@en ;
+  rdfs:label "Polity Population"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:integer ;
+  dacura:pattern "Polity Population♣Social_Scale"@en ;
+  dacura:units "people"@en .
+
+seshat:populationOfTheLargestSettlement
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Note that this could be different from the capital (coded under General). If possible, indicate the dynamics (that is, how population changed during the temporal period of the polity). Note that we are also building a city database - you should consult it as it may already have the needed data."@en ;
+  rdfs:label "Population of the largest settlement"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:integer ;
+  dacura:pattern "Population of the largest settlement♣Social_Scale"@en ;
+  dacura:units "people"@en .
+
+seshat:largestCommunicationDistance
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Distance in kilometers between the capital and the furthest provincial capital. Use the figure for the most direct land and/or sea route that was available. <p>As an alternative for prehistoric communities, measure the distance between largest quasi-capital and furthest village within the quasi-polity.</p>"@en ;
+  rdfs:label "Largest communication distance"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:integer ;
+  dacura:pattern "Largest communication distance♣Social_Scale"@en ;
+  dacura:units "km"@en .
+
+seshat:settlementHierarchy
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "levels. This variable records the hierarchy of not just settlement sizes, but also their complexity as reflected in different roles they play within the (quasi)polity. As settlements become more populous they acquire more complex functions: transportational (e.g. port); economic (e.g. market); administrative (e.g. storehouse, local government building); cultural (e.g. theatre); religious (e.g. temple), utilitarian (e.g. hospital), monumental (e.g. statues, plazas). </p><p>Example: (6) Large City (monumental structures, theatre, market, hospital, central government buildings) (5) City (market, theatre, regional government buildings) (4) Large Town (market, administrative buildings) (3) Town (administrative buildings, storehouse)) (2) Village (shrine) (1) Hamlet (residential only). </p><p>In the narrative paragraph explain the different levels and list their functions. Provide a (crude) estimate of population sizes. For example, Large Town (market, temple, administrative buildings): 2,000-5,000 inhabitants."@en ;
+  rdfs:label "Settlement hierarchy"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:integer ;
+  dacura:pattern "Settlement hierarchy♣Hierarchical_Complexity"@en ;
+  dacura:units "levels"@en .
+
+seshat:administrativeLevels
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "levels. An example of hierarchy for a state society could be (5) the overall ruler, (4) provincial/regional governors, (3) district heads, (2) town mayors, (1) village heads. Note that unlike in settlement hierarchy, here you code people hierarchy. <b>Do not simply copy settlement hierarchy data here.</b> For archaeological polities, you will usually code as 'unknown', unless experts identified ranks of chiefs or officials independently of the settlement hierarchy. </p><p>Note: Often there are more than one concurrent administrative hierarchy. In the example above the hierarchy refers to the territorial government. In addition, the ruler may have a hierarchically organized central bureaucracy located in the capital. For example, (4)the overall ruler, (3) chiefs of various ministries, (2) mid-level bureaucrats, (1) scribes and clerks. In the narrative paragraph detail what is known about both hierarchies. The machine-readable code should reflect the largest number (the longer chain of command)."@en ;
+  rdfs:label "Administrative levels"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:integer ;
+  dacura:pattern "Administrative levels♣Hierarchical_Complexity"@en ;
+  dacura:units "levels"@en .
+
+seshat:religiousLevels
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Start with the head of the official cult (if present) and work down to the local priest (level 1)."@en ;
+  rdfs:label "Religious levels"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:integer ;
+  dacura:pattern "Religious levels♣Hierarchical_Complexity"@en ;
+  dacura:units "levels"@en .
+
+seshat:militaryLevels
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Start with the commander-in-chief and work down to the private (level 1). <p>Even in primitive societies such as simple chiefdoms it is often possible to distinguish at least two levels – a commander and soldiers. A complex chiefdom would be coded three levels. The presence of warrior burials might be the basis for inferring the existence of a military organization. (The lowest military level is always the individual soldier).</p>"@en ;
+  rdfs:label "Military levels"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:integer ;
+  dacura:pattern "Military levels♣Hierarchical_Complexity"@en ;
+  dacura:units "levels"@en .
+
+seshat:professionalMilitaryOfficers
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Full-time specialists "@en ;
+  rdfs:label "Professional military officers"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:EpistemicState ;
+  dacura:pattern "Professional military officers♣Professions"@en .
+
+seshat:professionalSoldiers
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Full-time specialists"@en ;
+  rdfs:label "Professional soldiers"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:EpistemicState ;
+  dacura:pattern "Professional soldiers♣Professions"@en .
+
+seshat:professionalPriesthood
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Full-time specialists absent/present/inferred present/inferred absent/uncoded/unknown"@en ;
+  rdfs:label "Professional priesthood"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:EpistemicState ;
+  dacura:pattern "Professional priesthood♣Professions"@en .
+
+seshat:fulltimeBureaucrats
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Full-time specialists "@en ;
+  rdfs:label "Full-time bureaucrats"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:EpistemicState ;
+  dacura:pattern "Full-time bureaucrats♣Bureaucracy_characteristics"@en .
+
+seshat:sourceOfSupport
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "possible codes: state salary, governed population, land, none. 'State salary' can be paid either in currency or in kind (e.g., koku of rice). 'Governed population' means that the official directly collects tribute from the population (for example, the 'kormlenie' system in Medieval Russia). 'Land' is when the bureaucrats live off land supplied by the state. 'None' is when the state officials are not compensated (example: in the Republican and Principate Rome the magistrates were wealthy individuals who served without salary, motivated by prestige and social or career advancement)."@en ;
+  rdfs:label "Source of support"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range owl:Nothing ;
+  dacura:pattern "Source of support♣Bureaucracy_characteristics"@en .
+
+seshat:examinationSystem
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "The paradigmatic example is the Chinese imperial system."@en ;
+  rdfs:label "Examination system"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:EpistemicState ;
+  dacura:pattern "Examination system♣Bureaucracy_characteristics"@en .
+
+seshat:meritPromotion
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Code present if there are regular, institutionalized procedures for promotion based on performance. When exceptional individuals are promoted to the top ranks, in the absence of institutionalized procedures, we code it under institution and equity variables"@en ;
+  rdfs:label "Merit promotion"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:EpistemicState ;
+  dacura:pattern "Merit promotion♣Bureaucracy_characteristics"@en .
+
+seshat:specializedGovernmentBuildings
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "These buildings must be distinct from the ruler's palace and may be used for document storage, registration offices, minting money, etc. Defense structures also are not coded here (see Military)."@en ;
+  rdfs:label "Specialized government buildings"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:EpistemicState ;
+  dacura:pattern "Specialized government buildings♣Bureaucracy_characteristics"@en .
+
+seshat:formalLegalCode
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Usually, but not always written down. If not written down, code it 'present' when a uniform legal system is established by oral transmission (e.g., officials are taught the rules, or the laws are announced in a public space). Provide a short description"@en ;
+  rdfs:label "Formal legal code"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:EpistemicState ;
+  dacura:pattern "Formal legal code♣Law"@en .
+
+seshat:judges
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "This refers only to full-time professional judges"@en ;
+  rdfs:label "Judges"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:EpistemicState ;
+  dacura:pattern "Judges♣Law"@en .
+
+seshat:courts
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Buildings specialized for legal proceedings only."@en ;
+  rdfs:label "Courts"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:EpistemicState ;
+  dacura:pattern "Courts♣Law"@en .
+
+seshat:utilitarianPublicBuildings
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment "Typical examples include aqueducts, sewers, and granaries. In the narrative paragraph list all utilitarian buildings and give examples of the most impressive/costly/large ones. Also score them separately: "@en ;
+  rdfs:label "Utilitarian public buildings"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:EpistemicState ;
+  dacura:pattern "Utilitarian public buildings♣Specialized_Buildings:_polity_owned"@en .
+
+seshat:irrigationSystems
+  rdfs:domain seshat:PoliticalAuthority ;
+  rdfs:comment ""@en ;
+  rdfs:label "irrigation systems"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:EpistemicState ;
+  dacura:pattern "irrigation systems♣Specialized_Buildings:_polity_owned"@en .
+
+seshat:warName
+  rdfs:domain seshat:War ;
+  rdfs:comment "If the war does not have a name in the literature, choose a simple name which names the belligerents such as \"Roman-Parthian.\" Style suggestion: do not include the word \"war\" in the war name. The First Punic war would be coded as \"First Punic.\""@en ;
+  rdfs:label "War name"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:string ;
+  dacura:pattern "War name♣General"@en ;
+  dacura:units ""@en .
+
+seshat:warDate
+  rdfs:domain seshat:War ;
+  rdfs:comment "Date from earliest to last conflict in this war."@en ;
+  rdfs:label "War date"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:Duration ;
+  dacura:pattern "War date♣General"@en .
+
+[] rdfs:label "Unknown"@en .
+[] rdfs:label "Unitary"@en .
+[] rdfs:label "Federated"@en .
+[]
+  a seshat:EpistemicState ;
+  rdfs:label "Present"@en .
+
+[]
+  a seshat:EpistemicState ;
+  rdfs:label "Absent"@en .
+
+[]
+  a seshat:EpistemicState ;
+  rdfs:label "Inferred Absent"@en .
+
+[]
+  a seshat:EpistemicState ;
+  rdfs:label "Inferred Present"@en .
+
+[]
+  a seshat:EpistemicState ;
+  rdfs:label "Unknown"@en .

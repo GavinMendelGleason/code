@@ -1,0 +1,632 @@
+@prefix seshat: <http://dacura.scss.tcd.ie/seshat/ontology/seshat#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dacura: <http://dacura.scss.tcd.ie/ontology/dacura#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix xdd: <http://dacura.scss.tcd.ie/ontology/xdd#> .
+@prefix ns0: <http://purl.org/dc/elements/1.1/> .
+
+seshat:EphemeralEntity
+  a owl:Class ;
+  dacura:tag "abstract"@en ;
+  rdfs:subClassOf dacura:Entity ;
+  rdfs:comment "The class of entities that has temporal boundaries on their existence - a birth date and/or a demise date"@en ;
+  rdfs:label "Ephemeral Entity"@en .
+
+seshat:Organisation
+  a owl:Class ;
+  dacura:tag "abstract"@en ;
+  rdfs:subClassOf seshat:EphemeralEntity ;
+  owl:disjointWith seshat:Territory ;
+  rdfs:label "Organisation"@en ;
+  rdfs:comment "An abstract concept describing human social groups."@en .
+
+seshat:PoliticalAuthority
+  a owl:Class ;
+  dacura:tag "abstract"@en ;
+  rdfs:subClassOf seshat:Organisation ;
+  rdfs:label "Political Authority"@en ;
+  rdfs:comment "A derived concept covering human social groups with some self-governing powers."@en .
+
+seshat:Polity
+  a owl:Class ;
+  rdfs:subClassOf seshat:PoliticalAuthority ;
+  rdfs:label "Polity"@en ;
+  rdfs:comment "A polity is defined as an independent political unit. Kinds of polities range from villages (local communities) through simple and complex chiefdoms to states and empires. A polity can be either centralized or not (e.g., organized as a confederation). What distinguishes a polity from other human groupings and organizations is that it is politically independent of any overarching authority; it possesses sovereignty. Polities are defined spatially by the area enclosed within a boundary on the world map. There may be more than one such areas. Polities are dynamical entities, and thus their geographical extent may change with time. Thus, typically each polity will be defined by a set of multiple boundaries, each for a specified period of time. For prehistoric periods and for NGAs populated by a multitude of small-scale polities we use a variant called quasi-polity."@en .
+
+seshat:SupraculturalEntity
+  a owl:Class ;
+  rdfs:subClassOf seshat:Organisation ;
+  rdfs:label "Supracultural Entity"@en ;
+  rdfs:comment "Political Authority entities are often embedded within larger-scale cultural groupings of polities or quasipolities. These are sometimes referred to as 'civilizations'. For example, medieval European kingdoms were part of Latin Christendom. During the periods of disunity in China, warring states there, nevertheless, belonged to the same Chinese cultural sphere. Archaeologists often use 'archaeological traditions' to denote such large-scale cultural entities (for example, Peregrine's Atlas of Cultural Evolution). Note, 'supracultural entity' refers to cultural interdependence, and is distinct from a political confederation or alliance, which should be coded under 'supra-polity relations.'."@en .
+
+seshat:SubPolity
+  a owl:Class ;
+  rdfs:subClassOf seshat:PoliticalAuthority ;
+  rdfs:label "Sub-polity"@en ;
+  rdfs:comment "A derived concept covering human social groups that are temporal, geographic or political components of other human social groups."@en .
+
+seshat:QuasiPolity
+  a owl:Class ;
+  rdfs:subClassOf seshat:PoliticalAuthority ;
+  rdfs:label "Quasi-polity"@en ;
+  rdfs:comment " The polity-based approach is not feasible for those periods when a NGA is divided up among a multitude of small-scale polities (e.g., independent villages or even many small chiefdoms). In this instance we use the concept of 'quasi-polity'. Similarly, for societies known only archaeologically we may not be able to establish the boundaries of polities, even approximately. Quasi-polity is defined as a cultural area with some degree of cultural (including linguistic, if known) homogeneity that is distinct from surrounding areas. For example, the Marshall Islands before German occupation had no overarching native or colonial authority (chiefs controlled various subsets of islands and atolls) and therefore it was not a polity. But it was a quasi-polity because of the significant cultural and linguistic uniformity. The idea is to collect data for the quasi-polity as a whole. This way we can integrate over (often patchy) data from different sites and different polities to estimate what a 'generic' polity was like. Accordingly, when coding, for example, social complexity variables, enter data not for the whole NGA but for a 'typical' polity in it. For example, when coding for a quasi-polity polity territory is not the area of the NGA as a whole, but the average or typical area of polities within the NGA."@en .
+
+seshat:InterestGroup
+  a owl:Class ;
+  rdfs:subClassOf seshat:Organisation ;
+  rdfs:label "Interest group"@en ;
+  rdfs:comment "An Interest Group(IG) is a social group that pursues some common interest, so that its members are united by a common goal or goals. Polities and religious cults are also interest groups, but the IG category is broader. It also includes ethnic groups, professional associations, warrior bands, solidarity associations, mutual aid societies, firms and banks (including their premodern variants), etc. The IG is defined sociologically, not geographically. However, if desired, a geographic area, enclosed within a boundary, may be associated with it in the same way as with a polity or a Religious System(RS). "@en .
+
+seshat:ReligiousSystem
+  a owl:Class ;
+  rdfs:subClassOf seshat:InterestGroup ;
+  rdfs:label "Religious system"@en ;
+  rdfs:comment "Religious System (RS). This unit is defined in ways that are analogous to a polity, except it reflects religious, rather than political authority. Religious systems are dynamical and are typically defined by a set of dated boundaries. Unlike polities, religious systems often overlap with each other."@en .
+
+seshat:City 
+  rdfs:label "City"@en ;
+  rdfs:comment "Cities are represented by a single point on the map that doesnâ€™t change with time. Although it is possible to reflect their spatial expansion dynamically, we chose not to do so in the current implementation."@en ;
+  a owl:Class ;
+  rdfs:subClassOf [ a owl:Class ; owl:intersectionOf (seshat:Organisation seshat:FreeFormArea) ].
+
+seshat:population 
+  a owl:ObjectProperty ;
+  rdfs:label "Population"@en ;
+  rdfs:comment "Population in some free form area"@en ;
+  rdfs:domain seshat:FreeFormArea ;
+  rdfs:range dacura:Integer .
+
+seshat:Territory 
+  a owl:Class ;
+  dacura:tag "abstract"@en ;
+  rdfs:subClassOf dacura:Entity ;
+  owl:disjointWith seshat:Organisation ;
+  rdfs:label "Unit of territory"@en ;
+  rdfs:comment "An abstract concept describing geographical locations or areas."@en .
+
+seshat:FreeFormArea 
+  a owl:Class ;
+  rdfs:subClassOf seshat:Territory ;
+  rdfs:label "Free form area"@en ;
+  rdfs:comment "Freeform area (FA). This is an area enclosed within a boundary, or a dated set of boundaries. Basically, it is our method for treating an arbitrary shape on the map to which a historical expert wishes to tie certain values of coded variables. Examples include a province within an empire, something with a hole in it, or a â€˜southeast corner of a region."@en .
+
+seshat:NGA 
+  a owl:Class ;
+  rdfs:subClassOf seshat:FreeFormArea ;
+  rdfs:label "NGA, Natural geographic area"@en ;
+  rdfs:comment "Natural Geographic Area (NGA). This type of unit is defined spatially by the area enclosed within a boundary drawn on the world map. It does not change with time. Its rough spatial scale is 100 km Ã— 100 km (+/- 50%). Examples: Latium, Upper Egypt, Middle Yellow River Valley. "@en .
+
+seshat:Event 
+  rdfs:label "Event"@en ;
+  dacura:tag "abstract"@en ;
+  rdfs:comment "An abstract class describing historical events."@en ;
+  a owl:Class ;
+  rdfs:subClassOf seshat:EphemeralEntity .
+
+seshat:War 
+  rdfs:label "War"@en ;
+  rdfs:comment "A derived concept covering historical wars."@en ;
+  a owl:Class ;
+  rdfs:subClassOf seshat:Event .
+
+seshat:Battle 
+  rdfs:label "Battle"@en ;
+  rdfs:comment "A derived concept covering historical battles."@en ;
+  a owl:Class ;
+  rdfs:subClassOf seshat:Event .
+
+seshat:casualties 
+  rdfs:label "Casualities"@en ;
+  rdfs:comment "Number of deaths"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range dacura:IntegerRange ;
+  rdfs:domain seshat:Event .
+
+seshat:combatant 
+  rdfs:label "Combatant"@en ;
+  rdfs:comment "The beligerents involved in the conflict"@en ;
+  a owl:ObjectProperty ;
+  rdfs:domain [ a owl:Class ; owl:UnionOf (seshat:War seshat:Battle) ].
+
+seshat:isPartOfWar 
+  rdfs:label "is part of war"@en ;
+  rdfs:comment "An event part of a war"@en ;
+  a owl:ObjectProperty ;
+  rdfs:domain seshat:Battle ;
+  rdfs:range seshat:War .
+
+seshat:geolocation 
+  rdfs:label "Geo location polygon"@en ;
+  rdfs:comment "A (possibly degenerate) geo locadtion polygon."@en ; 
+  a owl:ObjectProperty ;
+  rdfs:domain seshat:FreeFormArea ;
+  rdfs:range dacura:CoordinatePolygon .
+  
+seshat:NavalEngagement 
+  a owl:Class ;
+  rdfs:subClassOf seshat:Battle ;
+  rdfs:label "Naval Engagement"@en ;
+  rdfs:comment "A derived concept covering historical naval engagements."@en .
+
+seshat:LandBattle 
+  a owl:Class ;
+  rdfs:subClassOf seshat:Battle ;
+  rdfs:label "Land battle"@en ;
+  rdfs:comment "A derived concept covering historical land battles."@en .
+
+seshat:Siege
+  a owl:Class ;
+  rdfs:subClassOf seshat:Event ;
+  rdfs:label "Siege"@en ;
+  rdfs:comment "Note that 'siege' is a generic name for any interaction between an army and a settlement belonging to opposing factions. If an army entered a hostile city without resistance, this is siege. "@en .
+
+seshat:MetaConflict
+  a owl:Class ;
+  rdfs:subClassOf seshat:Event ;
+  rdfs:label "Meta-conflict"@en ;
+  rdfs:comment "Is this war part of a group of conflicts that span a much larger timeframe between the belligerents? For example, the 'First', 'Second' and 'Third Punic' wars are conflicts within the Roman-Carthage meta-conflict. These wars are coded as separate wars, rather than grouped together and coded as a single 'Roman-Carthage' war."@en .
+
+seshat:DegreeOfCentralization
+  rdfs:label "Degree of Centralization X"@en ;
+  rdfs:comment "The degree of centralisation of an organisation"@en ;
+  a owl:Class .
+
+seshat:degreeOfCentralization
+  rdfs:label "Degree of Centralization p"@en ;
+  rdfs:comment "The degree of centralisation of an organisation"@en ;
+  a owl:ObjectProperty ;
+  rdfs:domain seshat:DegreeOfCentralization ;
+  rdfs:range seshat:DegreeOfCentralizationChoice .
+
+seshat:DegreeOfCentralizationChoice
+  rdfs:label "Degree of Centralization Choice"@en ;
+  rdfs:comment "The degree of centralisation of an organisation"@en ;
+  a owl:Class ;
+  rdfs:subClassOf dacura:Enumerated ;
+  owl:oneOf (
+   seshat:quasipolity
+   seshat:nominal
+   seshat:loose
+   seshat:confederated_state
+   seshat:unitary_state
+   seshat:unknown_centralisation
+   seshat:no_centralisation
+ ) .
+
+seshat:EpistemicState
+  rdfs:label "Epistemic State"@en ;
+  rdfs:comment "The epistemic state of some variable"@en ;
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box, [
+    a owl:Restriction ;
+    owl:onProperty seshat:epistemicStateChoice ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger
+  ] .
+
+seshat:EpistemicStateChoice
+  rdfs:label "Epistemic State Choice"@en ;
+  rdfs:comment "The possible values of an epistemic state choice"@en ;
+  a owl:Class ;
+  rdfs:subClassOf dacura:Enumerated ;
+  owl:oneOf (
+   seshat:unknown
+   seshat:absent
+   seshat:present
+ ) .
+
+seshat:SupraPolityRelations
+  rdfs:label "Supra-Polity Relations"@en ;
+  rdfs:comment "The categories of relationships between a polity and its paramount power "@en ;
+  rdfs:subClassOf dacura:Box ;
+  a owl:Class .
+
+seshat:supraPolityRelations
+  rdfs:label "Supra-Polity Relations"@en ;
+  rdfs:comment "The categories of relationships between a polity and its paramount power "@en ;
+  a owl:ObjectProperty ;
+  rdfs:domain seshat:SupraPolityRelations ;
+  rdfs:range seshat:SupraPolityRelationsChoice .
+
+seshat:SupraPolityRelationsChoice
+  rdfs:label "Supra-Polity Relations Choice"@en ;
+  rdfs:comment "A choice of relationships between a polity and its paramount power "@en ;
+  a owl:Class ;
+  rdfs:subClassOf dacura:Enumerated ;
+  owl:oneOf (
+   seshat:alliance
+   seshat:nominal_allegiance
+   seshat:personal_union
+   seshat:vassalage
+   seshat:unknown_supra_polity_relations
+   seshat:no_supra_polity_relations
+ ) .
+
+seshat:PoliticalEvolution
+  rdfs:label "Political Evolution"@en ;
+  rdfs:comment "The ways in which a political authority can evolve into another one"@en ;
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box .
+
+seshat:politicalEvolution
+  rdfs:label "Political Evolution"@en ;
+  rdfs:comment "The ways in which a political authority can evolve into another one"@en ;
+  a owl:ObjectProperty ;
+  rdfs:domain seshat:PoliticalEvolution ;
+  rdfs:range seshat:PoliticalEvolutionChoice .
+
+seshat:PoliticalEvolutionChoice
+  rdfs:label "Political Evolution"@en ;
+  rdfs:comment "The ways in which a political authority can evolve into another one"@en ;
+  a owl:Class ;
+  rdfs:subClassOf dacura:Enumerated ;
+  owl:oneOf (
+   seshat:continuity
+   seshat:assimilation
+   seshat:elite_migration
+   seshat:population_migration
+ ) .
+
+seshat:IncomeSource
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "Source of Income"@en ;
+  rdfs:comment "A source of income"@en .
+
+seshat:incomeSource
+  rdfs:label "Source of Income"@en ;
+  rdfs:comment "A source of income"@en ;
+  a owl:ObjectProperty ;
+  rdfs:domain seshat:IncomeSource ;
+  rdfs:range seshat:IncomeSourceChoice .
+
+seshat:IncomeSourceChoice
+  rdfs:label "Source of Income"@en ;
+  rdfs:comment "The various categories of income source"@en ;
+  a owl:Class ;
+  rdfs:subClassOf dacura:Enumerated ;
+  owl:oneOf (
+   seshat:state_salary
+   seshat:governed_population
+   seshat:land
+   seshat:no_income
+   seshat:unknown_income
+ ) .
+
+seshat:PeakDate
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box, [
+    a owl:Restriction ;
+    owl:onProperty seshat:peakDate ;
+    owl:onClass seshat:PeakDate ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger
+  ] .
+
+seshat:Building
+  a owl:Class ;
+  rdfs:label "Building"@en ;
+  rdfs:comment "Used to describe impressive/costly buildings that are then associated with the Polities that built them and the NGAs in which they are placed. They have 3 dimensions and a narrative paragraph."@en ;
+  rdfs:subClassOf [
+    rdfs:comment "A building can have a single optional height value."@en ;
+    a owl:Restriction ;
+    owl:onProperty seshat:height ;
+    owl:maxCardinality "1"^^xsd:nonNegativeInteger
+  ], [
+    a owl:Restriction ;
+    rdfs:comment "A building can have a single optional cost value."@en ;
+    owl:onProperty seshat:cost ;
+    owl:maxCardinality "1"^^xsd:nonNegativeInteger
+  ], [
+    a owl:Restriction ;
+    owl:onProperty seshat:extent ;
+    rdfs:comment "A building can have a single optional extent value."@en ;
+    owl:maxCardinality "1"^^xsd:nonNegativeInteger
+  ] .
+
+seshat:SingleHeight
+  a owl:Class ;
+  rdfs:label "Single Height"@en ;
+  rdfs:comment "Buildings have a single height value"@en ;
+  rdfs:subClassOf dacura:Box, [
+    a owl:Restriction ;
+    owl:onProperty seshat:singleHeight ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger
+  ] .
+
+seshat:SingleExtent
+  a owl:Class ;
+  rdfs:label "Single Extent"@en ;
+  rdfs:comment "Buildings have only one extent value"@en ;
+  rdfs:subClassOf dacura:Box, [
+    a owl:Restriction ;
+    owl:onProperty seshat:singleExtent ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger
+  ] .
+
+seshat:SingleCost
+  a owl:Class ;
+  rdfs:label "Single Cost"@en ;
+  rdfs:comment "Buildings have only one cost value"@en ;
+  rdfs:subClassOf dacura:Box, [
+    a owl:Restriction ;
+    owl:onProperty seshat:singleCost ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger
+  ] .
+
+seshat:SinglePoliticalAuthority
+  a owl:Class ;
+  rdfs:label "Political Authority"@en ;
+  rdfs:subClassOf dacura:Box, [
+    a owl:Restriction ;
+    owl:onProperty seshat:singlePoliticalAuthority ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger
+  ] ;
+  rdfs:comment "A reference to a single political authority"@en .
+
+seshat:SingleUTMZone
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box, [
+    a owl:Restriction ;
+    owl:onProperty seshat:singleUTMZone ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger
+  ] ;
+  rdfs:label "A single UTM zone"@en ;
+  rdfs:comment "Seshat entities are associated with a single UTM Zone"@en .
+
+seshat:epistemicStateChoice
+  a owl:ObjectProperty ;
+  rdfs:label "Epistemic State"@en ;
+  rdfs:comment "The epistemic state of some variable"@en ;
+  rdfs:domain seshat:EpistemicState ;
+  rdfs:range seshat:EpistemicStateChoice .
+
+seshat:alternativeNames
+  rdfs:label "Alternative names"@en ;
+  rdfs:comment "Names used in the historical literature or common names used by the inhabitants"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range dacura:String ;
+  rdfs:domain dacura:Entity .
+
+seshat:peak
+  rdfs:label "Peak Date"@en ;
+  rdfs:comment "The period when the political power was at its peak, whether militarily, in terms of the size of territory controlled, or the degree of cultural development. This variable has a subjective element, but typically historians agree when the peak was."@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:PeakDate ;
+  rdfs:domain seshat:Organisation .
+
+seshat:peakDate
+  rdfs:label "Peak Year"@en ;
+  rdfs:comment "The peak year (or uncertainty range) of the historical entity."@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xdd:gYearRange ;
+  rdfs:domain seshat:PeakDate .
+
+seshat:duration
+  rdfs:label "Duration"@en ;
+  rdfs:comment "The starting and ending dates that the entity existed."@en ;
+  a owl:ObjectProperty ;
+  rdfs:range dacura:DurationRange ;
+  rdfs:domain seshat:EphemeralEntity .
+
+seshat:bestBuilding
+  rdfs:label "Most costly building"@en ;
+  rdfs:comment "The most impressive or costly building constructed by the political authority"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:Building ;
+  rdfs:domain seshat:PoliticalAuthority .
+
+seshat:height
+  rdfs:label "Height"@en ;
+  rdfs:comment "Height of building in metres"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:SingleHeight ;
+  rdfs:domain seshat:Building .
+
+seshat:singleHeight
+  rdfs:label "Height"@en ;
+  rdfs:comment "Height of building in meters"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xdd:decimalRange ;
+  rdfs:domain seshat:SingleHeight .
+
+seshat:extent
+  rdfs:label "Extent"@en ;
+  rdfs:comment "Length of building along longest axis in metres"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:SingleExtent ;
+  rdfs:domain seshat:Building .
+
+seshat:singleExtent
+  rdfs:label "Extent"@en ;
+  rdfs:comment "Length of building along longest axis in metres"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xdd:decimalRange ;
+  rdfs:domain seshat:SingleExtent .
+
+seshat:cost
+  rdfs:label "Cost"@en ;
+  rdfs:comment "cost in people-years."@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:SingleCost ;
+  rdfs:domain seshat:Building .
+
+seshat:singleCost
+  rdfs:label "Cost"@en ;
+  rdfs:comment "Cost of construction in people years"@en ;
+  a owl:DatatypeProperty ;
+  rdfs:range xdd:integerRange ;
+  rdfs:domain seshat:SingleCost .
+
+seshat:predecessor
+  rdfs:label "Preceding Political Authority"@en ;
+  rdfs:comment "The immediate preceding political authority. This code is based on the core region of the polity (not the NGA region). E.g. Achaemenid Empire's core region was Persia, where they were preceded by the Median Empire."@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:SinglePoliticalAuthority ;
+  rdfs:domain seshat:PoliticalAuthority .
+
+seshat:singlePoliticalAuthority
+  a owl:ObjectProperty ;
+  rdfs:label "Reference to single Political Authority"@en ;
+  rdfs:comment "A reference to a Political Authority"@en ;
+  rdfs:domain seshat:SinglePoliticalAuthority ;
+  rdfs:range seshat:PoliticalAuthority .
+
+seshat:utmZone
+  rdfs:label "UTM zone"@en ;
+  rdfs:comment """The UTM Zone that corresponds most directly with the entity - e.g. where the polity's capital city is located, or the location of the NGA
+For more see: http://www.dmap.co.uk/utmworld.htm"""@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:SingleUTMZone ;
+  rdfs:domain dacura:Entity .
+
+seshat:singleUTMZone
+  rdfs:label "UTM zone"@en ;
+  rdfs:comment """The UTM Zone that corresponds most directly with the entity - e.g. where the polity's capital city is located, or the location of the NGA
+For more see: http://www.dmap.co.uk/utmworld.htm"""@en ;
+  a owl:DatatypeProperty ;
+  rdfs:domain seshat:SingleUTMZone ;
+  rdfs:range xsd:string .
+
+seshat:centralization
+  rdfs:label "Degree of Centralization"@en ;
+  rdfs:comment "How centralized was power in this political authority?"@en ;
+  a owl:ObjectProperty ;
+  rdfs:range seshat:DegreeOfCentralization ;
+  rdfs:domain seshat:PoliticalAuthority .
+
+seshat:
+  ns0:title "Seshat Global History Databank Ontology"@en ;
+  ns0:date "2017-02-28"@en ;
+  ns0:creator "Kevin Feeney"@en, "Gavin Mendel-Gleason"@en ;
+  ns0:contributor "Odhran Gavin"@en, "Bojan Bozic"@en, "Rob Brennan"@en, "Pieter Francois"@en, "Harvey Whitehouse"@en, "Arkadiusz Marciniak"@en, "Thomas E. Currie"@en, "Christopher Chase-Dunn"@en, "Jack A. Goldstone"@en, "J. G. Manning"@en, "Peter N. Peregrine"@en, "Frances Reynolds"@en, "Peter J. Richerson"@en, "Enrico Spolaore"@en, "Romain Wacziarg"@en, "Douglas R. White"@en, "David S. Wilson"@en, "Andrey Korotayev"@en, "David Baker"@en, "Johannes Preiser-Kapeller"@en, "Nikolay Kradin"@en, "Daniel Hoyer"@en, "Peter Turchin"@en ;
+  ns0:rights "This ontology is distributed under a Creative Commons Attribution License - http://creativecommons.org/licenses/by/3.0"@en ;
+  ns0:description "This ontology will be used by the Evolution Institute and its partners to describe time series data collected about all human societies."@en ;
+  a owl:Ontology ;
+  rdfs:comment "The Seshat Global History Databank ontology is designed to describe human societies throughout time."@en ;
+  rdfs:label "Seshat Global History Databank Ontology"@en ;
+  owl:versionInfo "0.2.0"@en .
+
+seshat:quasipolity
+  rdfs:label "Quasi-polity"@en ;
+  rdfs:comment "Use if the NGA is inhabited by many politically independent groups"@en ;
+  a seshat:DegreeOfCentralizationChoice .
+
+seshat:nominal
+  rdfs:label "Nominal "@en ;
+  rdfs:comment "regional rulers pay only nominal allegiance to the overall ruler and maintain independence on all important aspects of governing, including taxation and warfare. (example: Japan during the Sengoku period)"@en ;
+  a seshat:DegreeOfCentralizationChoice .
+
+seshat:loose
+  rdfs:label "Loose"@en ;
+  rdfs:comment "the central government exercises a certain degree of control, especially over military matters and international relations. Otherwise the regional rulers are left alone (example: European "@en ;
+  a seshat:DegreeOfCentralizationChoice .
+
+seshat:confederated_state
+  rdfs:label "Confederated State"@en ;
+  rdfs:comment "regions enjoy a large degree of autonomy in internal (regional) government. In particular, the regional governors are either hereditary rulers, or are elected by regional elites or by the population of the region; and regional governments can levy and dispose of regional taxes. Use this category for the more centralized "@en ;
+  a seshat:DegreeOfCentralizationChoice .
+
+seshat:unitary_state
+  rdfs:label "Unitary State"@en ;
+  rdfs:comment "regional governors are appointed and removed by the central authorities, taxes are imposed by, and transmitted to the center"@en ;
+  a seshat:DegreeOfCentralizationChoice .
+
+seshat:unknown_centralisation
+  rdfs:label "Unknown"@en ;
+  rdfs:comment "No information exists as to the degree of centralisation"@en ;
+  a seshat:DegreeOfCentralizationChoice .
+
+seshat:no_centralisation
+  rdfs:label "None"@en ;
+  rdfs:comment "There is no centralised system"@en ;
+  a seshat:DegreeOfCentralizationChoice .
+
+seshat:alliance
+  rdfs:label "Alliance"@en ;
+  rdfs:comment "belongs to a long-term military-political alliance of independent polities ('long-term' refers to more or less permanent relationship between polities extending over multiple years"@en ;
+  a seshat:SupraPolityRelationsChoice .
+
+seshat:nominal_allegiance
+  rdfs:label "Nominal Allegiance"@en ;
+  rdfs:comment "ay only nominal allegiance to the overall ruler and maintain independence on all important aspects of governing, including taxation and warfare."@en ;
+  a seshat:SupraPolityRelationsChoice .
+
+seshat:personal_union
+  rdfs:label "Personal Union"@en ;
+  rdfs:comment "the focal polity is united with another, or others, as a result of a dynastic marriage"@en ;
+  a seshat:SupraPolityRelationsChoice .
+
+seshat:vassalage
+  rdfs:label "Vassalage"@en ;
+  rdfs:comment "A central government exercises a certain degree of control, especially over military matters and international relations. Otherwise the polity is left alone"@en ;
+  a seshat:SupraPolityRelationsChoice .
+
+seshat:unknown_supra_polity_relations
+  rdfs:label "Unknown"@en ;
+  rdfs:comment "Unknown"@en ;
+  a seshat:SupraPolityRelationsChoice .
+
+seshat:no_supra_polity_relations
+  rdfs:label "None"@en ;
+  rdfs:comment "No relations with any supracultural entity"@en ;
+  a seshat:SupraPolityRelationsChoice .
+
+seshat:continuity
+  rdfs:label "Continuity"@en ;
+  rdfs:comment "Gradual change without any discontinuity"@en ;
+  a seshat:PoliticalEvolutionChoice .
+
+seshat:assimilation
+  rdfs:label "Cultural Assimilation"@en ;
+  rdfs:comment "Assimilation by another political authority in the absence of substantial population replacement"@en ;
+  a seshat:PoliticalEvolutionChoice .
+
+seshat:elite_migration
+  rdfs:label "Elite Migration"@en ;
+  rdfs:comment "The preceding elites were replaced by new elites coming from elsewhere"@en ;
+  a seshat:PoliticalEvolutionChoice .
+
+seshat:population_migration
+  rdfs:label "Population Migration"@en ;
+  rdfs:comment "Evidence for substantial population replacement"@en ;
+  a seshat:PoliticalEvolutionChoice .
+
+seshat:state_salary
+  rdfs:label "State Salary"@en ;
+  rdfs:comment "can be paid either in currency or in kind (e.g., koku of rice)."@en ;
+  a seshat:IncomeSourceChoice .
+
+seshat:governed_population
+  rdfs:label "Governed Population"@en ;
+  rdfs:comment "means that the official directly collects tribute from the population (for example, the 'kormlenie' system in Medieval Russia)."@en ;
+  a seshat:IncomeSourceChoice .
+
+seshat:land
+  rdfs:label "Land"@en ;
+  rdfs:comment "Living off land supplied by the state."@en ;
+  a seshat:IncomeSourceChoice .
+
+seshat:no_income
+  rdfs:label "No income"@en ;
+  rdfs:comment "The state officials are not compensated (example: in the Republican and Principate Rome the magistrates were wealthy individuals who served without salary, motivated by prestige and social or career advancement)"@en ;
+  a seshat:IncomeSourceChoice .
+
+seshat:unknown_income
+  rdfs:label "Unknown"@en ;
+  rdfs:comment "Unknown Income source"@en ;
+  a seshat:IncomeSourceChoice .
+
+seshat:unknown
+  rdfs:label "Unknown"@en ;
+  rdfs:comment "It can be said with a high degree of confidence that it is not known whether the feature was present or absent in the context."@en ;
+  a seshat:EpistemicStateChoice .
+
+seshat:absent
+  rdfs:label "Absent"@en ;
+  rdfs:comment "The feature was absent in this historical context"@en ;
+  a seshat:EpistemicStateChoice .
+
+seshat:present
+  rdfs:label "Present"@en ;
+  rdfs:comment "The feature was present in this historical context"@en ;
+  a seshat:EpistemicStateChoice .

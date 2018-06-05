@@ -1,0 +1,22 @@
+PREFIX seshat: <http://dacura.scss.tcd.ie/ontology/seshat#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dacura: <http://dacura.scss.tcd.ie/ontology/dacura#>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX dbp:	<http://dbpedia.org/property/>
+PREFIX yago: <http://dbpedia.org/class/yago/>
+
+CONSTRUCT {
+  ?War a seshat:War .
+  ?War rdfs:label ?Name .
+  ?War seshat:causalties ?Casualties .
+  ?War seshat:peakDate ?Date .
+  ?War rdfs:comment ?Abstract .
+} WHERE
+{
+  ?War a dbo:MilitaryConflict.
+  FILTER NOT EXISTS { ?War a yago:Battle100953559 }
+  OPTIONAL { ?War dbo:abstract ?Abstract . FILTER (langMatches(lang(?Abstract),"en")) }
+  OPTIONAL { ?War dbp:date ?Date . }
+  OPTIONAL { ?War dbo:causalties ?Casualties . }
+  OPTIONAL { ?War rdfs:label ?Name . FILTER (langMatches(lang(?Name),"en"))}
+} LIMIT 100

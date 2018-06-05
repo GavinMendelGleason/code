@@ -1,0 +1,4 @@
+||| Attempt to church encode typed PCF
+
+Operator pcftrue : (). 
+[pcftrue] =def= [lam(x.(lam(y.x)))].

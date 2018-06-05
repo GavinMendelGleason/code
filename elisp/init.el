@@ -182,6 +182,45 @@
 		(create-prolog-tags tags-dir)
   		(visit-tags-table my-tags-file)))))
 
+;;; Ciao mode
+(setq load-path (cons "/usr/local/lib/ciao" load-path))
+;; Java mode in ciao                                 
+;;(setq load-path (cons "/usr/lib/ciao" load-path))
+
+(defun load-java-ciaopp-mode ()
+  (require 'java-ciaopp)
+  (java-ciaopp-setup))
+
+(add-hook 'java-mode-hook 'load-java-ciaopp-mode)
+(load-file "/usr/local/lib/ciao/ciao-site-file.el")
+(if (file-exists-p "/usr/local/lib/ciao/ciao-site-file.el")
+	(load-file "/usr/local/lib/ciao/ciao-site-file.el")
+  )
+
+;; (autoload 'run-ciao-toplevel "ciao"
+;;          "Start a Ciao/Prolog top-level sub-process." t)
+;; (autoload 'ciao-startup "ciao"
+;;          "The Ciao/Prolog program development system startup screens." t)
+;; (autoload 'ciao "ciao"
+;;          "Start a Ciao/Prolog top-level sub-process." t)
+;; (autoload 'prolog "ciao"
+;;          "Start a Ciao/Prolog top-level sub-process." t)
+;; (autoload 'run-ciao-preprocessor "ciao"
+;;          "Start a Ciao/Prolog preprocessor sub-process." t)
+;; (autoload 'ciaopp "ciao"
+;;          "Start a Ciao/Prolog preprocessor sub-process." t)
+;; (autoload 'ciao-mode "ciao"
+;;          "Major mode for editing and running Ciao/Prolog" t)
+;; (autoload 'ciao-inferior-mode "ciao"
+;;          "Major mode for running Ciao/Prolog, CiaoPP, LPdoc, etc." t)
+;;(setq auto-mode-alist (cons '("\\.pl$" . ciao-mode) auto-mode-alist))
+;;(setq auto-mode-alist (cons '("\\.pls$" . ciao-mode) auto-mode-alist))
+;;(setq auto-mode-alist (cons '("\\.lpdoc$" . ciao-mode) auto-mode-alist))
+;;(setq completion-ignored-extensions
+;;    (append '(".dep" ".itf" ".po" ".asr" ".cpx")
+;;             completion-ignored-extensions))
+
+
 ;; Mercury
 (add-to-list 'load-path
 			 "/usr/local/mercury-rotd-2017-06-22/lib/mercury/elisp")

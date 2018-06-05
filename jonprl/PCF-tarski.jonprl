@@ -1,0 +1,59 @@
+||| Let's build up a language of PCF
+
+Operator pcf-decode : (0).
+[pcf-decode(x)] =def= [
+  match x {
+      "ptrue" => void
+    | "pfalse" => void
+    | "pif" => unit * unit * unit
+    |  _ => bot
+  }
+].
+
+Operator pcf-code : ().
+[pcf-code] =def= [{a : atom | pcf-decode(a) ⇓}].
+
+Operator pcf-sig : ().
+[pcf-sig] =def= [ x : pcf-code ◃ pcf-decode(x) ].
+
+Theorem pcf-code-wf : [ pcf-code ∈ U{i} ] {
+  unfold <pcf-code has-value> ; auto
+}.
+
+Resource wf += { wf-lemma <pcf-code-wf> }.
+
+Theorem pcf-decode-wf : [{a:pcf-code} pcf-decode(a) ∈ U{i}]{
+  intro @i ; auto ;
+  unfold <pcf-decode pcf-code> ; auto ;
+  elim #1 ; unfold <pcf-decode> ; assert [bot ⇓] ;
+  aux { chyp-subst <- #4 ; auto } ;
+  auto;
+  bot-div #6
+}.
+
+Resource wf += { wf-lemma <pcf-decode-wf> }.
+
+Theorem pcf-sig-wf : [pcf-sig ∈ container{i}] {
+  unfold <pcf-sig pcf-code pcf-decode> ; auto ;
+  elim #1 ; assert [bot ⇓] ;
+  aux { chyp-subst <- #4 ; auto} ;
+  bot-div #6
+}.
+
+Resource wf += { wf-lemma <pcf-sig-wf> }.
+
+Operator pcf :().
+[pcf] =def= [wtree(pcf-sig)].
+
+Theorem pcf-wf : [pcf ∈ U{i}] {
+  unfold <pcf> ; auto
+}.
+
+Operator ptrue : ().
+[ptrue] =def= [sup("ptrue" ^ <>)].
+
+Operator pfalse : ().
+[pfalse] =def= [sup("pfalse" ^ <>)].
+
+Operator pif : (0;0;0).
+[pif(B;N;M)] =def= [sup("pfalse" ^ B ^ N ^ M)].

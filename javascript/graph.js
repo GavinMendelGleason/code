@@ -388,6 +388,7 @@ GVis.prototype.update_graph = function(log_nodes) {
 }
 
 GVis.prototype.nodeVisibility = function(node,self){
+	console.log(self.currentDate);
 	if(node.dateRange){ 
 		if(!node.dateRange.fromDate){
 			if(!node.dateRange.toDate ||

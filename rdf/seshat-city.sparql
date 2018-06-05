@@ -1,0 +1,25 @@
+PREFIX seshat: <http://dacura.scss.tcd.ie/ontology/seshat#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dacura: <http://dacura.scss.tcd.ie/ontology/dacura#>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX dbp:	<http://dbpedia.org/property/>
+PREFIX yago: <http://dbpedia.org/class/yago/>
+PREFiX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+
+CONSTRUCT {
+  ?City a seshat:City .
+  ?City rdfs:label ?Name .
+  ?City rdfs:comment ?Abstract .
+  ?City seshat:foundingDate ?Date .
+  ?City seshat:population ?Population .
+  ?City seshat:latitude ?Lat .
+  ?City seshat:longitude ?Long .
+} WHERE {
+  { ?City a yago:WikicatAncientCities . } UNION { ?City a yago:DestroyedCities . }
+  OPTIONAL { ?City dbo:abstract ?Abstract . FILTER (langMatches(lang(?Abstract),"en")) }
+  OPTIONAL { ?City dbp:date ?Date . }
+  OPTIONAL { ?City rdfs:label ?Name . FILTER (langMatches(lang(?Name),"en")) }
+  OPTIONAL { ?City geo:lat ?Lat . }
+  OPTIONAL { ?City geo:long ?Long . }
+  OPTIONAL { ?City dbo:populationTotal ?Population . }
+} LIMIT 100

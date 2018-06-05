@@ -1,0 +1,93 @@
+@prefix seshatprov: <http://dacura.scss.tcd.ie/provtest/ontology/seshatprov#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dacura: <http://dacura.scss.tcd.ie/ontology/dacura#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+seshatprov: a owl:Ontology .
+
+seshatprov:Annotation
+  a owl:Class ;
+  rdfs:label "Annotation"@en ;
+  rdfs:comment "The annotation class stores information about other classes."@en ;
+  rdfs:subClassOf dacura:Entity .
+
+owl:Thing rdfs:subClassOf seshatprov:Annotation .
+
+seshatprov:DateRange
+  a owl:Class ;
+  rdfs:label "Date Range"@en ;
+  rdfs:comment "A Date Range"@en .
+
+seshatprov:from
+  rdfs:label "from"@en ;
+  rdfs:comment "The date from which a date range starts."@en ;
+  rdfs:domain seshatprov:DateRange ;
+  rdfs:range seshatprov:Annotation ;
+  a owl:ObjectProperty .
+
+seshatprov:until
+  rdfs:label "until"@en ;
+  rdfs:comment "The date to which a date range goes."@en ;
+  rdfs:domain seshatprov:DateRange ;
+  rdfs:range seshatprov:Annotation ;
+  a owl:ObjectProperty .
+
+seshatprov:refersToPeriod
+  rdfs:label "Refers to period"@en ;
+  rdfs:comment "The period which the annotation refers to."@en ;
+  rdfs:domain seshatprov:Annotation ;
+  rdfs:range seshatprov:DateRange ;
+  a owl:ObjectProperty .
+
+seshatprov:Reference
+  a owl:Class ;
+  rdfs:label "Reference"@en ;
+  rdfs:comment "A reference"@en .
+
+seshatprov:referenceBody
+  a owl:DatatypeProperty ;
+  rdfs:label "Reference Body"@en ;
+  rdfs:comment "Sufficient textual information to obtain the reference."@en ;
+  rdfs:domain seshatprov:Reference ;
+  rdfs:range xsd:string .
+
+seshatprov:referenceCode
+  a owl:DatatypeProperty ;
+  rdfs:label "Reference Code"@en ;
+  rdfs:comment "An internal code (up to some notion of what an internal code is)."@en ;
+  rdfs:domain seshatprov:Reference ;
+  rdfs:range xsd:string .
+
+seshatprov:AnnotationTag
+  a owl:Class ;
+  rdfs:label "Annotation Tag"@en ;
+  rdfs:comment "This is the set of possible annotation tags."@en ;
+  rdfs:subClassOf dacura:Enumerated .
+
+seshatprov:refersTo
+  a owl:ObjectProperty ;
+  rdfs:label "Refers to"@en ;
+  rdfs:comment "The object which an annotation refers to"@en ;
+  rdfs:domain seshatprov:Annotation ;
+  rdfs:range owl:Thing .
+
+[]
+  a seshatprov:AnnotationTag ;
+  rdfs:label "dubious"@en ;
+  rdfs:comment "This fact is dubious"@en .
+
+[]
+  a seshatprov:AnnotationTag ;
+  rdfs:label "Dubious"@en ;
+  rdfs:comment "Not very bloody likely"@en .
+
+[]
+  a seshatprov:AnnotationTag ;
+  rdfs:label "Inferred"@en ;
+  rdfs:comment "This opinion is based on inference from other stuff."@en .
+
+[]
+  a seshatprov:AnnotationTag ;
+  rdfs:label ""@en .
+

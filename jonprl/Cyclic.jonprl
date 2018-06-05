@@ -1,0 +1,17 @@
+||| This is an attempt to create cyclic proofs in jonprl
+
+Operator top : ().
+[top] =def= [void => void].
+
+Theorem top-is-top : [{x:base} {y:base} =(x; y; top)] {
+  unfold <top> ;
+	  ||| [x] 
+	  intro ; unfold <member> ; aux { eq-cd } ;
+		||| [y] 
+		intro ; unfold <member> ; aux { eq-cd } ;
+		||| ⊢ =(x; y; void => void)
+		eq-cd ; aux { unfold <member> ; eq-cd } ;
+    elim #3			 
+}.
+
+Theorem term : [ {x:base} {y:base} ]

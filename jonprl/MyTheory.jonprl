@@ -1,0 +1,4 @@
+||| This is an attempt at working through a simple example in jonprl
+Infix 2 "∈" := member.
+Postfix 10 "⇓" := has-value.
+

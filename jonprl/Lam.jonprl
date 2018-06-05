@@ -1,0 +1,37 @@
+||| Lambda calculus
+
+Operator LamF : (0).
+              ||| var   lam   app
+[LamF(X)] =def= [ nat + X   + X * X]. 
+
+Theorem LamF-wf : [{A:U{i}} LamF(A) ∈ U{i}] {
+ unfold <LamF> ; auto
+}.
+
+Operator var : (0).
+[var(N)] =def= [inl(N)].
+
+Theorem var-wf : [{A:U{i}} {N:nat} var(N) ∈ LamF(A)]{ 
+  unfold <LamF var> ; auto 
+}.
+
+Operator lam : (0).
+[lam(N)] =def= [inr(inl(N))].
+
+Theorem lam-wf : [{A:U{i}} {M:A} lam(M) ∈ LamF(A)] {
+  unfold <LamF lam> ; auto
+}.
+
+Operator app : (0;0).
+[app(N;M)] =def= [inr(inr(<N,M>))].
+
+Theorem app-wf : [{A:U{i}} {M:A} {N:A} app(M;N) ∈ LamF(A)] {
+  unfold <LamF app> ; auto
+}.
+
+|||Operator Lam-sig : (0).
+|||[Lam-sig(A)] =def= [ LamF(X) <:
+
+|||Operator RedF : (0;0).
+              ||| beta   
+|||[RedF(X)] =def= [ X * X + X * X + X * X ]

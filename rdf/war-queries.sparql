@@ -1,0 +1,37 @@
+## Battle
+select distinct ?Battle , ?Name , ?Date , ?Casualties , ?Combatant , ?War , ?Lat , ?Long , ?Abstract where 
+{
+  ?Battle a yago:Battle100953559.
+  OPTIONAL { ?Battle dbo:abstract ?Abstract . FILTER (langMatches(lang(?Abstract),"en")) }
+  OPTIONAL { ?Battle dbp:date ?Date . }
+  OPTIONAL { ?Battle dbo:causalties ?Casualties . }
+  OPTIONAL { ?Battle dbo:combatant ?Combatant . }
+  OPTIONAL { ?Battle dbo:isPartOfMilitaryConflict ?War . }
+  OPTIONAL { ?Battle geo:lat ?Lat . }
+  OPTIONAL { ?Battle geo:long ?Long . }
+  OPTIONAL { ?Battle rdfs:label ?Name . FILTER (langMatches(lang(?Name),"en")) } 
+}
+
+# War 
+select distinct ?War , ?Name , ?Abstract , ?Date , ?Casualties where 
+{
+  ?War a dbo:MilitaryConflict.
+  FILTER NOT EXISTS { ?War a yago:Battle100953559 }
+  OPTIONAL { ?Battle dbo:abstract ?Abstract . FILTER (langMatches(lang(?Abstract),"en")) }
+  OPTIONAL { ?War dbp:date ?Date . }
+  OPTIONAL { ?War dbo:causalties ?Casualties . }
+  OPTIONAL { ?War rdfs:label ?Name . FILTER (langMatches(lang(?Name),"en"))}
+  } 
+}
+
+# City
+select distinct ?City, ?Name, ?Date, ?Abstract , ?Lat , ?Long , ?Population where 
+{
+  { ?City a yago:WikicatAncientCities . } UNION { ?City a yago:DestroyedCities . }
+  OPTIONAL { ?City dbo:abstract ?Abstract . FILTER (langMatches(lang(?Abstract),"en")) }
+  OPTIONAL { ?City dbp:date ?Date . }
+  OPTIONAL { ?City rdfs:label ?Name . FILTER (langMatches(lang(?Name),"en")) }
+  OPTIONAL { ?City geo:lat ?Lat . }
+  OPTIONAL { ?City geo:long ?Long . }
+  OPTIONAL { ?City dbo:populationTotal ?Population . }
+} 

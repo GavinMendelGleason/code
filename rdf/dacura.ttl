@@ -1,0 +1,584 @@
+@prefix dacura: <http://dacura.scss.tcd.ie/ontology/dacura#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+dacura:Entity
+  a owl:Class ;
+  rdfs:label "Entity"@en ;
+  rdfs:comment "The designator for primary objects"@en .
+
+dacura:Enumerated
+  a owl:Class ;
+  rdfs:label "Enumerated Set"@en ;
+  rdfs:comment "Any number of possible particular elements"@en .
+
+dacura:Box
+  a owl:Class ;
+  rdfs:label "Box"@en ;
+  rdfs:comment "Box super-class to facilitiate user-interface design."@en .
+
+dacura:AnySimpleType
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "anySimpleType Box"@en ;
+  rdfs:comment "The xsd:anySimpleType box"@en .
+
+dacura:anySimpleType
+  a owl:DatatypeProperty ;
+  rdfs:label "anySimpleType"@en ;
+  rdfs:comment "An xsd:anySimpleType datatype."@en ;
+  rdfs:domain dacura:AnySimpleType ;
+  rdfs:range xsd:anySimpleType .
+
+dacura:String
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "string Box"@en ;
+  rdfs:comment "The xsd:string box"@en .
+
+dacura:string
+  a owl:DatatypeProperty ;
+  rdfs:label "string"@en ;
+  rdfs:comment "An xsd:string datatype."@en ;
+  rdfs:domain dacura:String ;
+  rdfs:range xsd:string .
+
+dacura:Boolean
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "boolean Box"@en ;
+  rdfs:comment "The xsd:boolean box"@en .
+
+dacura:boolean
+  a owl:DatatypeProperty ;
+  rdfs:label "boolean"@en ;
+  rdfs:comment "An xsd:boolean datatype."@en ;
+  rdfs:domain dacura:Boolean ;
+  rdfs:range xsd:boolean .
+
+dacura:Decimal
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "decimal Box"@en ;
+  rdfs:comment "The xsd:decimal box"@en .
+
+dacura:decimal
+  a owl:DatatypeProperty ;
+  rdfs:label "decimal"@en ;
+  rdfs:comment "An xsd:decimal datatype."@en ;
+  rdfs:domain dacura:Decimal ;
+  rdfs:range xsd:decimal .
+
+dacura:Double
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "double Box"@en ;
+  rdfs:comment "The xsd:double box"@en .
+
+dacura:double
+  a owl:DatatypeProperty ;
+  rdfs:label "double"@en ;
+  rdfs:comment "An xsd:double datatype."@en ;
+  rdfs:domain dacura:Double ;
+  rdfs:range xsd:double .
+
+dacura:Float
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "float Box"@en ;
+  rdfs:comment "The xsd:float box"@en .
+
+dacura:float
+  a owl:DatatypeProperty ;
+  rdfs:label "float"@en ;
+  rdfs:comment "An xsd:float datatype."@en ;
+  rdfs:domain dacura:Float ;
+  rdfs:range xsd:float .
+
+dacura:Time
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "time Box"@en ;
+  rdfs:comment "The xsd:time box"@en .
+
+dacura:time
+  a owl:DatatypeProperty ;
+  rdfs:label "time"@en ;
+  rdfs:comment "An xsd:time datatype."@en ;
+  rdfs:domain dacura:Time ;
+  rdfs:range xsd:time .
+
+dacura:Date
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "date Box"@en ;
+  rdfs:comment "The xsd:date box"@en .
+
+dacura:date
+  a owl:DatatypeProperty ;
+  rdfs:label "date"@en ;
+  rdfs:comment "An xsd:date datatype."@en ;
+  rdfs:domain dacura:Date ;
+  rdfs:range xsd:date .
+
+dacura:DateTime
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "dateTime Box"@en ;
+  rdfs:comment "The xsd:dateTime box"@en .
+
+dacura:dateTime
+  a owl:DatatypeProperty ;
+  rdfs:label "dateTime"@en ;
+  rdfs:comment "An xsd:dateTime datatype."@en ;
+  rdfs:domain dacura:DateTime ;
+  rdfs:range xsd:dateTime .
+
+dacura:DateTimeStamp
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "dateTimeStamp Box"@en ;
+  rdfs:comment "The xsd:dateTimeStamp box"@en .
+
+dacura:dateTimeStamp
+  a owl:DatatypeProperty ;
+  rdfs:label "dateTimeStamp"@en ;
+  rdfs:comment "An xsd:dateTimeStamp datatype."@en ;
+  rdfs:domain dacura:DateTimeStamp ;
+  rdfs:range xsd:dateTimeStamp .
+
+dacura:GYear
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "gYear Box"@en ;
+  rdfs:comment "The xsd:gYear box"@en .
+
+dacura:gYear
+  a owl:DatatypeProperty ;
+  rdfs:label "gYear"@en ;
+  rdfs:comment "An xsd:gYear datatype."@en ;
+  rdfs:domain dacura:GYear ;
+  rdfs:range xsd:gYear .
+
+dacura:GMonth
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "gMonth Box"@en ;
+  rdfs:comment "The xsd:gMonth box"@en .
+
+dacura:gMonth
+  a owl:DatatypeProperty ;
+  rdfs:label "gMonth"@en ;
+  rdfs:comment "An xsd:gMonth datatype."@en ;
+  rdfs:domain dacura:GMonth ;
+  rdfs:range xsd:gMonth .
+
+dacura:GDay
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "gDay Box"@en ;
+  rdfs:comment "The xsd:gDay box"@en .
+
+dacura:gDay
+  a owl:DatatypeProperty ;
+  rdfs:label "gDay"@en ;
+  rdfs:comment "An xsd:gDay datatype."@en ;
+  rdfs:domain dacura:GDay ;
+  rdfs:range xsd:gDay .
+
+dacura:GYearMonth
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "gYearMonth Box"@en ;
+  rdfs:comment "The xsd:gYearMonth box"@en .
+
+dacura:gYearMonth
+  a owl:DatatypeProperty ;
+  rdfs:label "gYearMonth"@en ;
+  rdfs:comment "An xsd:gYearMonth datatype."@en ;
+  rdfs:domain dacura:GYearMonth ;
+  rdfs:range xsd:gYearMonth .
+
+dacura:GMonthDay
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "gMonthDay Box"@en ;
+  rdfs:comment "The xsd:gMonthDay box"@en .
+
+dacura:gMonthDay
+  a owl:DatatypeProperty ;
+  rdfs:label "gMonthDay"@en ;
+  rdfs:comment "An xsd:gMonthDay datatype."@en ;
+  rdfs:domain dacura:GMonthDay ;
+  rdfs:range xsd:gMonthDay .
+
+dacura:Duration
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "duration Box"@en ;
+  rdfs:comment "The xsd:duration box"@en .
+
+dacura:duration
+  a owl:DatatypeProperty ;
+  rdfs:label "duration"@en ;
+  rdfs:comment "An xsd:duration datatype."@en ;
+  rdfs:domain dacura:Duration ;
+  rdfs:range xsd:duration .
+
+dacura:YearMonthDuration
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "yearMonthDuration Box"@en ;
+  rdfs:comment "The xsd:yearMonthDuration box"@en .
+
+dacura:yearMonthDuration
+  a owl:DatatypeProperty ;
+  rdfs:label "yearMonthDuration"@en ;
+  rdfs:comment "An xsd:yearMonthDuration datatype."@en ;
+  rdfs:domain dacura:YearMonthDuration ;
+  rdfs:range xsd:yearMonthDuration .
+
+dacura:DayTimeDuration
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "dayTimeDuration Box"@en ;
+  rdfs:comment "The xsd:dayTimeDuration box"@en .
+
+dacura:dayTimeDuration
+  a owl:DatatypeProperty ;
+  rdfs:label "dayTimeDuration"@en ;
+  rdfs:comment "An xsd:dayTimeDuration datatype."@en ;
+  rdfs:domain dacura:DayTimeDuration ;
+  rdfs:range xsd:dayTimeDuration .
+
+dacura:Byte
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "byte Box"@en ;
+  rdfs:comment "The xsd:byte box"@en .
+
+dacura:byte
+  a owl:DatatypeProperty ;
+  rdfs:label "byte"@en ;
+  rdfs:comment "An xsd:byte datatype."@en ;
+  rdfs:domain dacura:Byte ;
+  rdfs:range xsd:byte .
+
+dacura:Short
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "short Box"@en ;
+  rdfs:comment "The xsd:short box"@en .
+
+dacura:short
+  a owl:DatatypeProperty ;
+  rdfs:label "short"@en ;
+  rdfs:comment "An xsd:short datatype."@en ;
+  rdfs:domain dacura:Short ;
+  rdfs:range xsd:short .
+
+dacura:Integer
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "integer Box"@en ;
+  rdfs:comment "The xsd:integer box"@en .
+
+dacura:integer
+  a owl:DatatypeProperty ;
+  rdfs:label "integer"@en ;
+  rdfs:comment "An xsd:integer datatype."@en ;
+  rdfs:domain dacura:Integer ;
+  rdfs:range xsd:integer .
+
+dacura:Long
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "long Box"@en ;
+  rdfs:comment "The xsd:long box"@en .
+
+dacura:long
+  a owl:DatatypeProperty ;
+  rdfs:label "long"@en ;
+  rdfs:comment "An xsd:long datatype."@en ;
+  rdfs:domain dacura:Long ;
+  rdfs:range xsd:long .
+
+dacura:UnsignedByte
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "unsignedByte Box"@en ;
+  rdfs:comment "The xsd:unsignedByte box"@en .
+
+dacura:unsignedByte
+  a owl:DatatypeProperty ;
+  rdfs:label "unsignedByte"@en ;
+  rdfs:comment "An xsd:unsignedByte datatype."@en ;
+  rdfs:domain dacura:UnsignedByte ;
+  rdfs:range xsd:unsignedByte .
+
+dacura:UnsignedInt
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "unsignedInt Box"@en ;
+  rdfs:comment "The xsd:unsignedInt box"@en .
+
+dacura:unsignedInt
+  a owl:DatatypeProperty ;
+  rdfs:label "unsignedInt"@en ;
+  rdfs:comment "An xsd:unsignedInt datatype."@en ;
+  rdfs:domain dacura:UnsignedInt ;
+  rdfs:range xsd:unsignedInt .
+
+dacura:UnsignedLong
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "unsignedLong Box"@en ;
+  rdfs:comment "The xsd:unsignedLong box"@en .
+
+dacura:unsignedLong
+  a owl:DatatypeProperty ;
+  rdfs:label "unsignedLong"@en ;
+  rdfs:comment "An xsd:unsignedLong datatype."@en ;
+  rdfs:domain dacura:UnsignedLong ;
+  rdfs:range xsd:unsignedLong .
+
+dacura:PositiveInteger
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "positiveInteger Box"@en ;
+  rdfs:comment "The xsd:positiveInteger box"@en .
+
+dacura:positiveInteger
+  a owl:DatatypeProperty ;
+  rdfs:label "positiveInteger"@en ;
+  rdfs:comment "An xsd:positiveInteger datatype."@en ;
+  rdfs:domain dacura:PositiveInteger ;
+  rdfs:range xsd:positiveInteger .
+
+dacura:NonNegativeInteger
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "nonNegativeInteger Box"@en ;
+  rdfs:comment "The xsd:nonNegativeInteger box"@en .
+
+dacura:nonNegativeInteger
+  a owl:DatatypeProperty ;
+  rdfs:label "nonNegativeInteger"@en ;
+  rdfs:comment "An xsd:nonNegativeInteger datatype."@en ;
+  rdfs:domain dacura:NonNegativeInteger ;
+  rdfs:range xsd:nonNegativeInteger .
+
+dacura:NegativeInteger
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "negativeInteger Box"@en ;
+  rdfs:comment "The xsd:negativeInteger box"@en .
+
+dacura:negativeInteger
+  a owl:DatatypeProperty ;
+  rdfs:label "negativeInteger"@en ;
+  rdfs:comment "An xsd:negativeInteger datatype."@en ;
+  rdfs:domain dacura:NegativeInteger ;
+  rdfs:range xsd:negativeInteger .
+
+dacura:NonPositiveInteger
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "nonPositiveInteger Box"@en ;
+  rdfs:comment "The xsd:nonPositiveInteger box"@en .
+
+dacura:nonPositiveInteger
+  a owl:DatatypeProperty ;
+  rdfs:label "nonPositiveInteger"@en ;
+  rdfs:comment "An xsd:nonPositiveInteger datatype."@en ;
+  rdfs:domain dacura:NonPositiveInteger ;
+  rdfs:range xsd:nonPositiveInteger .
+
+dacura:Base64Binary
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "base64Binary Box"@en ;
+  rdfs:comment "The xsd:base64Binary box"@en .
+
+dacura:base64Binary
+  a owl:DatatypeProperty ;
+  rdfs:label "base64Binary"@en ;
+  rdfs:comment "An xsd:base64Binary datatype."@en ;
+  rdfs:domain dacura:Base64Binary ;
+  rdfs:range xsd:base64Binary .
+
+dacura:AnyURI
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "anyURI Box"@en ;
+  rdfs:comment "The xsd:anyURI box"@en .
+
+dacura:anyURI
+  a owl:DatatypeProperty ;
+  rdfs:label "anyURI"@en ;
+  rdfs:comment "An xsd:anyURI datatype."@en ;
+  rdfs:domain dacura:AnyURI ;
+  rdfs:range xsd:anyURI .
+
+dacura:Language
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "language Box"@en ;
+  rdfs:comment "The xsd:language box"@en .
+
+dacura:language
+  a owl:DatatypeProperty ;
+  rdfs:label "language"@en ;
+  rdfs:comment "An xsd:language datatype."@en ;
+  rdfs:domain dacura:Language ;
+  rdfs:range xsd:language .
+
+dacura:NormalizedString
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "normalizedString Box"@en ;
+  rdfs:comment "The xsd:normalizedString box"@en .
+
+dacura:normalizedString
+  a owl:DatatypeProperty ;
+  rdfs:label "normalizedString"@en ;
+  rdfs:comment "An xsd:normalizedString datatype."@en ;
+  rdfs:domain dacura:NormalizedString ;
+  rdfs:range xsd:normalizedString .
+
+dacura:Token
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "token Box"@en ;
+  rdfs:comment "The xsd:token box"@en .
+
+dacura:token
+  a owl:DatatypeProperty ;
+  rdfs:label "token"@en ;
+  rdfs:comment "An xsd:token datatype."@en ;
+  rdfs:domain dacura:Token ;
+  rdfs:range xsd:token .
+
+dacura:NMTOKEN
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "NMTOKEN Box"@en ;
+  rdfs:comment "The xsd:NMTOKEN box"@en .
+
+dacura:nMTOKEN
+  a owl:DatatypeProperty ;
+  rdfs:label "NMTOKEN"@en ;
+  rdfs:comment "An xsd:NMTOKEN datatype."@en ;
+  rdfs:domain dacura:NMTOKEN ;
+  rdfs:range xsd:NMTOKEN .
+
+dacura:Name
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "Name Box"@en ;
+  rdfs:comment "The xsd:Name box"@en .
+
+dacura:name
+  a owl:DatatypeProperty ;
+  rdfs:label "Name"@en ;
+  rdfs:comment "An xsd:Name datatype."@en ;
+  rdfs:domain dacura:Name ;
+  rdfs:range xsd:Name .
+
+dacura:NCName
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "NCName Box"@en ;
+  rdfs:comment "The xsd:NCName box"@en .
+
+dacura:nCName
+  a owl:DatatypeProperty ;
+  rdfs:label "NCName"@en ;
+  rdfs:comment "An xsd:NCName datatype."@en ;
+  rdfs:domain dacura:NCName ;
+  rdfs:range xsd:NCName .
+
+dacura:NOTATION
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "NOTATION Box"@en ;
+  rdfs:comment "The xsd:NOTATION box"@en .
+
+dacura:nOTATION
+  a owl:DatatypeProperty ;
+  rdfs:label "NOTATION"@en ;
+  rdfs:comment "An xsd:NOTATION datatype."@en ;
+  rdfs:domain dacura:NOTATION ;
+  rdfs:range xsd:NOTATION .
+
+dacura:QName
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "QName Box"@en ;
+  rdfs:comment "The xsd:QName box"@en .
+
+dacura:qName
+  a owl:DatatypeProperty ;
+  rdfs:label "QName"@en ;
+  rdfs:comment "An xsd:QName datatype."@en ;
+  rdfs:domain dacura:QName ;
+  rdfs:range xsd:QName .
+
+dacura:ID
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "ID Box"@en ;
+  rdfs:comment "The xsd:ID box"@en .
+
+dacura:iD
+  a owl:DatatypeProperty ;
+  rdfs:label "ID"@en ;
+  rdfs:comment "An xsd:ID datatype."@en ;
+  rdfs:domain dacura:ID ;
+  rdfs:range xsd:ID .
+
+dacura:IDREF
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "IDREF Box"@en ;
+  rdfs:comment "The xsd:IDREF box"@en .
+
+dacura:iDREF
+  a owl:DatatypeProperty ;
+  rdfs:label "IDREF"@en ;
+  rdfs:comment "An xsd:IDREF datatype."@en ;
+  rdfs:domain dacura:IDREF ;
+  rdfs:range xsd:IDREF .
+
+dacura:ENTITY
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "ENTITY Box"@en ;
+  rdfs:comment "The xsd:ENTITY box"@en .
+
+dacura:eNTITY
+  a owl:DatatypeProperty ;
+  rdfs:label "ENTITY"@en ;
+  rdfs:comment "An xsd:ENTITY datatype."@en ;
+  rdfs:domain dacura:ENTITY ;
+  rdfs:range xsd:ENTITY .
+
+dacura:Coordinate
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "Coordinate Box"@en ;
+  rdfs:comment "The xdd:coordinate box"@en .
+
+dacura:CoordinatePolygon
+  a owl:Class ;
+  rdfs:subClassOf dacura:Box ;
+  rdfs:label "CoordinatePolygon Box"@en ;
+  rdfs:comment "The xdd:coordinatePolygon box"@en .
+
+dacura:coordinatePolygon
+  a owl:DatatypeProperty ;
+  rdfs:label "CoordinatePolygon"@en ;
+  rdfs:comment "An xdd:coordinatePolygon datatype."@en ;
+  rdfs:domain dacura:CoordinatePolygon ;
+  rdfs:range dacura:coordinatePolygon .
