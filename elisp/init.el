@@ -142,6 +142,9 @@
 
 ;; Prolog mode
 (load-file "/home/francoisbabeuf/.emacs.d/lib/prolog.el")
+(setq prolog-electric-if-then-else-flag t)
+(setq prolog-electric-dot-flag t)
+
 ;;(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
 ;;(setq prolog-system 'mercury)
 
@@ -152,9 +155,9 @@
             (setq indent-tabs-mode nil)))
 
 (setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
-(setq edebug-trace nil)
 
-(setq prolog-electric-if-then-else-flag t)
+
+
 
 ;;(setq prolog-program-name "swipl")
 ;; Automatic Etags for prolog

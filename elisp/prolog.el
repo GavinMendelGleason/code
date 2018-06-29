@@ -3219,11 +3219,12 @@ of the current predicate."
       (delete-region (1- (point)) (point)) ;Delete the dot that called us.
       (prolog-insert-predicate-template)
       (when prolog-electric-dot-full-predicate-template
- 	(save-excursion
- 	  (end-of-line)
- 	  (insert ".\n"))))
+		(save-excursion
+		  (end-of-line)
+		  (insert ".\n"))))
      ;; Default
      (t
+	  (indent-according-to-mode)
       (insert "\n"))
      )))
 
