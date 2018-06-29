@@ -28,6 +28,7 @@
 
 ;; Colour theme 
 (load-theme 'suscolors t)
+;;(load-theme 'github t)
 
 ;; Tramp Colour
 ;;(setq tramp-theme-face-remapping-alist '(background . "Purple"))
@@ -45,6 +46,12 @@
 (setq frame-title-format
       (list (format "%s %%S: %%j " (system-name))
         '(buffer-file-name "%f" (dired-directory dired-directory "%b"))))
+
+;;; Editor hooks for 'with-editor' which enables *shell* etc. to use emacs
+(add-hook 'shell-mode-hook  'with-editor-export-editor)
+(add-hook 'term-exec-hook   'with-editor-export-editor)
+(add-hook 'eshell-mode-hook 'with-editor-export-editor)
+(add-hook 'shell-mode-hook 'with-editor-export-git-editor)
 
 ;;; *******************************************
 ;;; Languages
@@ -68,61 +75,61 @@
 ;;(require 'agda-mode)
 
 ;; RDF (n3 mode)
-(require 'n3-mode)
-(add-to-list 'auto-mode-alist '("\\.ttl\\'" . n3-mode))
+;;(require 'n3-mode)
+;;(add-to-list 'auto-mode-alist '("\\.ttl\\'" . n3-mode))
 
 ;; Abella
-(load-file "/home/francoisbabeuf/.emacs.d/lib/abella/lprolog.el")
+;;(load-file "/home/francoisbabeuf/.emacs.d/lib/abella/lprolog.el")
 
 ;; Twelf
-(setq twelf-root "/home/francoisbabeuf/Documents/build/twelf/")
-(load (concat twelf-root "emacs/twelf-init.el"))
+;;(setq twelf-root "/home/francoisbabeuf/Documents/build/twelf/")
+;;(load (concat twelf-root "emacs/twelf-init.el"))
 
 ;; Event ML
-(load-file "/home/francoisbabeuf/.emacs.d/lib/eml/eventml-mode.el")
+;;(load-file "/home/francoisbabeuf/.emacs.d/lib/eml/eventml-mode.el")
 
 ;; JonPRL
-(load-file "/home/francoisbabeuf/.emacs.d/lib/jonprl-mode/jonprl-compat.el")
-(load-file "/home/francoisbabeuf/.emacs.d/lib/jonprl-mode/jonprl-mode.el")
+;;(load-file "/home/francoisbabeuf/.emacs.d/lib/jonprl-mode/jonprl-compat.el")
+;;(load-file "/home/francoisbabeuf/.emacs.d/lib/jonprl-mode/jonprl-mode.el")
 
 ;; OCaML
-(add-to-list 'auto-mode-alist '("\\.ml\\'" . tuareg-mode))
+;;(add-to-list 'auto-mode-alist '("\\.ml\\'" . tuareg-mode))
 
 ;;;; OPAM  for OCaM
-(let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var" "share")))))
-  (when (and opam-share (file-directory-p opam-share))
-       ;; Register Merlin
-	(add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
-	(autoload 'merlin-mode "merlin" nil t nil)
-	;; Automatically start it in OCaml buffers
-	(add-hook 'tuareg-mode-hook 'merlin-mode t)
-	(add-hook 'caml-mode-hook 'merlin-mode t)
-	;; custom key bindings
-	(add-hook 'merlin-mode-hook
-       (lambda ()  
-		 (local-set-key (quote [?\C-x?\C-d]) (quote merlin-destruct))))
-	;; Use opam switch to lookup ocamlmerlin binary
-	(setq merlin-command 'opam)))
+;; (let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var" "share")))))
+;;   (when (and opam-share (file-directory-p opam-share))
+;;        ;; Register Merlin
+;; 	(add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
+;; 	(autoload 'merlin-mode "merlin" nil t nil)
+;; 	;; Automatically start it in OCaml buffers
+;; 	(add-hook 'tuareg-mode-hook 'merlin-mode t)
+;; 	(add-hook 'caml-mode-hook 'merlin-mode t)
+;; 	;; custom key bindings
+;; 	(add-hook 'merlin-mode-hook
+;;        (lambda ()  
+;; 		 (local-set-key (quote [?\C-x?\C-d]) (quote merlin-destruct))))
+;; 	;; Use opam switch to lookup ocamlmerlin binary
+;; 	(setq merlin-command 'opam)))
 
 ;; Flymake (prep for other things which use flymake)
-(flymake-mode-on)
-(defadvice flymake-post-syntax-check (before flymake-force-check-was-interrupted)
-  (setq flymake-check-was-interrupted t))
-(ad-activate 'flymake-post-syntax-check)
+;;(flymake-mode-on)
+;;(defadvice flymake-post-syntax-check (before flymake-force-check-was-interrupted)
+;;  (setq flymake-check-was-interrupted t))
+;;(ad-activate 'flymake-post-syntax-check)
 
 ;; Fstar
-(setq fstar-executable "/home/francoisbabeuf/.opam/system/bin/fstar.exe")
+;;(setq fstar-executable "/home/francoisbabeuf/.opam/system/bin/fstar.exe")
 ;; (setq fstar-executable "/home/francoisbabeuf/Documents/build/FStar/bin/fstar.exe")
 
 ;; RedPRL
 ;;(load-file "/home/francoisbabeuf/.emacs.d/lib/redprl/redprl-mode.el")
 ;;(load-file "/home/francoisbabeuf/.emacs.d/lib/redprl/ob-redprl.el")
 ;;(load-file "/home/francoisbabeuf/.emacs.d/lib/redprl/redprl.el")
-(setq redprl-command "/home/francoisbabeuf/Documents/build/sml-redprl/bin/redprl")
+;;(setq redprl-command "/home/francoisbabeuf/Documents/build/sml-redprl/bin/redprl")
 
 ;; Agda
-(load-file (let ((coding-system-for-read 'utf-8))
-                (shell-command-to-string "agda-mode locate")))
+;;(load-file (let ((coding-system-for-read 'utf-8))
+;;                (shell-command-to-string "agda-mode locate")))
 
 ;;'(agda2-include-dirs
 ;;   (quote
@@ -130,13 +137,13 @@
 
 
 ;; load csp-mode setup code
-(add-to-list 'load-path "/home/francoisbabeuf/share/emacs/site-lisp/csp-mode")
-(load "csp-mode-startup")
+;;(add-to-list 'load-path "/home/francoisbabeuf/share/emacs/site-lisp/csp-mode")
+;;(load "csp-mode-startup")
 
 ;; Prolog mode
-(load-file "/home/francoisbabeuf/.emacs.d/lib/prolog-mode/prolog.el")
-(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
-(setq prolog-system 'mercury)
+(load-file "/home/francoisbabeuf/.emacs.d/lib/prolog.el")
+;;(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
+;;(setq prolog-system 'mercury)
 
 (setq auto-mode-alist (cons (cons "\\.pl" 'prolog-mode) auto-mode-alist))
 
@@ -145,7 +152,11 @@
             (setq indent-tabs-mode nil)))
 
 (setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
+(setq edebug-trace nil)
 
+(setq prolog-electric-if-then-else-flag t)
+
+;;(setq prolog-program-name "swipl")
 ;; Automatic Etags for prolog
 (setq tags-table-list
 	  '("~/Documents/build/ClioPatria/cpack/dqs"))
@@ -183,19 +194,19 @@
   		(visit-tags-table my-tags-file)))))
 
 ;;; Ciao mode
-(setq load-path (cons "/usr/local/lib/ciao" load-path))
+;;(setq load-path (cons "/usr/local/lib/ciao" load-path))
 ;; Java mode in ciao                                 
 ;;(setq load-path (cons "/usr/lib/ciao" load-path))
 
-(defun load-java-ciaopp-mode ()
-  (require 'java-ciaopp)
-  (java-ciaopp-setup))
+;; (defun load-java-ciaopp-mode ()
+;;   (require 'java-ciaopp)
+;;   (java-ciaopp-setup))
 
-(add-hook 'java-mode-hook 'load-java-ciaopp-mode)
-(load-file "/usr/local/lib/ciao/ciao-site-file.el")
-(if (file-exists-p "/usr/local/lib/ciao/ciao-site-file.el")
-	(load-file "/usr/local/lib/ciao/ciao-site-file.el")
-  )
+;; (add-hook 'java-mode-hook 'load-java-ciaopp-mode)
+;; (load-file "/usr/local/lib/ciao/ciao-site-file.el")
+;; (if (file-exists-p "/usr/local/lib/ciao/ciao-site-file.el")
+;; 	(load-file "/usr/local/lib/ciao/ciao-site-file.el")
+;;   )
 
 ;; (autoload 'run-ciao-toplevel "ciao"
 ;;          "Start a Ciao/Prolog top-level sub-process." t)
@@ -222,35 +233,35 @@
 
 
 ;; Mercury
-(add-to-list 'load-path
-			 "/usr/local/mercury-rotd-2017-06-22/lib/mercury/elisp")
-(autoload 'mercury-mode "prolog" "Major mode for editing Mercury programs." t)
+;;(add-to-list 'load-path
+;;			 "/usr/local/mercury-rotd-2017-06-22/lib/mercury/elisp")
+;;(autoload 'mercury-mode "prolog" "Major mode for editing Mercury programs." t)
 
-(autoload 'mdb "gud" "Invoke the Mercury debugger" t)
+;;(autoload 'mdb "gud" "Invoke the Mercury debugger" t)
 
-(defvar *flymake-mercury-checker* "/home/francoisbabeuf/bin/mercury-checker.sh")
+;;(defvar *flymake-mercury-checker* "/home/francoisbabeuf/bin/mercury-checker.sh")
 
-(defun flymake-mercury-init ()
-  (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                     'flymake-create-temp-inplace))
-         (local-file (file-relative-name
-                      temp-file
-                      (file-name-directory buffer-file-name))))
-    (list *flymake-mercury-checker* (list local-file))))
+;;(defun flymake-mercury-init ()
+;;  (let* ((temp-file (flymake-init-create-temp-buffer-copy
+;;                     'flymake-create-temp-inplace))
+;;         (local-file (file-relative-name
+;;                      temp-file
+;;                      (file-name-directory buffer-file-name))))
+;;    (list *flymake-mercury-checker* (list local-file))))
 
-(eval-after-load 'flycheck
-  '(progn
-	 (require 'flycheck-mercury)
-	 (push '("\\([^:]*\\):\\([0-9]+\\):[0-9]+: \\(.*\\)" 1 2 nil 3) flymake-err-line-patterns)
-	 (add-to-list 'flymake-allowed-file-name-masks '("\\.m\\'" flymake-mercury-init nil flymake-get-real-file-name))))
+;; (eval-after-load 'flycheck
+;;   '(progn
+;; 	 (require 'flycheck-mercury)
+;; 	 (push '("\\([^:]*\\):\\([0-9]+\\):[0-9]+: \\(.*\\)" 1 2 nil 3) flymake-err-line-patterns)
+;; 	 (add-to-list 'flymake-allowed-file-name-masks '("\\.m\\'" flymake-mercury-init nil flymake-get-real-file-name))))
 
-(add-hook 'mercury-mode-hook
-          '(lambda ()
-			 (if (not (null buffer-file-name)) (flymake-mode))))
+;; (add-hook 'mercury-mode-hook
+;;           '(lambda ()
+;; 			 (if (not (null buffer-file-name)) (flymake-mode))))
 
-(add-to-list 'auto-mode-alist '("\\.m\\'" . mercury-mode))
-(eval-after-load 'flycheck
-  '(require 'flycheck-mercury))
+;; (add-to-list 'auto-mode-alist '("\\.m\\'" . mercury-mode))
+;; (eval-after-load 'flycheck
+;;   '(require 'flycheck-mercury))
 
 ;;; ************************************************
 ;;; Customisations
@@ -322,6 +333,6 @@
  '(agda2-highlight-primitive-type-face ((t (:foreground "brown"))))
  '(agda2-highlight-record-face ((t (:foreground "magenta")))))
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;;(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
 (put 'downcase-region 'disabled nil)
