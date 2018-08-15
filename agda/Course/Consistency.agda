@@ -158,7 +158,7 @@ E⟶ch⋆n⇒E⟶⋆n p = E⇓n⇒E⟶⋆n (E⟶ch⋆n⇒E⇓n p)
 
 The proof that:
 
-E ⟶⋆ n → E ⟶ch⋆ n 
+(E ⟶⋆ n) → (E ⟶ch⋆ n) 
 
 -} 
 E⟶⋆n⇒E⟶ch⋆n : ∀ {E n} → E ⟶⋆ num n → E ⟶ch⋆ num n

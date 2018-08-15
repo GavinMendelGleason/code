@@ -959,8 +959,8 @@ This is really kludgy, and unneeded (i.e. obsolete) in Emacs>=24."
     ;;    ;   elserule
     ;;    )
     (`(:before . ,(or `"->" `"*->" `";"))
-     (and (smie-rule-bolp) (smie-rule-parent-p "(") (smie-rule-parent 0)))
-    (`(:after . ,(or `"->" `"*->"))
+     (and (smie-rule-bolp) (smie-rule-parent-p "(" ";") (smie-rule-parent 0)))
+    (`(:after . ,(or `"->" `"*->" `";"))
      ;; We distinguish
      ;;
      ;;     (a ->
@@ -972,7 +972,7 @@ This is really kludgy, and unneeded (i.e. obsolete) in Emacs>=24."
      ;;     ;    c)
      ;;
      ;; based on the space between the open paren and the "a".
-     (unless (and (smie-rule-parent-p "(" ";")
+     (unless (and (smie-rule-parent-p "(" ";" "->" "*->")
                   (save-excursion
                     (smie-indent-forward-token)
                     (smie-backward-sexp 'halfsexp)

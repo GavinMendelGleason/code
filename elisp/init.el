@@ -154,9 +154,9 @@
           (lambda ()
             (setq indent-tabs-mode nil)))
 
+;;(setq prolog-program-name "swipl") ;;
 (setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
-
-
+;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
 
 
 ;;(setq prolog-program-name "swipl")
