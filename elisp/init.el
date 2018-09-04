@@ -76,7 +76,7 @@
 
 ;; RDF (n3 mode)
 ;;(require 'n3-mode)
-;;(add-to-list 'auto-mode-alist '("\\.ttl\\'" . n3-mode))
+(add-to-list 'auto-mode-alist '("\\.ttl\\'" . ttl-mode))
 
 ;; Abella
 ;;(load-file "/home/francoisbabeuf/.emacs.d/lib/abella/lprolog.el")
@@ -135,6 +135,11 @@
 ;;   (quote
 ;;	("." "/usr/share/agda-stdlib" "/home/francoisbabeuf/Documents/code/agda/agda-stdlib/" "/home/francoisbabeuf/Documents/code/agda/finset/")))
 
+;; Whitespace mode
+(require 'whitespace)
+
+;; Magit 
+;;(require 'magit)
 
 ;; load csp-mode setup code
 ;;(add-to-list 'load-path "/home/francoisbabeuf/share/emacs/site-lisp/csp-mode")
