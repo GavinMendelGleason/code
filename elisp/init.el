@@ -26,6 +26,9 @@
 (defvaralias 'cperl-indent-level 'tab-width)
 (setq indent-tabs-mode nil)
 
+;; Emacs basics
+(tool-bar-mode -1) 
+
 ;; Colour theme 
 (load-theme 'suscolors t)
 ;;(load-theme 'github t)
