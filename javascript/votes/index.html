@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+.node circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.legend rect {
+  fill:white;
+  stroke:black;
+  opacity:0.8;}
+
+</style>
+<svg width="2000" height="1400"></svg>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="graph.js"></script>
+<script src="legend.js"></script>
+<script>
+function po(o) {
+  var out = '';
+  for (var p in o) {
+    out += p + ': ' + o[p] + '\n';
+  }
+  alert(out);
+}
+
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+
+var color = function(Code){
+	if(Code == 'Fianna Fáil'){
+		return d3.color("darkgreen");
+	}else if(Code == 'Sinn Féin'){
+		return d3.color("lightgreen");
+	}else if(Code == 'People Before Profit'){
+		return d3.color("brown");
+	}else if(Code == 'Green Party'){
+		return d3.color("yellow");
+	}else if(Code == 'Workers\' Party'){
+		return d3.color("maroon");
+	}else if(Code == 'Labour Party'){
+		return d3.color("red");
+	}else if(Code == 'Social Democrats'){
+		return d3.color("purple");
+	}else if(Code == 'Fine Gael'){
+		return d3.color("blue");
+	}else if(Code == 'Independent'){
+		return d3.color("orange");
+	}else if(Code == 'Solidarity'){
+		return d3.color("turquoise");
+	}
+}
+
+//var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(link => link.value))
+    .force("charge", d3.forceManyBody().strength( function() { return  -10000; } ))
+    .force("center", d3.forceCenter(width / 2, height / 2));
+
+var link = svg.append("g")
+    .attr("class", "links")
+    .selectAll("line")
+    .data(graph.links)
+    .enter().append("line")
+      .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+var node = svg.append("g")
+	.attr("class", "nodes")
+    .selectAll(".node")
+    .data(graph.nodes)
+    .enter().append("g")
+      .attr("class", "node")
+      .call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+		  .on("end", dragended));
+
+node.append("circle")
+    .attr("r", 15)
+    .attr("x", -8)
+    .attr("y", -8)
+    .attr("data-legend",function(d) { return d.group })      
+    .attr("fill", function(d) { return color(d.group); });
+
+node.append("text")
+    .attr("dx", 12)
+    .attr("dy", ".35em")
+    .text(function(d) { return d.id });
+
+node.append("title")
+    .text(function(d) { return d.id; });
+
+legend = svg.append("g")
+   .attr("class","legend")
+   .attr("transform","translate(50,30)")
+   .style("font-size","12px")
+   .call(d3.legend)
+
+simulation
+    .nodes(graph.nodes)
+    .on("tick", ticked);
+simulation.force("link")
+    .links(graph.links);
+
+function ticked() {
+    link
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+    node
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+
+	
+    node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+}
+
+
+function dragstarted(d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+function dragended(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+</script>
