@@ -78,7 +78,8 @@ _≤_ : ℕ → ℕ → 𝔹
 
 _≤dec_ : ℕ → ℕ → 𝔹
 x ≤dec y with (x ≤ℕdec y)
-x ≤dec y | res = {!!} 
+x ≤dec y | yes p = true
+x ≤dec y | no ¬p = false
 
 data _≡_ {ℓ} {A : Set ℓ} : A → A → Set ℓ where 
   refl : ∀ {x} → x ≡ x
