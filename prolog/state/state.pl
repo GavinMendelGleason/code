@@ -49,12 +49,25 @@ interpret(V:=Exp) -->
 
 run :- 
     Term=(
-        v := (1 + 3)
+        v := 1 + 3
     ;   w := v + v
     ;   w := w + 1),
-    interpret(Term,[v=0,w=0],Result), 
+    interpret(Term,[[v=0,w=0]],Result), 
     write(Result).
- 
-/* 
-Example = 
+
+/*
+update(C0,C1), [S1] -->
+    [S0],
+    {
+        select(C0,S0,C1,S1)
+    }.
+
+view(C0), [S0] -->
+    [S0],
+    {
+        member(C0,S0)
+    }.
+
+return(S0), [S0] -->
+    [_].
 */
