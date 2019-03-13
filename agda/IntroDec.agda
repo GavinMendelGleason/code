@@ -49,10 +49,11 @@ data _≤ℕ_ : ℕ → ℕ → Set where
   1+≤ : ∀ x y → x ≤ℕ y → (1+ x) ≤ℕ (1+ y)
 
 _≤ℕdec_ : ∀ x y → Dec (x ≤ℕ y)
-∅ ≤ℕdec y = {!!}
-1+ x ≤ℕdec ∅ = {!!}
+∅ ≤ℕdec y = yes (∅≤ y)
+1+ x ≤ℕdec ∅ = no (λ ())
 1+ x ≤ℕdec 1+ y with x ≤ℕdec y 
-1+ x ≤ℕdec 1+ y | res = {!!}
+1+ x ≤ℕdec 1+ y | yes p = yes (1+≤ x y p)
+1+ x ≤ℕdec 1+ y | no ¬p = no (λ {(1+≤ _ _ p)  → ¬p p})
 
 data 𝔹 : Set where 
   true : 𝔹
