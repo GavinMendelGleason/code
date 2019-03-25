@@ -211,8 +211,8 @@ subtract(Z,K,Zero).
 *********************************
 ** Generate other representations
 
-% We can find alternative representations of a number by "adding" backwards, 
-% and finding everything which would bring us to zero, then negating this value
+% We can find alternative representations of a number by running the addition search backwards, 
+% and finding everything which would bring us to zero. We can then negate this value
 % to get a number equal to the original. 
 
 % word size
