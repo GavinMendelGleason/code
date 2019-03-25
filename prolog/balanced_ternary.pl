@@ -67,8 +67,8 @@ zero_pad(L,WS,Word) :-
     append(Top,L,Word).
 
 overflow([B0,B1|_]) :-
-    B0 in -1..1,
-    B1 in -1..1.
+    (   B0 in -1 \/ 1 
+    ;   B1 in -1 \/ 1).
 
 no_overflow([0,0|_]).
 
