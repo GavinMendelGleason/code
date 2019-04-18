@@ -13,6 +13,12 @@
 
 This module contains convenience functions for interaction with the shell.
 
+
+example:
+
+cat('~/test.txt',Stream), split(Stream,Fields), Fields = [A,B,C], 
+  pack([C,B,A],Out) >> ('~/new_text.txt',Out).
+
 */
 
 intersperse(_,[],[]).
