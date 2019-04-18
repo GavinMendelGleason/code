@@ -5,19 +5,21 @@
               pack/2,
               pack/4,
               cd/1,
-              op(1150,xfx,>>),
-              '>>'/2
+              ls/0,
+              op(1150,xfx,>>>),
+              '>>>'/2,
+              op(920,fy, cd),
+              cd/1                  
              ]).
 
 /* 
 
-This module contains convenience functions for interaction with the shell.
-
+This module contains convenience predicates for interaction with the shell.
 
 example:
 
 cat('~/test.txt',Stream), split(Stream,Fields), Fields = [A,B,C], 
-  pack([C,B,A],Out) >> ('~/new_text.txt',Out).
+  pack([C,B,A],Out) >>> ('~/new_text.txt',Out).
 
 */
 
@@ -70,7 +72,7 @@ select(N,Fields,Res) :-
     nth0(N,Fields,Res).
 
 :- op(1150,xfx,>>).
-'>>'(Pred,(Spec,Stream)) :-
+'>>>'(Pred,(Spec,Stream)) :-
     expand_file_name(Spec,Files),
     (   Files = [File]
     ->  open(File,write,Stream)
@@ -91,8 +93,35 @@ pack(RS,FS,Fields,Stream) :-
 pack(Fields,Stream) :-
     pack('\n', ' , ', Fields, Stream).
 
+:- op(920,fy, cd).
 cd(NewCWD) :-
     working_directory(_, NewCWD).
+
+ls :-
+    working_directory(CWD, CWD),
+    directory_files(CWD,Files),
+    sort(Files,Sorted),
+    forall(member(File,Sorted),
+           (   write(File),
+               nl
+           )).
+
+ls(Spec) :-
+    expand_file_name(Spec,Files),
+    forall(member(File, Files),
+           (   directory_files(File,Listed),
+               forall(member(Elt,Listed),
+                      (   write(Elt),
+                          nl
+                      ))
+           )).
+
+ls(Spec,Results) :-
+    expand_file_name(Spec,Files),
+    maplist(
+        [File,Listed]>>directory_files(File,Listed),
+        Files, AllFiles),
+    append(AllFiles,Results).
 
 end :-
     fail.
