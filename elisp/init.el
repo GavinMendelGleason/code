@@ -32,6 +32,15 @@
 ;; Colour theme 
 (load-theme 'suscolors t)
 ;;(load-theme 'github t)
+(defun light-contrast-mode ()
+  "Light contrast"
+  (interactive)
+  (load-theme 'github t))
+
+(defun dark-contrast-mode ()
+  "Dark contrast"
+  (interactive)
+  (load-theme 'suscolors t))
 
 ;; Tramp Colour
 ;;(setq tramp-theme-face-remapping-alist '(background . "Purple"))
@@ -163,8 +172,9 @@
             (setq indent-tabs-mode nil)))
 
 ;;(setq prolog-program-name "swipl") ;;
-(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
 ;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
+(setq prolog-program-name "/home/francoisbabeuf/Documents/build/terminusdb/start.pl")
+
 
 
 ;;(setq prolog-program-name "swipl")
