@@ -63,5 +63,5 @@ _++_ : {A : Set} → {n m : ℕ} → Vec n A → Vec m A → Vec (n + m) A
 _++_ {A} {z} {m} xs ys = ys
 _++_ {A} {s n} {m} (π₁ , π₂) ys = cons A (n + m) π₁ (π₂ ++ ys) 
 
-weakening : ∀ {A a} (as bs cs : Vec A) → 
-    (a \u2208 (as ++ cs)) \u2192 (a \u2208 (as ++ bs ++ cs))
+--weakening : ∀ {A a} (as bs cs : Vec A) → 
+--    (a \u2208 (as ++ cs)) \u2192 (a \u2208 (as ++ bs ++ cs))

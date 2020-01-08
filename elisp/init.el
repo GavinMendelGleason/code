@@ -3,8 +3,8 @@
 ;;; *******************************************
 ;;; MELPA
 (require 'package) ;; You might already have this line
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ("melpa" . "http://melpa.org/packages/")))
 (package-initialize) ;; You might already have this line
 
 ;;; *******************************************
@@ -20,16 +20,17 @@
       (concat comint-password-prompt-regexp
               "\\|^Password for .*:\\s *\\'"))
 
-;; Tabs
+;; Tabs / spaces
 (setq-default tab-width 4)
 (defvaralias 'c-basic-offset 'tab-width)
 (defvaralias 'cperl-indent-level 'tab-width)
-(setq indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
+(setq-default show-trailing-whitespace t)
 
 ;; Emacs basics
-(tool-bar-mode -1) 
+(tool-bar-mode -1)
 
-;; Colour theme 
+;; Colour theme
 (load-theme 'suscolors t)
 ;;(load-theme 'github t)
 (defun light-contrast-mode ()
@@ -52,7 +53,7 @@
 
 ;; unicode-fonts
 (require 'unicode-fonts)
-(unicode-fonts-setup)
+;;(unicode-fonts-setup)
 
 ;; Frame buffer name in titlebar
 (setq frame-title-format
@@ -118,7 +119,7 @@
 ;; 	(add-hook 'caml-mode-hook 'merlin-mode t)
 ;; 	;; custom key bindings
 ;; 	(add-hook 'merlin-mode-hook
-;;        (lambda ()  
+;;        (lambda ()
 ;; 		 (local-set-key (quote [?\C-x?\C-d]) (quote merlin-destruct))))
 ;; 	;; Use opam switch to lookup ocamlmerlin binary
 ;; 	(setq merlin-command 'opam)))
@@ -150,7 +151,7 @@
 ;; Whitespace mode
 (require 'whitespace)
 
-;; Magit 
+;; Magit
 ;;(require 'magit)
 
 ;; load csp-mode setup code
@@ -160,7 +161,7 @@
 ;; Prolog mode
 (load-file "/home/francoisbabeuf/.emacs.d/lib/prolog.el")
 (setq prolog-electric-if-then-else-flag t)
-(setq prolog-electric-dot-flag t)
+;; (setq prolog-electric-dot-flag t)
 
 ;;(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
 ;;(setq prolog-system 'mercury)
@@ -173,8 +174,9 @@
 
 ;;(setq prolog-program-name "swipl") ;;
 ;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
-(setq prolog-program-name "/home/francoisbabeuf/Documents/build/terminusdb/start.pl")
-
+;;
+(setenv "TERMINUS_ADMIN_PASSWD" "connectors wanna plans compressed")
+(setq prolog-program-name "/home/francoisbabeuf/Documents/build/terminus-server/start.pl")
 
 
 ;;(setq prolog-program-name "swipl")
@@ -188,12 +190,12 @@
 (defun create-prolog-tags (dir-name)
   "Create prolog tags file."
   (interactive "DDirectory: ")
-  (eshell-command 
+  (eshell-command
    (format "cd %s; find %s -type f -name \"*.pl\" | etags -l prolog -"
 		   dir-name dir-name)))
 
 (defadvice xref--find-definitions (around refresh-etags activate)
-  "Rerun etags and reload tags if tag not found and redo find-tag.              
+  "Rerun etags and reload tags if tag not found and redo find-tag.
     If buffer is modified, ask about save before running etags."
   (let ((extension (file-name-extension (buffer-file-name))))
 	(condition-case err
@@ -209,14 +211,27 @@
   "Run etags on all peer files in current dir and reload them silently."
   (let ((my-tags-file (locate-dominating-file default-directory "TAGS")))
 	(when my-tags-file
-	  (message "Loading tags file: %s" my-tags-file)	  
+	  (message "Loading tags file: %s" my-tags-file)
 	  (let ((tags-dir (file-name-directory my-tags-file)))
 		(create-prolog-tags tags-dir)
   		(visit-tags-table my-tags-file)))))
 
+;; (lsp-register-client
+;;   (make-lsp-client
+;;    :new-connection
+;;    (lsp-stdio-connection (list "swipl"
+;;                                "-g" "use_module(library(lsp_server))."
+;;                                "-g" "lsp_server:main"
+;;                                "-t" "halt"
+;;                                "--" "stdio"))
+;;    :major-modes '(prolog-mode)
+;;    :priority 1
+;;    :multi-root t
+;;    :server-id 'prolog-ls))
+
 ;;; Ciao mode
 ;;(setq load-path (cons "/usr/local/lib/ciao" load-path))
-;; Java mode in ciao                                 
+;; Java mode in ciao
 ;;(setq load-path (cons "/usr/lib/ciao" load-path))
 
 ;; (defun load-java-ciaopp-mode ()
@@ -292,55 +307,53 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(agda2-include-dirs
-   (quote
-	("." "/home/francoisbabeuf/lib/agda-prelude/" "/home/francoisbabeuf/lib/agda-stdlib/")))
+ '(agda2-include-dirs (quote ("." "/home/francoisbabeuf/lib/agda-stdlib/")))
  '(agda2-program-args
    (quote
-	("--include-path=/home/francoisbabeuf/lib/agda-prelude/src/" "--include-path=.")))
+    ("--include-path=/home/francoisbabeuf/lib/agda-stdlib/" "--include-path=.")) t)
  '(custom-safe-themes
    (quote
-	("23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
+    ("23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
  '(package-selected-packages
    (quote
-	(auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
+    (spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
  '(prolog-compile-string
    (quote
-	((eclipse "[%f].")
-	 (mercury "mmc ")
-	 (sicstus
-	  (eval
-	   (if
-		   (prolog-atleast-version
-			(quote
-			 (3 . 7)))
-		   "prolog:zap_file(%m,%b,compile,%l)." "prolog:zap_file(%m,%b,compile).")))
-	 (swi "[%f].")
-	 (t "compile(%f)."))))
+    ((eclipse "[%f].")
+     (mercury "mmc ")
+     (sicstus
+      (eval
+       (if
+           (prolog-atleast-version
+            (quote
+             (3 . 7)))
+           "prolog:zap_file(%m,%b,compile,%l)." "prolog:zap_file(%m,%b,compile).")))
+     (swi "[%f].")
+     (t "compile(%f)."))))
  '(safe-local-variable-values
    (quote
-	((eval progn
-		   (let
-			   ((m31-root-directory
-				 (when buffer-file-name
-				   (locate-dominating-file buffer-file-name ".dir-locals.el")))
-				(m31-project-find-file
-				 (and
-				  (boundp
-				   (quote m31-project-find-file))
-				  m31-project-find-file)))
-			 (when m31-root-directory
-			   (setq tags-file-name
-					 (concat m31-root-directory "TAGS"))
-			   (add-to-list
-				(quote compilation-search-path)
-				m31-root-directory)
-			   (if
-				   (not m31-project-find-file)
-				   (setq compile-command
-						 (concat "make -C " m31-root-directory))))
-			 (setq m31-executable
-				   (concat m31-root-directory "andromeda.native"))))))))
+    ((eval progn
+           (let
+               ((m31-root-directory
+                 (when buffer-file-name
+                   (locate-dominating-file buffer-file-name ".dir-locals.el")))
+                (m31-project-find-file
+                 (and
+                  (boundp
+                   (quote m31-project-find-file))
+                  m31-project-find-file)))
+             (when m31-root-directory
+               (setq tags-file-name
+                     (concat m31-root-directory "TAGS"))
+               (add-to-list
+                (quote compilation-search-path)
+                m31-root-directory)
+               (if
+                   (not m31-project-find-file)
+                   (setq compile-command
+                         (concat "make -C " m31-root-directory))))
+             (setq m31-executable
+                   (concat m31-root-directory "andromeda.native"))))))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

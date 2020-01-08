@@ -375,6 +375,7 @@ S ≺⟨ eq ⟩ T = ∣ S ∣⟨ eq ⟩ <′ ∣ T ∣⟨ eq ⟩
 _⊂⟨_⟩_ : {C : Set} → List C → (eq : DecEq C) → List C → Set
 S ⊂⟨ eq ⟩ T = S ⊆ T × S ≺⟨ eq ⟩ T
 
+{-
 _<?_ : ∀ n m → Dec (n <′ m)
 zero <? zero = no (λ ())
 zero <? suc m = yes (aux m)
@@ -385,7 +386,7 @@ suc n <? zero = no (λ ())
 suc n <? suc m with n <? m
 suc n <? suc m | yes p = yes (n≤m⇒1+n≤1+m _ _ p)
 suc n <? suc m | no ¬p = no (λ x → ¬p (1+n≤1+m⇒n≤m (suc n) m x))
-
+-}
 _⊂⟨_⟩?_ : {C : Set} → (S : List C) → (eq : DecEq C) → (T : List C) → Dec (S ⊂⟨ eq ⟩ T)
 S ⊂⟨ eq ⟩? T with S ⊆⟨ eq ⟩? T | ∣ S ∣⟨ eq ⟩ <? ∣ T ∣⟨ eq ⟩
 S ⊂⟨ eq ⟩? T | yes p | yes p₁ = yes (p , p₁)
