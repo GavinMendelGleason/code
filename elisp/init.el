@@ -158,13 +158,28 @@
 ;;(add-to-list 'load-path "/home/francoisbabeuf/share/emacs/site-lisp/csp-mode")
 ;;(load "csp-mode-startup")
 
-;; Prolog mode
+;;; Prolog mode
+;; (require 'lsp-mode)
+;; (lsp-register-client
+;;  (make-lsp-client
+;;   :new-connection
+;;   (lsp-stdio-connection (list "swipl"
+;;                               "-g" "lsp_server:main"
+;;                               "-t" "halt"
+;;                               "/home/francoisbabeuf/Documents/build/lsp_server/prolog/lsp_server.pl"
+;;                               "--" "stdio"))
+;;   :major-modes '(prolog-mode)
+;;   :priority 1
+;;   :multi-root t
+;;   :server-id 'prolog-ls))
+
 (load-file "/home/francoisbabeuf/.emacs.d/lib/prolog.el")
 (setq prolog-electric-if-then-else-flag t)
-;; (setq prolog-electric-dot-flag t)
 
-;;(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
-;;(setq prolog-system 'mercury)
+;; ;; (setq prolog-electric-dot-flag t)
+;; (setq prolog-system 'swi)
+;; ;;(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
+;; ;;(setq prolog-system 'mercury)
 
 (setq auto-mode-alist (cons (cons "\\.pl" 'prolog-mode) auto-mode-alist))
 
@@ -175,9 +190,7 @@
 ;;(setq prolog-program-name "swipl") ;;
 ;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
 ;;
-(setenv "TERMINUS_ADMIN_PASSWD" "connectors wanna plans compressed")
 (setq prolog-program-name "/home/francoisbabeuf/Documents/build/terminus-server/start.pl")
-
 
 ;;(setq prolog-program-name "swipl")
 ;; Automatic Etags for prolog
@@ -207,14 +220,14 @@
 			 (er-refresh-etags extension)
 			 ad-do-it))))
 
-(defun er-refresh-etags (&optional extension)
-  "Run etags on all peer files in current dir and reload them silently."
-  (let ((my-tags-file (locate-dominating-file default-directory "TAGS")))
-	(when my-tags-file
-	  (message "Loading tags file: %s" my-tags-file)
-	  (let ((tags-dir (file-name-directory my-tags-file)))
-		(create-prolog-tags tags-dir)
-  		(visit-tags-table my-tags-file)))))
+;; (defun er-refresh-etags (&optional extension)
+;;   "Run etags on all peer files in current dir and reload them silently."
+;;   (let ((my-tags-file (locate-dominating-file default-directory "TAGS")))
+;; 	(when my-tags-file
+;; 	  (message "Loading tags file: %s" my-tags-file)
+;; 	  (let ((tags-dir (file-name-directory my-tags-file)))
+;; 		(create-prolog-tags tags-dir)
+;;   		(visit-tags-table my-tags-file)))))
 
 ;; (lsp-register-client
 ;;   (make-lsp-client
@@ -313,7 +326,7 @@
     ("--include-path=/home/francoisbabeuf/lib/agda-stdlib/" "--include-path=.")) t)
  '(custom-safe-themes
    (quote
-    ("23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
+    ("4e7e04c4b161dd04dc671fb5288e3cc772d9086345cb03b7f5ed8538905e8e27" "23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
  '(package-selected-packages
    (quote
     (spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
@@ -353,7 +366,8 @@
                    (setq compile-command
                          (concat "make -C " m31-root-directory))))
              (setq m31-executable
-                   (concat m31-root-directory "andromeda.native"))))))))
+                   (concat m31-root-directory "andromeda.native")))))))
+ '(ttl-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

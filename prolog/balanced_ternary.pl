@@ -1,7 +1,9 @@
 :- module(balanced_ternary, [
               dtw/3,
               add/3,
-              subtract/3
+              subtract/3,
+              equal/2,
+              td/2
           ]).
 
 :- use_module(library(clpfd)).
@@ -67,7 +69,7 @@ zero_pad(L,WS,Word) :-
     append(Top,L,Word).
 
 overflow([B0,B1|_]) :-
-    (   B0 in -1 \/ 1 
+    (   B0 in -1 \/ 1
     ;   B1 in -1 \/ 1).
 
 no_overflow([0,0|_]).
@@ -167,17 +169,17 @@ op2( 0,0, 0).
 op2(-1,1, 0).
 op2( 0,1, 1).
 
-/* 
- * The punchline! Addition in only 3 operations. 
+/*
+ * The punchline! Addition in only 3 operations.
  */
 add(X,Y,W) :-
     maplist([BX,BY,BT,BZ]>>( op0(BX,BY,(BT:BZ)) ), X, Y, T, Z),
     shift(T,TS),
     maplist([BT,BZ,BT1,BZ1]>>( op1(BT,BZ,(BT1:BZ1)) ), TS, Z, T1, Z1),
-    shift(T1,T1S), 
+    shift(T1,T1S),
     maplist([BT1,BZ1,BW]>>( op2(BT1,BZ1,BW) ), T1S, Z1, W).
 
-/* 
+/*
  * Subtraction in only 4
  */
 subtract(X,Y,W) :-
@@ -192,17 +194,17 @@ equal(X,Y) :-
     is_zero(W).
 
 /************************
- *  Examples 
+ *  Examples
 
 ***************
-** Add 13 and 6 
+** Add 13 and 6
 
-% word size of 8, 
-WS = 8, 
+% word size of 8,
+WS = 8,
 % translate 13 and 6 into balanced ternary
-dtw(13,X,WS), dtw(6,Y,WS), 
-add(X,Y,Z), 
-% Hopefully we got 19, let's check. 
+dtw(13,X,WS), dtw(6,Y,WS),
+add(X,Y,Z),
+% Hopefully we got 19, let's check.
 dtw(19,K,WS),
 % we can eyeball Zero easily enough
 subtract(Z,K,Zero).
@@ -211,33 +213,33 @@ subtract(Z,K,Zero).
 *********************************
 ** Generate other representations
 
-% We can find alternative representations of a number by running the addition search backwards, 
+% We can find alternative representations of a number by running the addition search backwards,
 % and finding everything which would bring us to zero. We can then negate this value
-% to get a number equal to the original. 
+% to get a number equal to the original.
 
 % word size
-WS = 8, 
+WS = 8,
 % choose a number
-N = 6, 
-dtw(3,X,6), 
+N = 6,
+dtw(3,X,6),
 % Get the unique representation of zero
-dtw(0,Zero,6), 
+dtw(0,Zero,6),
 % Add something unspecified to X to get zero
-add(X, XN, Zero), 
+add(X, XN, Zero),
 % invert this
 neg(XN,Other_X).
 
 % Unfortunately this answer gives us a lot of nonsense with large negative numbers.
-% The reason is that our operations are really only safe if we leave a couple of "guard bits" 
+% The reason is that our operations are really only safe if we leave a couple of "guard bits"
 % at the top of our word to make sure we don't overflow.
 
 % ... take the lines above
 % ... and add this to the end
-no_overflow(Other_X). 
+no_overflow(Other_X).
 
 % Now we get some nice representations! Check to see if equal(X,Other_X)!
-% 
+%
 % Are these all of the representations? I think so!
- 
+
 
  */
