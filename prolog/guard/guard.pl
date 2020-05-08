@@ -99,6 +99,52 @@ xfy_list(Op, Term, [Left|List]) :-
     !.
 xfy_list(_, Term, [Term]).
 
+/* This is not a true complement as we don't
+ * have orthocomplete lattices. The consequence is that our
+ * approximations are lossy.
+ *
+ * Ideally these complements would be calculated by the cplad library.
+ *
+ * We should have:
+ *
+ *   Complement law
+ *     a⊥ ∨ a = 1 and a⊥ ∧ a = 0.
+ *   Order-reversing
+ *     if a ≤ b then b⊥ ≤ a⊥.
+ *
+ * But not:
+ *
+ *   Involution law
+ *     a⊥⊥ = a.
+ */
+constraint_complement(true,false).
+constraint_complement(X=Y,diff(X,Y)).
+constraint_complement(ground(X),anti_domain(X,ground@boundness)).
+constraint_complement(nonvar(X),andi_domain(X,nonvar@boundness)).
+constraint_complement(var(X),anti_domain(X,var@boundness)).
+constraint_complement(list(X),(   anti_domain(X,list@types)
+                              ;   anti_domain(X,nonvar@boundness))).
+constraint_complement(number(X),(   anti_domain(X,number@types)
+                                ;   anti_domain(X,ground@boundness))).
+constraint_complement(string(X),(   anti_domain(X,string@types)
+                                ;   anti_domain(X,ground@boundness))).
+constraint_complement(integer(X),(   anti_domain(X,intger@types)
+                                 ;   anti_domain(X,ground@boundness))).
+constraint_complement(atom(X),(   anti_domain(X,atom@types)
+                              ;   anti_domain(X,ground@boundness))).
+constraint_complement((A<B),{A>=B}).
+constraint_complement((A>B),{A=<B}).
+constraint_complement((A>=B),{A<B}).
+constraint_complement((A=<B),{A>B}).
+constraint_complement((A,B),(AC;BC)) :-
+    constraint_complement(A,AC),
+    constraint_complement(B,BC).
+constraint_complement((A;B),(AC,BC)) :-
+    constraint_complement(A,AC),
+    constraint_complement(B,BC).
+constraint_constraint((\+ G),GC) :-
+    guard_constraint(G,GC).
+
 guard_constraint(true,true).
 guard_constraint(X=Y,X=Y).
 guard_constraint(ground(X),domain(X,ground@boundness)).
@@ -124,6 +170,8 @@ guard_constraint((A,B),(AC,BC)) :-
 guard_constraint((A;B),(AC;BC)) :-
     guard_constraint(A,AC),
     guard_constraint(B,BC).
+guard_constraint((\+ G),GC) :-
+    constraint_complement(G,GC).
 
 constraint_goal(Arg_Template,Args,Guard,Goal) :-
     maplist([X,Y,X=Y]>>true,Arg_Template,Args,Equality_List),
@@ -245,7 +293,7 @@ split_guarded_clause((Head :- Body), Head, Guard, Remainder) :-
  * We store clauses for module wide analysis in clause_to_transform/4
  */
 :- dynamic clause_to_transform/4.
-:- dynamic overlapping_guard_warning/2.
+:- dynamic overlapping_guard_warning/4.
 
 :- begin_tests(transform_clauses).
 

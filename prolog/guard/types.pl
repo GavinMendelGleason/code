@@ -30,7 +30,26 @@ order(bottom,integer).
 order(bottom,list).
 
 :- dynamic meet/3.
-:- lattice_completion(element,order,meet).
+:- dynamic join/3.
+:- dynamic pseudo_compliment/2.
+:- lattice_completion(element,order).
+
+:- begin_tests(types).
+
+test(meet,[]) :-
+    meet(atom,number,bottom),
+    meet(number,integer,integer).
+
+test(join,[]) :-
+    join(atom,number,top),
+    join(number,integer,number).
+
+test(pseudo_compliment,[]) :-
+    pseudo_compliment(integer,[string,atom,list]),
+    pseudo_compliment(atom,[string,number,integer,list]).
+
+:- end_tests(types).
+
 :- dynamic attr_unify_hook/2.
 :- dynamic attribute_goals/1.
 :- create_abstract_domain(types).

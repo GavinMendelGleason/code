@@ -1,6 +1,7 @@
 :- module(clpad, [
               create_abstract_domain/1,
               domain/2,
+              anti_domain/2,
               op(601, xfx, @)
            ]).
 
@@ -8,11 +9,14 @@
 
 /**
  * Create a contraint system over an abstract interpretation domain
- * supplied as a module + meet/3
+ * supplied as a module + meet/3 + psuedo_complement/2
  */
 
 :- dynamic domain/2.
 :- multifile domain/2.
+
+:- dynamic anti_domain/2.
+:- multifile anti_domain/2.
 
 % NOTE: We might want to think about abstracting top/bottom
 %
@@ -29,6 +33,13 @@ create_abstract_domain(Module) :-
     assertz(
         (domain(X, Domain@Module) :-
              put_attr(Y, Module, Domain),
+             X = Y)),
+    % Add anti_comain predicates for this module
+    assertz(
+        (anti_domain(X, Domain@Module) :-
+             Module:pseudo_compliment(Domain,Anti_Domains),
+             member(Anti_Domain, Anti_Domains),
+             put_attr(Y, Module, Anti_Domain),
              X = Y)),
     % Create the attribution hooks for the abstract domain
     assertz(
