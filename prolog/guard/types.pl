@@ -1,6 +1,7 @@
 :- module(types, [
+              in/2,
               meet/3,
-              domain/2,
+              pseudo_compliment/2,
               op(601, xfx, @)
           ]).
 
@@ -10,14 +11,15 @@
 
 :- use_module(complete_lattice).
 :- use_module(clpad).
-:- reexport(clpad, [domain/2]).
+:- reexport(clpad, [domain/2,anti_domain/2]).
 
+element(top).
 element(string).
 element(atom).
 element(number).
 element(integer).
-element(bottom).
 element(list).
+element(bottom).
 
 order(string,top).
 order(atom,top).
@@ -28,6 +30,18 @@ order(bottom,string).
 order(bottom,atom).
 order(bottom,integer).
 order(bottom,list).
+
+in(_,top).
+in(X,string) :-
+    string(X).
+in(X,atom) :-
+    atom(X).
+in(X,number) :-
+    number(X).
+in(X,integer) :-
+    integer(X).
+in(X,list) :-
+    list(X).
 
 :- dynamic meet/3.
 :- dynamic join/3.

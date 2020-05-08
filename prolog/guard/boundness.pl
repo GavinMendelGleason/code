@@ -1,5 +1,7 @@
 :- module(boundness, [
+              in/2,
               meet/3,
+              pseudo_compliment/2,
               op(601, xfx, @)
           ]).
 
@@ -23,6 +25,14 @@ order(nonvar,ground).
 order(bottom,nonvar).
 order(bottom,var).
 
+in(_,top).
+in(X,var) :-
+    var(X).
+in(X,nonvar) :-
+    nonvar(X).
+in(X,ground) :-
+    ground(X).
+
 :- dynamic meet/3.
 :- dynamic join/3.
 :- dynamic pseudo_compliment/3.
@@ -35,7 +45,7 @@ test(meet,[]) :-
     meet(nonvar,ground,nonvar).
 
 test(join,[]) :-
-    join(nonvar,ground,nonvar),
+    join(nonvar,ground,ground),
     join(var,nonvar,top).
 
 test(pseudo_compliment,[]) :-
@@ -49,4 +59,3 @@ test(pseudo_compliment,[]) :-
 :- dynamic attr_unify_hook/2.
 :- dynamic attribute_goals/1.
 :- create_abstract_domain(boundness).
-

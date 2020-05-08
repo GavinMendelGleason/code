@@ -2,17 +2,15 @@
               '|'/2,
               '*'/1,
               op(920,fy, *)
-              % op(1005,xfy,'|').
           ]).
 
 :- use_module(library(clpr)).
 :- use_module(types, []).
 :- use_module(boundness, []).
-:- use_module(clpad, [domain/2]).
+:- use_module(clpad, [domain/2,anti_domain/2]).
 :- use_module(library(plunit)).
 
 :- op(601, xfx, @).
-%:- op(1005,xfy,'|').
 
 /*
  * A guard is just a conjunction really.
@@ -63,6 +61,8 @@ safe_guard((A,B)) :-
 safe_guard((A;B)) :-
     safe_guard(A),
     safe_guard(B).
+safe_guard(\+ A) :-
+    safe_guard(A).
 
 has_guard(A | B, A, B) :-
     safe_guard(A).
@@ -101,7 +101,7 @@ xfy_list(_, Term, [Term]).
 
 /* This is not a true complement as we don't
  * have orthocomplete lattices. The consequence is that our
- * approximations are lossy.
+ * approximations are lossy - i.e. we should be overly conservative.
  *
  * Ideally these complements would be calculated by the cplad library.
  *
@@ -237,7 +237,12 @@ test(equality_exclusion,[]) :-
 :- end_tests(guard_constraints).
 
 % Note: Obviously this should be smarter.
-trim_negatives(Guard,_Negatives,Guard).
+trim_negatives(Guard,_Negatives,Guard) :-
+    true.
+/*
+    xfy_list(';',Disjunct,Negatives),
+    compliment_goal(Negatives,Compliment),
+*/
 
 refute_guards_disjoint(Arg_Template,Args,Guard,Others,Counter_Examples) :-
     constraint_goal(Arg_Template,Args,Guard,Goal),
@@ -333,6 +338,20 @@ test(split_complex_guard,[]) :-
     Guard = ( A > 1, (integer(A);number(A))),
     Body = (A = 30).
 
+test(split_negative_guard,[]) :-
+    split_guarded_clause(
+        (
+            p(X) :-
+                \+ atom(X),
+                (   var(X)
+                ;   nonvar(X))
+                | X = 30
+        ),
+        Head, Guard, Body),
+    Head = p(A),
+    Guard =  (\+atom(A),(var(A);nonvar(A))),
+    Body = (A = 30).
+
 test(transform_clause, []) :-
 
     retractall(clause_to_transform(_,_,_,_)),
@@ -361,7 +380,7 @@ test(transform_clause, []) :-
 
     transformed_clauses(Clauses),
     Clauses = [(abs(Arg1_1, Arg1_2):- Arg1_1 >=0, !, Arg1_1 = Arg1_2),
-               (abs(Arg2_1, Arg2_2):- Arg2_1 <0, !, Arg2_2 is -Arg2_1)],
+               (abs(Arg2_1, Arg2_2):- Arg2_1 <0, true, Arg2_2 is -Arg2_1)],
 
     retractall(guard:clause_to_transform(_,_,_,_)).
 
@@ -394,9 +413,9 @@ test(transform_unsafe_clause, []) :-
     assertz(guard:clause_to_transform(P_2/N_2,Args_2,Guard_2,Remainder_2)),
 
     transformed_clauses(Clauses),
-    writeq(Clauses),
+
     Clauses = [(unsafe(Arg1_1,Arg1_2):- Arg1_1>0, *!, Arg1_2 is 10),
-               (unsafe(Arg2_1,Arg2_2):- true, !, Arg2_1 = Arg2_2)],
+               (unsafe(Arg2_1,Arg2_2):- true, true, Arg2_1 = Arg2_2)],
 
     retractall(guard:clause_to_transform(_,_,_,_)).
 
