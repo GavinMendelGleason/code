@@ -6,12 +6,10 @@
 
 abs(X,Y) :-
     X >= 0
-    | X = Y,
-      format('~NGreater: ~n', [X]).
+    | X = Y.
 abs(X,Y) :-
     X < 0
-    | Y is -X,
-      format('~NLess: ~n', [X]).
+    | Y is -X.
 
 my_pred(a,X,Y) :-
     X > 0
@@ -19,3 +17,11 @@ my_pred(a,X,Y) :-
 my_pred(b,X,Y) :-
     true
     | Y is 13 / X.
+
+unsafe(X,Y) :-
+    X > 0
+    | Y is 10.
+unsafe(X,Y) :-
+    true
+    | X = Y.
+

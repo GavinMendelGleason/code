@@ -40,6 +40,7 @@ bodyless_predicate(Term) :-
     \+ Term = (_-->_),
     \+ Term = end_of_file.
 
+safe_guard_predicate(true).
 safe_guard_predicate(number(_)).
 safe_guard_predicate(integer(_)).
 safe_guard_predicate(string(_)).
@@ -98,6 +99,7 @@ xfy_list(Op, Term, [Left|List]) :-
     !.
 xfy_list(_, Term, [Term]).
 
+guard_constraint(true,true).
 guard_constraint(X=Y,X=Y).
 guard_constraint(ground(X),domain(X,ground@boundness)).
 guard_constraint(nonvar(X),domain(X,nonvar@boundness)).
@@ -189,51 +191,52 @@ test(equality_exclusion,[]) :-
 % Note: Obviously this should be smarter.
 trim_negatives(Guard,_Negatives,Guard).
 
+refute_guards_disjoint(Arg_Template,Args,Guard,Others,Counter_Examples) :-
+    constraint_goal(Arg_Template,Args,Guard,Goal),
+    findall((Alt_Args-Alt_Guard),
+            (   member(Alt_Args-Alt_Guard-_,Others),
+                constraint_goal(Arg_Template,Alt_Args,Alt_Guard,Alt_Goal),
+                Joint = (Goal,Alt_Goal),
+                call(Joint)),
+            Counter_Examples).
+
 transform_clauses_([],_PN,_Negatives,[]).
 transform_clauses_([Args-Guard-Remainder|After],P/N,Negatives,[New_Clause|New_Clauses]) :-
     length(Arg_Template,N),
-    constraint_goal(Arg_Template,Args,Guard,Goal),
-    forall(
-        (   member(Alt_Args-Alt_Guard-_,After),
-            constraint_goal(Arg_Template,Alt_Args,Alt_Guard,Alt_Goal)
-        ),
-        % there are no overlapping guards
-        (   call((Goal,Alt_Goal))
-        ->  Head_A =.. [P,Args],
-            Head_B =.. [P,Alt_Args],
-            % Throw? Or warn?  Settable is best.
-            format('~NWarning! Overlapping clauses: ~n~q~n~n~q~n~n', [
-                       (Head_A :- Guard| ...),
-                       (Head_B :- Alt_Guard| ...)
-                       ])
-        ;   true)
+    refute_guards_disjoint(Arg_Template,Args,Guard,After,Counter_Examples),
+    (   Counter_Examples = []
+    ->  (   After = []
+        ->  Maybe_Cut = true,
+            New_Negatives = [Guard|Negatives]
+        ;   Maybe_Cut = (!),
+            % Cut is safe - so is removal of negatives...
+            New_Negatives = [Guard|Negatives]
+        )
+    ;   Maybe_Cut = (* (!)),
+        Trimmed_Guard = Guard,
+        assertz(overlapping_guard_warning(P,Args,Guard,Counter_Examples)),
+        New_Negatives = Negatives
     ),
-    % Save to guard
-    !,
-    % Cut is safe - so is removal of negatives...
     trim_negatives(Guard,Negatives,Trimmed_Guard),
     Head =.. [P|Args],
     New_Clause=(
-        Head :- Trimmed_Guard, !, Remainder
+        Head :- Trimmed_Guard, Maybe_Cut, Remainder
     ),
-    % Currently doing
-    transform_clauses_(After,P/N,[Guard|Negatives],New_Clauses).
-transform_clauses_([Args-Guard-Remainder|After],P/N,Negatives,[New_Clause|New_Clauses]) :-
-    Head =.. [P|Args],
-    New_Clause=(
-        Head :- Guard, Remainder
-    ),
-    transform_clauses_(After,P/N,[Guard|Negatives],New_Clauses).
+    transform_clauses_(After,P/N,New_Negatives,New_Clauses).
 
 transform_clauses(P/N, Clauses, New_Clauses) :-
     transform_clauses_(Clauses,P/N,[],New_Clauses).
 
-transformed_clauses(Transformed) :-
-    setof(Args-Guard-Remainder,
+predicate_transformed_clauses(Transformed) :-
+    bagof(Args-Guard-Remainder,
           clause_to_transform(P/N,Args,Guard,Remainder),
           Clauses),
-    transform_clauses(P/N, Clauses, Transformed_Stack),
-    reverse(Transformed_Stack,Transformed).
+    transform_clauses(P/N, Clauses, Transformed).
+
+transformed_clauses(Transformed) :-
+    findall(Clauses, predicate_transformed_clauses(Clauses),
+            All_Clauses),
+    append(All_Clauses,Transformed).
 
 split_guarded_clause((Head :- Body), Head, Guard, Remainder) :-
     has_guard(Body,Guard,Remainder).
@@ -242,6 +245,7 @@ split_guarded_clause((Head :- Body), Head, Guard, Remainder) :-
  * We store clauses for module wide analysis in clause_to_transform/4
  */
 :- dynamic clause_to_transform/4.
+:- dynamic overlapping_guard_warning/2.
 
 :- begin_tests(transform_clauses).
 
@@ -314,19 +318,69 @@ test(transform_clause, []) :-
     retractall(guard:clause_to_transform(_,_,_,_)).
 
 
+
+test(transform_unsafe_clause, []) :-
+
+    retractall(clause_to_transform(_,_,_,_)),
+
+    Clause_1 = (
+        unsafe(X,Y) :-
+            X > 0
+            | Y is 10
+    ),
+
+    split_guarded_clause(Clause_1,Head_1,Guard_1,Remainder_1),
+    Head_1 =.. [P_1|Args_1],
+    length(Args_1,N_1),
+    assertz(guard:clause_to_transform(P_1/N_1,Args_1,Guard_1,Remainder_1)),
+
+    Clause_2 = (
+        unsafe(X,Y) :-
+            true
+            | X = Y
+    ),
+
+    split_guarded_clause(Clause_2,Head_2,Guard_2,Remainder_2),
+    Head_2 =.. [P_2|Args_2],
+    length(Args_2,N_2),
+    assertz(guard:clause_to_transform(P_2/N_2,Args_2,Guard_2,Remainder_2)),
+
+    transformed_clauses(Clauses),
+    writeq(Clauses),
+    Clauses = [(unsafe(Arg1_1,Arg1_2):- Arg1_1>0, *!, Arg1_2 is 10),
+               (unsafe(Arg2_1,Arg2_2):- true, !, Arg2_1 = Arg2_2)],
+
+    retractall(guard:clause_to_transform(_,_,_,_)).
+
+
+
 :- end_tests(transform_clauses).
 
-user:term_expansion(begin_of_file, []) :-
+give_report :-
+    forall(
+        overlapping_guard_warning(P, Args1, Guard1, Counter_Examples),
+        (   P1 =.. [P|Args1],
+            Clause1 = (P1 :- Guard1 | '...'),
+            findall((P2 :- Guard | '...'),
+                    (   member(Arg-Guard,Counter_Examples),
+                        P2 =.. [P|Arg]),
+                    Clauses),
+            format('* Warning! Overlapping clauses: ~n*~n*  ~q*~n*~n',
+                   [Clause1]),
+            maplist(format('*  ~q*~n*~n'), Clauses))
+    ).
+
+user:term_expansion(begin_of_file, begin_of_file) :-
     % We don't want to process ourselves, so fail...
     prolog_load_context(module, Module),
     guard:module_wants_guard(Module),
-    retractall(clause_to_transform(_,_,_,_)).
+    retractall(guard:clause_to_transform(_,_,_,_)),
+    retractall(guard:overlapping_guard_warning(_,_)).
 user:term_expansion(end_of_file,Clauses) :-
     prolog_load_context(module, Module),
     guard:module_wants_guard(Module),
     guard:transformed_clauses(Clauses),
-    writeq(Clauses),
-    nl.
+    guard:give_report.
 user:term_expansion(Clause, No_Clause) :-
     prolog_load_context(module, Module),
     guard:module_wants_guard(Module),
