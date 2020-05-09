@@ -241,7 +241,7 @@ trim_negatives(Guard,_Negatives,Guard) :-
     true.
 /*
     xfy_list(';',Disjunct,Negatives),
-    compliment_goal(Negatives,Compliment),
+    complement_goal(Negatives,Complement),
 */
 
 refute_guards_disjoint(Arg_Template,Args,Guard,Others,Counter_Examples) :-

@@ -22,11 +22,11 @@ check_module_exports(Module) :-
     module_property(Module,exports(Exports)),
     memberchk(in/2,Exports),
     memberchk(meet/3,Exports),
-    memberchk(pseudo_compliment/2,Exports),
+    memberchk(pseudo_complement/2,Exports),
     !.
 check_module_exports(_) :-
     throw(domain_error(
-              'You need to have in/2, meet/3, pseudo_compliment/2 to establish an abstract domain')).
+              'You need to have in/2, meet/3, pseudo_complement/2 to establish an abstract domain')).
 
 
 % NOTE: We might want to think about abstracting top/bottom
@@ -60,7 +60,7 @@ create_abstract_domain(Module) :-
              \+ Module:in(X,Domain))),
     assertz(
         (anti_domain(X, Domain@Module) :-
-             Module:pseudo_compliment(Domain,Anti_Domains),
+             Module:pseudo_complement(Domain,Anti_Domains),
              member(Anti_Domain, Anti_Domains),
              put_attr(Y, Module, Anti_Domain),
              X = Y)),

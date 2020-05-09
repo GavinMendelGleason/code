@@ -1,7 +1,7 @@
 :- module(types, [
               in/2,
               meet/3,
-              pseudo_compliment/2,
+              pseudo_complement/2,
               op(601, xfx, @)
           ]).
 
@@ -45,7 +45,7 @@ in(X,list) :-
 
 :- dynamic meet/3.
 :- dynamic join/3.
-:- dynamic pseudo_compliment/2.
+:- dynamic pseudo_complement/2.
 :- lattice_completion(element,order).
 
 :- begin_tests(types).
@@ -58,9 +58,9 @@ test(join,[]) :-
     join(atom,number,top),
     join(number,integer,number).
 
-test(pseudo_compliment,[]) :-
-    pseudo_compliment(integer,[string,atom,list]),
-    pseudo_compliment(atom,[string,number,integer,list]).
+test(pseudo_complement,[]) :-
+    pseudo_complement(integer,[string,atom,list]),
+    pseudo_complement(atom,[string,number,integer,list]).
 
 :- end_tests(types).
 
