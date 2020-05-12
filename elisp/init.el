@@ -45,11 +45,11 @@
 
 ;; Tramp Colour
 ;;(setq tramp-theme-face-remapping-alist '(background . "Purple"))
-(require 'tramp-theme)
-(setq tramp-theme-face-remapping-alist
-			'((nil "^root$" (fringe (:inherit fringe :inverse-video t)))
-				("^spartacus$" nil (default (:background "DarkPurple")))
-				("^gaius$" nil (default (:background "DarkGreen")))))
+;; (require 'tramp-theme)
+;; (setq tramp-theme-face-remapping-alist
+;; 			'((nil "^root$" (fringe (:inherit fringe :inverse-video t)))
+;; 				("^spartacus$" nil (default (:background "DarkPurple")))
+;; 				("^gaius$" nil (default (:background "DarkGreen")))))
 
 ;; unicode-fonts
 (require 'unicode-fonts)
@@ -173,7 +173,7 @@
 ;;   :multi-root t
 ;;   :server-id 'prolog-ls))
 
-(load-file "/home/francoisbabeuf/.emacs.d/lib/prolog.el")
+(load-file "/home/gavin/.emacs.d/lib/prolog.el")
 (setq prolog-electric-if-then-else-flag t)
 
 ;; ;; (setq prolog-electric-dot-flag t)
@@ -190,15 +190,15 @@
 ;;(setq prolog-program-name "swipl") ;;
 ;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
 ;;
-(setq prolog-program-name "/home/francoisbabeuf/Documents/build/terminus-server/start.pl")
+(setq prolog-program-name "/home/gavin/dev/terminus-server/start.pl")
 
 ;;(setq prolog-program-name "swipl")
 ;; Automatic Etags for prolog
 (setq tags-table-list
-	  '("~/Documents/build/ClioPatria/cpack/dqs"))
+	  '("/home/gavin/dev/terminus-server"))
 
 ;; Run this the first time you use tags
-;; (create-prolog-tags "~/Documents/build/ClioPatria/cpack/dqs")
+;; (create-prolog-tags "/home/gavin/dev/terminus-server")
 ;;
 (defun create-prolog-tags (dir-name)
   "Create prolog tags file."
@@ -320,10 +320,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(agda2-include-dirs (quote ("." "/home/francoisbabeuf/lib/agda-stdlib/")))
+ '(agda2-include-dirs (quote ("." "/home/gavin/lib/agda-stdlib/")))
  '(agda2-program-args
    (quote
-    ("--include-path=/home/francoisbabeuf/lib/agda-stdlib/" "--include-path=.")) t)
+    ("--include-path=/home/gavin/lib/agda-stdlib/" "--include-path=.")) t)
  '(custom-safe-themes
    (quote
     ("4e7e04c4b161dd04dc671fb5288e3cc772d9086345cb03b7f5ed8538905e8e27" "23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))

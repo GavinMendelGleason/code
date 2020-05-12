@@ -35,8 +35,8 @@ create_abstract_domain(Module) :-
     check_module_exports(Module),
     retractall(clpad:anti_domain(_,_@Module)),
     retractall(clpad:domain(_,_@Module)),
-    retractall(Module:attr_unify_hook/2),
-    retractall(Module:atribute_goals/2),
+    retractall(Module:attr_unify_hook(_,_)),
+    retractall(Module:atribute_goals(_,_)),
     % Add domain predicates for this module
     assertz(
         (domain(X, Domain@Module) :-
@@ -87,4 +87,4 @@ create_abstract_domain(Module) :-
              [ clpad:domain(X, Domain@Module) ]),
         Attribute_Goals),
     %  Translate attributes from this module to residual goals
-    assertz(Module:Attribute_Goals).
+    assertz(Attribute_Goals).

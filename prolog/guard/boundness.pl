@@ -20,9 +20,9 @@ element(ground).
 element(bottom).
 
 order(var,top).
-order(ground,top).
-order(nonvar,ground).
-order(bottom,nonvar).
+order(nonvar,top).
+order(ground,nonvar).
+order(bottom,ground).
 order(bottom,var).
 
 in(_,top).
@@ -42,10 +42,10 @@ in(X,ground) :-
 
 test(meet,[]) :-
     meet(var,nonvar,bottom),
-    meet(nonvar,ground,nonvar).
+    meet(nonvar,ground,ground).
 
 test(join,[]) :-
-    join(nonvar,ground,ground),
+    join(nonvar,ground,nonvar),
     join(var,nonvar,top).
 
 test(pseudo_complement,[]) :-
