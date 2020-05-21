@@ -190,6 +190,7 @@
 ;;(setq prolog-program-name "swipl") ;;
 ;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
 ;;
+;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dl.bintray.com/terminusdb/terminusdb/0.0.1")
 (setq prolog-program-name "/home/gavin/dev/terminus-server/start.pl")
 
 ;;(setq prolog-program-name "swipl")
@@ -220,14 +221,14 @@
 			 (er-refresh-etags extension)
 			 ad-do-it))))
 
-;; (defun er-refresh-etags (&optional extension)
-;;   "Run etags on all peer files in current dir and reload them silently."
-;;   (let ((my-tags-file (locate-dominating-file default-directory "TAGS")))
-;; 	(when my-tags-file
-;; 	  (message "Loading tags file: %s" my-tags-file)
-;; 	  (let ((tags-dir (file-name-directory my-tags-file)))
-;; 		(create-prolog-tags tags-dir)
-;;   		(visit-tags-table my-tags-file)))))
+(defun er-refresh-etags (&optional extension)
+  "Run etags on all peer files in current dir and reload them silently."
+  (let ((my-tags-file (locate-dominating-file default-directory "TAGS")))
+	(when my-tags-file
+	  (message "Loading tags file: %s" my-tags-file)
+	  (let ((tags-dir (file-name-directory my-tags-file)))
+		(create-prolog-tags tags-dir)
+  		(visit-tags-table my-tags-file)))))
 
 ;; (lsp-register-client
 ;;   (make-lsp-client
@@ -329,7 +330,7 @@
     ("4e7e04c4b161dd04dc671fb5288e3cc772d9086345cb03b7f5ed8538905e8e27" "23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
  '(package-selected-packages
    (quote
-    (spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
+    (with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
  '(prolog-compile-string
    (quote
     ((eclipse "[%f].")
