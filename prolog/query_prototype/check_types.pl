@@ -1,39 +1,72 @@
 :- module(check_types, [can_be/2,
-                        is/2,
+                        will_be/2,
+                        the/2,
                         node/1,
                         literal/1,
-                        object/1]).
+                        obj/1]).
 
-can_be(Type,X) :-
+:- op(601, xfx, @).
+:- op(601, xfx, ^^).
+
+:- meta_predicate do_or_die(:,?).
+do_or_die(Goal, Error) :-
+    (   call(Goal)
+    ->  true
+    ;   throw(Error)).
+
+will_be(Type,X) :-
+    freeze(X,
+           do_or_die(
+               the(Type,X),
+               error(type_error(Type,X),_Ctx))).
+
+can_be(_Type,X) :-
     var(X),
     !.
 can_be(Type,X) :-
-    is(Type,X).
+    the(Type,X).
 
-is(literal,X) :-
+is_already(_Type,X) :-
+    var(X),
+    !,
+    throw(error(instantiation_error,_Ctx)).
+is_already(Type,X) :-
+    the(Type,X).
+
+the(literal,X) :-
     literal(X).
-is(object,X) :-
-    object(X).
-is(node,X) :-
+the(obj,X) :-
+    obj(X).
+the(node,X) :-
     node(X).
-is(ground,X) :-
+the(ground,X) :-
     ground(X).
-is(var,X) :-
+the(var,X) :-
     var(X).
-is(atom,X) :-
+the(atom,X) :-
     atom(X).
-is(integer,X) :-
+the(string,X) :-
+    string(X).
+the(integer,X) :-
     integer(X).
-is(any,_X).
+the(any,_X).
 
-node(X) :-
+node(n(X)) :-
     can_be(atom,X).
 
-literal(X) :-
-    can_be(integer,X)
+literal_base(v(X)) :- atom(X).
+literal_base(base(X)) :-
+    can_be(string,X).
 
-object(n(X)) :-
-    node(X).
-object(l(X)) :-
-    node(X).
+literal_type(v(X)) :- atom(X).
+literal_type(type(X)) :-
+    can_be(atom,X).
 
+literal(v(X)) :- atom(X).
+literal(l(X^^Y)) :-
+    literal_base(X),
+    literal_type(Y).
+
+obj(v(X)) :- can_be(atom,X).
+obj(n(X)) :- can_be(atom,X).
+obj(l(X)) :- can_be(literal,l(X)).

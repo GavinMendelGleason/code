@@ -8,6 +8,16 @@
 (package-initialize) ;; You might already have this line
 
 ;;; *******************************************
+;;; Emacs as window manager? Surely you're joking?!
+;;(require 'exwm)
+;;(require 'exwm-config)
+;;(exwm-config-example)
+
+;;; *****************
+;;; window navigation
+;; (windmove-default-keybindings)
+
+;;; *******************************************
 ;;; Fixes
 ;; Open in the RIGHT fecking window
 (add-to-list
@@ -44,6 +54,7 @@
   (load-theme 'suscolors t))
 
 ;; Tramp Colour
+;;(setq tramp-default-method "ssh")
 ;;(setq tramp-theme-face-remapping-alist '(background . "Purple"))
 ;; (require 'tramp-theme)
 ;; (setq tramp-theme-face-remapping-alist
@@ -152,7 +163,11 @@
 (require 'whitespace)
 
 ;; Magit
-;;(require 'magit)
+(require 'magit)
+(global-set-key (kbd "C-x g") 'magit-status)
+
+;; Rust
+(require 'rust-mode)
 
 ;; load csp-mode setup code
 ;;(add-to-list 'load-path "/home/francoisbabeuf/share/emacs/site-lisp/csp-mode")
@@ -187,10 +202,15 @@
           (lambda ()
             (setq indent-tabs-mode nil)))
 
+
 ;;(setq prolog-program-name "swipl") ;;
 ;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
 ;;
+;;(setenv "TERMINUSDB_HTTPS_ENABLED" "false") ;; "true") ;;
+(setenv "TERMINUSDB_HTTPS_ENABLED" "true")
+(setenv "TERMINUSDB_SERVER_PORT" "6363")
 ;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dl.bintray.com/terminusdb/terminusdb/0.0.1")
+;;(setenv "TERMINUSDB_IGNORE_REF_AND_REPO_SCHEMA" "true")
 (setq prolog-program-name "/home/gavin/dev/terminus-server/start.pl")
 
 ;;(setq prolog-program-name "swipl")
@@ -330,7 +350,7 @@
     ("4e7e04c4b161dd04dc671fb5288e3cc772d9086345cb03b7f5ed8538905e8e27" "23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
  '(package-selected-packages
    (quote
-    (with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
+    (tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
  '(prolog-compile-string
    (quote
     ((eclipse "[%f].")
@@ -368,6 +388,7 @@
                          (concat "make -C " m31-root-directory))))
              (setq m31-executable
                    (concat m31-root-directory "andromeda.native")))))))
+ '(send-mail-function (quote mailclient-send-it))
  '(ttl-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
