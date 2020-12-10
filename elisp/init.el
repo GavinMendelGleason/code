@@ -7,6 +7,12 @@
                          ("melpa" . "http://melpa.org/packages/")))
 (package-initialize) ;; You might already have this line
 
+;; Kill the useless menu bar
+(menu-bar-mode -1)
+
+;; do something smart if lines are super long
+(global-so-long-mode 1)
+
 ;;; *******************************************
 ;;; Emacs as window manager? Surely you're joking?!
 ;;(require 'exwm)
@@ -15,7 +21,7 @@
 
 ;;; *****************
 ;;; window navigation
-;; (windmove-default-keybindings)
+(windmove-default-keybindings)
 
 ;;; *******************************************
 ;;; Fixes
@@ -176,6 +182,21 @@
 ;;; Prolog mode
 ;; (require 'lsp-mode)
 ;; (lsp-register-client
+;;   (make-lsp-client
+;;    :new-connection
+;;    (lsp-stdio-connection (list "swipl"
+;;                                "-g" "use_module(library(lsp_server))."
+;;                                "-g" "lsp_server:main"
+;;                                "-t" "halt"
+;;                                "--" "stdio"))
+;;    :major-modes '(prolog-mode)
+;;    :priority 1
+;;    :multi-root t
+;;    :server-id 'prolog-ls))
+;; (setq lsp-enable-snippet t)
+
+;; (require 'lsp-mode)
+;; (lsp-register-client
 ;;  (make-lsp-client
 ;;   :new-connection
 ;;   (lsp-stdio-connection (list "swipl"
@@ -207,16 +228,31 @@
 ;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
 ;;
 ;;(setenv "TERMINUSDB_HTTPS_ENABLED" "false") ;; "true") ;;
+;;(setenv "TERMINUSDB_HTTPS_ENABLED" "false")
 (setenv "TERMINUSDB_HTTPS_ENABLED" "true")
 (setenv "TERMINUSDB_SERVER_PORT" "6363")
+;;(setenv "TERMINUSDB_SERVER_DB_PATH" "/home/gavin/dev/terminus_electron")
 ;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dl.bintray.com/terminusdb/terminusdb/0.0.1")
-;;(setenv "TERMINUSDB_IGNORE_REF_AND_REPO_SCHEMA" "true")
-(setq prolog-program-name "/home/gavin/dev/terminus-server/start.pl")
+;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dl.bintray.com/terminusdb/terminusdb/0.0.1")
+(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dcm.ist/console/v4.0.0")
+(setenv "TERMINUSDB_IGNORE_REF_AND_REPO_SCHEMA" "true")
+;;(setq prolog-program-name "/home/gavin/dev/terminus-server/start.pl")
+(setenv "TERMINUSDB_SERVER_DB_PATH" "/home/gavin/dev/terminusdb/storage/db")
+
+(setenv "TERMINUS_BFF_URL" "https://terminusdb.com/")
+(setenv "TERMINUS_HUB_URL" "https://hub.terminusdb.com/")
+(setenv "AUTH0_DOMAIN" "terminusdb.eu.auth0.com")
+(setenv "AUTH0_CLIENT_ID" "4EYIHQaVLgwi5V5m2gRNYdtpZZfbwtDz")
+(setenv "AUDIENCE" "https://terminusdb.com/hubservices")
+
+
+(setq prolog-system 'swi)
+(setq prolog-program-name "/home/gavin/dev/terminusdb/start.pl")
 
 ;;(setq prolog-program-name "swipl")
 ;; Automatic Etags for prolog
 (setq tags-table-list
-	  '("/home/gavin/dev/terminus-server"))
+	  '("/home/gavin/dev/terminusdb"))
 
 ;; Run this the first time you use tags
 ;; (create-prolog-tags "/home/gavin/dev/terminus-server")
@@ -350,7 +386,7 @@
     ("4e7e04c4b161dd04dc671fb5288e3cc772d9086345cb03b7f5ed8538905e8e27" "23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
  '(package-selected-packages
    (quote
-    (tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
+    (so-long tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
  '(prolog-compile-string
    (quote
     ((eclipse "[%f].")
