@@ -227,9 +227,10 @@
 ;;(setq prolog-program-name "swipl") ;;
 ;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
 ;;
+(setenv "TERMINUSDB_FILE_STORAGE_PATH" "/home/gavin/dev/terminusdb/storage/")
 ;;(setenv "TERMINUSDB_HTTPS_ENABLED" "false") ;; "true") ;;
-;;(setenv "TERMINUSDB_HTTPS_ENABLED" "false")
-(setenv "TERMINUSDB_HTTPS_ENABLED" "true")
+(setenv "TERMINUSDB_HTTPS_ENABLED" "false")
+;;(setenv "TERMINUSDB_HTTPS_ENABLED" "true")
 (setenv "TERMINUSDB_SERVER_PORT" "6363")
 ;;(setenv "TERMINUSDB_SERVER_DB_PATH" "/home/gavin/dev/terminus_electron")
 ;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dl.bintray.com/terminusdb/terminusdb/0.0.1")
@@ -244,10 +245,13 @@
 (setenv "AUTH0_DOMAIN" "terminusdb.eu.auth0.com")
 (setenv "AUTH0_CLIENT_ID" "4EYIHQaVLgwi5V5m2gRNYdtpZZfbwtDz")
 (setenv "AUDIENCE" "https://terminusdb.com/hubservices")
-
+(setenv "PATH" "/home/gavin/.swivm/versions/v8.2.3/lib/swipl/bin/x86_64-linux:/home/gavin/tmp/google-cloud-sdk/bin:/home/gavin/bin:/home/gavin/.local/bin:/home/gavin/go/bin:/home/gavin/.cargo/bin:/home/gavin/.local/bin:/home/gavin/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin")
 
 (setq prolog-system 'swi)
-(setq prolog-program-name "/home/gavin/dev/terminusdb/start.pl")
+(setq prolog-program-name "/home/gavin/dev/terminusdb/src/interactive.pl")
+;;(setq prolog-program-name "/home/gavin/dev/terminusdb/src/start.pl")
+;;(setq prolog-program-switches '((t ("serve" "-i"))))
+(setq prolog-program-switches '((t ())))
 
 ;;(setq prolog-program-name "swipl")
 ;; Automatic Etags for prolog
@@ -386,7 +390,7 @@
     ("4e7e04c4b161dd04dc671fb5288e3cc772d9086345cb03b7f5ed8538905e8e27" "23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
  '(package-selected-packages
    (quote
-    (so-long tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
+    (magit-delta so-long tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
  '(prolog-compile-string
    (quote
     ((eclipse "[%f].")

@@ -2,7 +2,8 @@
               dkw/3,
               decimal_kary/3,
               kd/3,
-              kary_decimal/3
+              kary_decimal/3,
+              triples_to_k_vectors/4
           ]).
 
 /*
@@ -37,12 +38,12 @@ dkw(Int,K,WS) :-
     decimal_kary(Int,K,WS).
 
 decimal_kary(Int,K,Rep) :-
-    log(Int,K,R),
-    decimal_kary_aux(Int,K,R,Rep).
+    once(log(Int,K,R)),
+    once(decimal_kary_aux(Int,K,R,Rep)).
 
 decimal_kary(Int,K,N,Word) :-
-    log(N,K,R),
-    decimal_kary_aux(Int,K,R,Word).
+    once(log(N,K,R)),
+    once(decimal_kary_aux(Int,K,R,Word)).
 
 decimal_kary_aux(Int, _, 0, [Int]).
 decimal_kary_aux(Int, K, R,[D|Rep]) :-
@@ -113,16 +114,18 @@ assuming(G) :-
 
 create_dictionaries(Triples,Dictionaries) :-
     maplist([t(X,Y,Z),X,Y,Z]>>true,Triples, Subjects, Predicates, Objects),
-    include([value(V)]>>true, Objects, Values),
-    include([node(N)]>>true, Objects, Nodes),
+    convlist([value(V),V]>>true, Objects, Values),
+    convlist([node(N),N]>>true, Objects, Nodes),
     append(Subjects, Nodes, All_Nodes),
     sort(All_Nodes,Sorted_Nodes),
     sort(Predicates,Sorted_Predicates),
     sort(Values,Sorted_Values),
     length(Sorted_Nodes, Value_Offset),
-    append([Subjects, Objects], Total),
+    append([Subjects, Nodes], Total),
     length(Total, N),
+    length(Sorted_Predicates, I),
     Dictionaries = dictionaries{
+                       i: I,
                        n: N,
                        nodes: Sorted_Nodes,
                        predicates: Sorted_Predicates,
@@ -131,78 +134,147 @@ create_dictionaries(Triples,Dictionaries) :-
                    }.
 
 predicate_id(Predicate, Dictionaries, ID) :-
-    Predicates = (Dictionary.predicates),
-    nth(ID,Predicate,Predicates).
+    Predicates = (Dictionaries.predicates),
+    once(nth0(ID,Predicates,Predicate)).
 
 node_id(Node, Dictionaries, ID) :-
-    Nodes = (Dictionary.nodes),
-    nth(ID,Node,Nodes).
+    Nodes = (Dictionaries.nodes),
+    once(nth0(ID,Nodes,Node)).
 
 subject_id(Node, Dictionaries, ID) :-
     node_id(Node, Dictionaries, ID).
 
 value_id(Value, Dictionaries, ID) :-
-    Values = (Dictionary.values),
-    nth(Pre_ID,Value,Values),
-    ID #= Pre_ID + (Dictionary.value_offset).
+    Values = (Dictionaries.values),
+    once(nth0(Pre_ID,Values,Value)),
+    ID #= Pre_ID + (Dictionaries.value_offset).
 
 object_id(value(Value), Dictionaries, ID) :-
     value_id(Value, Dictionaries, ID).
 object_id(node(Node), Dictionaries, ID) :-
-    node_id(Value, Dictionaries, ID).
+    node_id(Node, Dictionaries, ID).
 
 triples_to_k_vectors(Triples, Dictionaries, K, [Ss,Ps,Os]) :-
     create_dictionaries(Triples,Dictionaries),
 
-    Values = (Dictionary.values),
-    N = (Dictionary.n),
+    Values = (Dictionaries.values),
+    N = (Dictionaries.n),
 
     maplist({K,N,Dictionaries}/[t(S,P,O),SL,PID,OL]>>(
                 subject_id(S,Dictionaries, SID),
                 decimal_kary(SID,K,N,SL),
                 object_id(O,Dictionaries, OID),
-                decimal_kary(OID,K,N,OL)
-                predicate_id(P,Dictionaries, PID),
+                decimal_kary(OID,K,N,OL),
+                predicate_id(P,Dictionaries, PID)
             ),
             Triples,Ss,Ps,Os).
 
-k_vectors_to_ik2_tree(Vectors, Dictionary, K, Tree) :-
+triples_ik2_tree(Triples, K, Ik2tree) :-
+    triples_to_k_vectors(Triples, Dictionaries, K, [Ss,Ps,Os]),
+    EmptyTree =
+    ik2tree{
+        k: K,
+        dictionaries: Dictionaries, % I in dictionaries
+        l: L
+        t: T
+    },
+    %  transpose S and O
+    transpose(Ss,ST),
+    transpose(Os,OT),
+    build_ik2_tree(ST,OT,Ps, Dictionaries, K, EmptyTree, Ik2Tree).
+
+build_ik2_tree([], [], Ps, _, _, Tree, Tree).
+build_ik2_tree([SL|SN], [OL|ON], Ps, Dictionaries, K, Tree, Final_Tree) :-
+    % 1. find |Y| at previous level (or size of all |Y| for first) - this is I
+    % 2. Use K to form I * K cells with ones based on each Y and S/P
+    Level = K * T,
+    maplist([MSB
     true.
 
-insert_ik2_tree(t(X,Y,Z), Tree, New_Tree) :-
-    N = (Tree.n),
-    K = (Tree.k),
-    assuming((X < N,
-              Y < N,
-              Z < N)),
-
-    decimal_kary(X,K,N,A),
-    decimal_kary(Z,K,N,C),
-    !,
-    insert_ik2_tree_(A,C,Y, Tree, New_Tree).
-
-set_bit(0,[_|T],[1|T]).
-set_bit(N,[X|T],[X|L]) :-
-    N #>= 1,
-    M #= N - 1,
-    set_bit(M,T,L).
-
-% Base case.
-insert_ik2_tree_([X],[Z],Y, Tree, Tree) :-
-    true.
-insert_ik2_tree_([X|Tail],[Z|Tail],Y, Tree, Tree) :-
-    I = (Tree.i),
-    T = (Tree.T),
-    Size is K**2 * I,
-    prefix_or_zeros(T,Size,Level),
-    Index #= X + Z * K,
-    set_bit(Index,Level,New_Level),
-    New_Tree = (Tree.t = New_Level),
-    writeq(Level).
+build_ik2_tree(Ss,Os,Ps, Dictionaries, K, Tree) :-
+    build_ik2_tree(Ss,Os,Ps, Dictionaries, K, Empty_Tree, Final_Tree).
 
 :- begin_tests(insert_triples).
 
-test(insert_triples_1, []) :-
+test(triples_to_k_vectors, []) :-
+
+    triples_to_k_vectors([t(a,b,node(c)), t(c,e,node(f))], D, 2, R),
+
+    D = dictionaries{n:4, nodes:[a, c, f], predicates:[b, e], value_offset:3, values:[]},
+    R = [[[0, 0, 0], [0, 0, 1]], [0, 1], [[0, 0, 1], [0, 1, 0]]].
+
+test(build_ik2_tree, []) :-
     true.
 
 :- end_tests(insert_triples).
+
+
+/*
+
+[[[0,0],[0,0],[0,1]], [0,1], [[0,0],[0,1],[1,0]]]
+
+
+*   *
+|\ /\
+. . .
+|\|\|\
+......
+
+
+[1,1,2]
+ |
+ 1
+
+ 1
+ |
+[0,1,2]
+
+
+
+% (a,b)  (c,d)      [a,b,c,d]
+
+  0,1     2,3
+
+   0 1 | 2 3     K = 2
+   ---------
+0 | 0 0 | 0 0
+1 | 1 0 | 0 0        1001
+  |----------    0010   0010
+2 | 0 0 | 0 0
+3 | 0 0 | 1 0
+
+
+N = 4
+
+   0 1 | 2 3     K = 2
+   ----------
+0 | 0 0 | 0 0 |
+1 | 1 0 | 0 0 |        1001
+  |---------- |    0010   0010
+2 | 0 0 | 0 0 |
+3 | 0 0 | 1 0 |
+  ------------
+
+% (a,p,b)  (c,q,d)      [a,b,c,d]  [p,q]   |[p,q]| = 2
+
+   0 1 | 2 3         K = 2,  I=|predicates|    Previous, Deleted
+   -----------
+0 | 0 0 | 0 0 |
+1 | 1 0 | 0 0 |      (p) 1000  (q) 0001
+  |---------- |       0010            0010
+2 | 0 0 | 0 0 |
+3 | 0 0 | 1 0 |
+  ------------
+
+% .->.->.->   X,Y,Z
+
+
+But how do we deal with deletions? We can expand I to include
++p, or -p, op
+
+
+
+
+
+
+*/
