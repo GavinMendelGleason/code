@@ -13,6 +13,9 @@
 ;; do something smart if lines are super long
 (global-so-long-mode 1)
 
+;; Set Path manually
+(setenv "PATH" "/home/gavin/.cabal/bin:/home/gavin/.swivm/versions/v8.2.3/lib/swipl/bin/x86_64-linux:/home/gavin/tmp/google-cloud-sdk/bin:/home/gavin/bin:/home/gavin/.local/bin:/home/gavin/go/bin:/home/gavin/.cargo/bin:/home/gavin/.local/bin:/home/gavin/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin")
+
 ;;; *******************************************
 ;;; Emacs as window manager? Surely you're joking?!
 ;;(require 'exwm)
@@ -45,6 +48,8 @@
 
 ;; Emacs basics
 (tool-bar-mode -1)
+(tooltip-mode nil)
+(setq tooltip-use-echo-area t)
 
 ;; Colour theme
 (load-theme 'suscolors t)
@@ -102,7 +107,10 @@
 (add-hook 'web-mode-hook 'my-web-mode-hook)
 
 ;; Agda
+;; (setenv "PATH" "")
 ;;(require 'agda-mode)
+(load-file (let ((coding-system-for-read 'utf-8))
+             (shell-command-to-string "agda-mode locate")))
 
 ;; RDF (n3 mode)
 ;;(require 'n3-mode)
@@ -228,27 +236,35 @@
 ;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
 ;;
 (setenv "TERMINUSDB_FILE_STORAGE_PATH" "/home/gavin/dev/terminusdb/storage/")
-;;(setenv "TERMINUSDB_HTTPS_ENABLED" "false") ;; "true") ;;
-(setenv "TERMINUSDB_HTTPS_ENABLED" "false")
+(setenv "TERMINUSDB_HTTPS_ENABLED" "true")
+;;(setenv "TERMINUSDB_HTTPS_ENABLED" "false")
 ;;(setenv "TERMINUSDB_HTTPS_ENABLED" "true")
 (setenv "TERMINUSDB_SERVER_PORT" "6363")
 ;;(setenv "TERMINUSDB_SERVER_DB_PATH" "/home/gavin/dev/terminus_electron")
 ;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dl.bintray.com/terminusdb/terminusdb/0.0.1")
 ;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dl.bintray.com/terminusdb/terminusdb/0.0.1")
-(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dcm.ist/console/v4.0.0")
+(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dl.bintray.com/terminusdb/terminusdb/canary")
+;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dcm.ist/console/v4.0.0")
 (setenv "TERMINUSDB_IGNORE_REF_AND_REPO_SCHEMA" "true")
 ;;(setq prolog-program-name "/home/gavin/dev/terminus-server/start.pl")
 (setenv "TERMINUSDB_SERVER_DB_PATH" "/home/gavin/dev/terminusdb/storage/db")
+(setenv "RUST_BACKTRACE" "1")
+
+;; (setenv "AUTH0_DOMAIN" "terminushub.eu.auth0.com")
+;; (setenv "AUTH0_CLIENT_ID" "MJJndGp0zUdM7o3POTQPmRJImY2ho0ai")
+;; (setenv "AUDIENCE" "https://terminushub/registerUser")
+;; (setenv "TERMINUS_BFF_URL" "https://hub-dev.dcm.ist/")
+;; (setenv "TERMINUS_HUB_URL" "https://hub-dev-server.dcm.ist/")
 
 (setenv "TERMINUS_BFF_URL" "https://terminusdb.com/")
 (setenv "TERMINUS_HUB_URL" "https://hub.terminusdb.com/")
 (setenv "AUTH0_DOMAIN" "terminusdb.eu.auth0.com")
 (setenv "AUTH0_CLIENT_ID" "4EYIHQaVLgwi5V5m2gRNYdtpZZfbwtDz")
 (setenv "AUDIENCE" "https://terminusdb.com/hubservices")
-(setenv "PATH" "/home/gavin/.swivm/versions/v8.2.3/lib/swipl/bin/x86_64-linux:/home/gavin/tmp/google-cloud-sdk/bin:/home/gavin/bin:/home/gavin/.local/bin:/home/gavin/go/bin:/home/gavin/.cargo/bin:/home/gavin/.local/bin:/home/gavin/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin")
 
 (setq prolog-system 'swi)
 (setq prolog-program-name "/home/gavin/dev/terminusdb/src/interactive.pl")
+;;(setq prolog-program-name "/home/gavin/dev/terminusdb/start.pl")
 ;;(setq prolog-program-name "/home/gavin/dev/terminusdb/src/start.pl")
 ;;(setq prolog-program-switches '((t ("serve" "-i"))))
 (setq prolog-program-switches '((t ())))
@@ -318,30 +334,6 @@
 ;; 	(load-file "/usr/local/lib/ciao/ciao-site-file.el")
 ;;   )
 
-;; (autoload 'run-ciao-toplevel "ciao"
-;;          "Start a Ciao/Prolog top-level sub-process." t)
-;; (autoload 'ciao-startup "ciao"
-;;          "The Ciao/Prolog program development system startup screens." t)
-;; (autoload 'ciao "ciao"
-;;          "Start a Ciao/Prolog top-level sub-process." t)
-;; (autoload 'prolog "ciao"
-;;          "Start a Ciao/Prolog top-level sub-process." t)
-;; (autoload 'run-ciao-preprocessor "ciao"
-;;          "Start a Ciao/Prolog preprocessor sub-process." t)
-;; (autoload 'ciaopp "ciao"
-;;          "Start a Ciao/Prolog preprocessor sub-process." t)
-;; (autoload 'ciao-mode "ciao"
-;;          "Major mode for editing and running Ciao/Prolog" t)
-;; (autoload 'ciao-inferior-mode "ciao"
-;;          "Major mode for running Ciao/Prolog, CiaoPP, LPdoc, etc." t)
-;;(setq auto-mode-alist (cons '("\\.pl$" . ciao-mode) auto-mode-alist))
-;;(setq auto-mode-alist (cons '("\\.pls$" . ciao-mode) auto-mode-alist))
-;;(setq auto-mode-alist (cons '("\\.lpdoc$" . ciao-mode) auto-mode-alist))
-;;(setq completion-ignored-extensions
-;;    (append '(".dep" ".itf" ".po" ".asr" ".cpx")
-;;             completion-ignored-extensions))
-
-
 ;; Mercury
 ;;(add-to-list 'load-path
 ;;			 "/usr/local/mercury-rotd-2017-06-22/lib/mercury/elisp")
@@ -381,10 +373,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(agda2-include-dirs (quote ("." "/home/gavin/lib/agda-stdlib/")))
+ '(agda2-include-dirs (quote ("." "/home/gavin/lib/agda-stdlib/src")))
  '(agda2-program-args
    (quote
-    ("--include-path=/home/gavin/lib/agda-stdlib/" "--include-path=.")) t)
+    ("--include-path=/home/gavin/lib/agda-stdlib/src/" "--include-path=.")))
+ '(agda2-program-name "/home/gavin/.cabal/bin/agda")
  '(custom-safe-themes
    (quote
     ("4e7e04c4b161dd04dc671fb5288e3cc772d9086345cb03b7f5ed8538905e8e27" "23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
@@ -446,3 +439,8 @@
 ;;(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
 (put 'downcase-region 'disabled nil)
+
+; @begin(93695291)@ - Do not edit these lines - added automatically!
+;(if (file-exists-p "/home/gavin/dev/ciao/ciao_emacs/elisp/ciao-site-file.el")
+;  (load-file "/home/gavin/dev/ciao/ciao_emacs/elisp/ciao-site-file.el"))
+; @end(93695291)@ - End of automatically added lines.

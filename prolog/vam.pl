@@ -1,9 +1,16 @@
-:- module(vam, [clause/4]).
+:- module(vam, [
+    vam_prove/3
+]).
+
+% boiler plate
+
+phrase_dl(Arg, L-T) :-
+    phrase(Arg, L, T).
 
 const(X) :-
     number(X).
-const(X) :-
-    atom(X).
+
+% VAM code
 
 clause(Head,Goals) -->
     head(Head),
@@ -34,17 +41,20 @@ goal(Goal) -->
     {functuniv(Goal,F,A,L)},
     argumentlist(g,L).
 
+argument(X,Var) -->
+    [X-fstvar,Var],
+    {var(Var)}.
+argument(X,Var) -->
+    [X-nxtvar,Var],
+    {var(Var)}.
 argument(X,Const) -->
     [X-const,Const],
     {const(Const)}.
 argument(X,Str) -->
     [X-struct,F/A],
-    {functuniv(Str,F,A,L)},
+    {\+ var(Str),
+     functuniv(Str,F,A,L)},
     argumentlist(X,L).
-argument(X,Var) -->
-    [X-fstvar,Var].      % assign/initialize
-argument(X,Var) -->
-    [X-nxtvar,Var].      % skip/assign/unify
 argument(X,_)   -->
     [X-void].            % skip
 
@@ -71,9 +81,9 @@ unification((h-const)+(g-fstvar),[Const|Hs]-Hs,[Const|Gs]-Gs). % no trail check
 unification((h-const)+(g-nxtvar),[Const|Hs]-Hs,[Const|Gs]-Gs). % trail check
 unification((h-nxtvar)+(g-nxtvar),[Var|Hs]-Hs,[Var|Gs]-Gs).    % full unification
 unification((h-void)+(g-struct),Hs-Hs,[F/A|Gs]-NGs) :-         % skip goal,
-    parse_dl(argument(g,_),[g-struct,F/A|Gs]-NGs).             % init some g-fstvar
+    phrase_dl(argument(g,_),[g-struct,F/A|Gs]-NGs).             % init some g-fstvar
 unification((h-struct)+(g-fstvar),[F/A|Hs]-NHs,[GVarNr|Gs]-Gs) :-  % no trail check
-    parse_dl(argument(h,GVarNr),[h-struct,F/A|Hs]-NHs).
+    phrase_dl(argument(h,GVarNr),[h-struct,F/A|Hs]-NHs).
 
 % resolution/5: Goal selection
 %% resolution(Head+Goal, Heads, GoalsIn-GoalsOut, StackIn-StackOut, NextPred)
@@ -93,8 +103,19 @@ vam_prove([H|Hs],[G|Gs],St) :-
     vam_prove(NHs,NGs,NSt).
 
 query(Query) :-
-    parse(body(Query),[c-goal,F/A|GoalCode]),
+    phrase(body(Query),[c-goal,F/A|GoalCode]),
     % translation
     vam_clause([F/A|HeadCode]),
     vam_prove(HeadCode,GoalCode,[]).
 
+% Program example. 
+vam_clause(Clause) :-
+    phrase(clause(p(x),(q,r)), Clause, []).
+vam_clause(Clause) :-
+    phrase(clause(p(y),true), Clause, []).
+vam_clause(Clause) :-
+    phrase(clause(q,true), Clause, []).
+vam_clause(Clause) :-
+    phrase(clause(r,true), Clause, []).
+vam_clause(Clause) :-
+    phrase(clause(eq(X,X),true), Clause, []).

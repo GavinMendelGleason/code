@@ -4,12 +4,11 @@
               put//2,
               peek//1,
               return//1,
-              run/3,
-              test//0
+              run/3
           ]).
 
 /*******
- * Mondic DCG management
+ * Monadic DCG management
  *
  * We use DCG's to simplify tracking the state of the WOQL query compiler.
  */
@@ -33,6 +32,7 @@ peek(S0,S0,S0).
 
 return(S0,_,S0).
 
+/* We should have a rule like phrase/2 and phrase/3 */
 :- meta_predicate run(2,?,?).
 run(DCG,Initial_State,Final_State) :-
     call(DCG,Initial_State,Final_State).
@@ -43,28 +43,32 @@ Examples
 
 */
 
-name_steve -->
-    put(name, steve).
+:- begin_tests(dict_state).
 
-name(Name) -->
-    put(name, Name).
+test(put, []) :-
+    Name = "Kantorovich",
+    run(put(name, Name),context{},O),
+    O = context{name:Name}.
 
-write_temp_name(Name) -->
-    update(name, Old_Name, Name),
-    write_name,
-    put(name, Old_Name).
+test(update, []) :-
+    Name = "Kantorovich",
+    Original = context{ name: "Danzig" },
 
-write_name -->
-    view(name, Name),
-    { write(Name),nl }.
+    run(update(name, Old_Name, Name),
+        Original,
+        New),
 
+    New = context{name:"Kantorovich"},
 
-test -->
-    name_steve,
-    write_name,
-    name(helen),
-    write_name,
-    write_temp_name(george),
-    write_name.
+    run(put(name, Old_Name),
+        New,
+        Final),
 
+    Final = context{name:"Danzig"}.
 
+test(view, []) :-
+    Original = context{ name: "Danzig" },
+    run(view(name, Name),Original, Original),
+    Name = "Danzig".
+
+:- end_tests(dict_state).
