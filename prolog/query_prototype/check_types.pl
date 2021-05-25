@@ -26,13 +26,6 @@ can_be(_Type,X) :-
 can_be(Type,X) :-
     the(Type,X).
 
-is_already(_Type,X) :-
-    var(X),
-    !,
-    throw(error(instantiation_error,_Ctx)).
-is_already(Type,X) :-
-    the(Type,X).
-
 the(literal,X) :-
     literal(X).
 the(obj,X) :-

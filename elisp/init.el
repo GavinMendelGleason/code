@@ -16,6 +16,11 @@
 ;; Set Path manually
 (setenv "PATH" "/home/gavin/.cabal/bin:/home/gavin/.swivm/versions/v8.2.3/lib/swipl/bin/x86_64-linux:/home/gavin/tmp/google-cloud-sdk/bin:/home/gavin/bin:/home/gavin/.local/bin:/home/gavin/go/bin:/home/gavin/.cargo/bin:/home/gavin/.local/bin:/home/gavin/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin")
 
+;;; ******
+;;; Lean
+(setq lean-rootdir "/home/gavin/lib/lean-4.0.0-m2-linux/")
+;;(global-set-key (kbd "S-SPC") #'company-complete)
+
 ;;; *******************************************
 ;;; Emacs as window manager? Surely you're joking?!
 ;;(require 'exwm)
@@ -373,55 +378,46 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(agda2-include-dirs (quote ("." "/home/gavin/lib/agda-stdlib/src")))
+ '(agda2-include-dirs '("." "/home/gavin/lib/agda-stdlib/src"))
  '(agda2-program-args
-   (quote
-    ("--include-path=/home/gavin/lib/agda-stdlib/src/" "--include-path=.")))
+   '("--include-path=/home/gavin/lib/agda-stdlib/src/" "--include-path=."))
  '(agda2-program-name "/home/gavin/.cabal/bin/agda")
  '(custom-safe-themes
-   (quote
-    ("4e7e04c4b161dd04dc671fb5288e3cc772d9086345cb03b7f5ed8538905e8e27" "23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default)))
+   '("4e7e04c4b161dd04dc671fb5288e3cc772d9086345cb03b7f5ed8538905e8e27" "23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default))
  '(package-selected-packages
-   (quote
-    (magit-delta so-long tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode)))
+   '(yaml-mode tide helm-lean company-lean ## lean-mode rustic flycheck magit-gh-pulls magit-delta so-long tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode))
  '(prolog-compile-string
-   (quote
-    ((eclipse "[%f].")
+   '((eclipse "[%f].")
      (mercury "mmc ")
      (sicstus
       (eval
        (if
            (prolog-atleast-version
-            (quote
-             (3 . 7)))
+            '(3 . 7))
            "prolog:zap_file(%m,%b,compile,%l)." "prolog:zap_file(%m,%b,compile).")))
      (swi "[%f].")
-     (t "compile(%f)."))))
+     (t "compile(%f).")))
  '(safe-local-variable-values
-   (quote
-    ((eval progn
+   '((eval progn
            (let
                ((m31-root-directory
                  (when buffer-file-name
                    (locate-dominating-file buffer-file-name ".dir-locals.el")))
                 (m31-project-find-file
                  (and
-                  (boundp
-                   (quote m31-project-find-file))
+                  (boundp 'm31-project-find-file)
                   m31-project-find-file)))
              (when m31-root-directory
                (setq tags-file-name
                      (concat m31-root-directory "TAGS"))
-               (add-to-list
-                (quote compilation-search-path)
-                m31-root-directory)
+               (add-to-list 'compilation-search-path m31-root-directory)
                (if
                    (not m31-project-find-file)
                    (setq compile-command
                          (concat "make -C " m31-root-directory))))
              (setq m31-executable
-                   (concat m31-root-directory "andromeda.native")))))))
- '(send-mail-function (quote mailclient-send-it))
+                   (concat m31-root-directory "andromeda.native"))))))
+ '(send-mail-function 'mailclient-send-it)
  '(ttl-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

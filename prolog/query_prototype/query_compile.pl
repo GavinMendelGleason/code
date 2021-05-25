@@ -7,26 +7,52 @@
 :- use_module(utils).
 :- use_module(dict_state).
 :- use_module(check_types).
+:- use_module(difflist).
+%:- use_module(library(clpfd), [transpose/2]).
 
 :- op(601, xfx, @).
 :- op(601, xfx, ^^).
 
 /*
- *
+
+var_binding --> var_binding{
+                   woql_var : Var,
+                   var_name : atom,
+                   descriptor_id_map : Map
+                }
+              | prolog_var_binding{
+                   woql_var : Var,
+                   var_name : atom,
+                   prolog_var : Var,
+                   descriptor_id_map : Map
+                }
+
+state --> query_state{
+             bindings : List,
+             resources : List
+          }
  */
+
+
 is_var_binding(var_binding{
                    woql_var : WOQL_Var,
-                   var_name : Var_Name
-                   descriptor_id_difference_list : DID_DL
+                   var_name : Var_Name,
+                   descriptor_id_map : DID_DL
                }) :-
     atom(Var_Name),
     var(WOQL_Var),
-    difference_list(DID_DL).
+    is_difference_list(DID_DL).
 is_var_binding(prolog_var_binding{
                    woql_var : WOQL_Var,
-                   var_name : Var_Name
+                   var_name : Var_Name,
+                   prolog_var : Prolog_Var,
+                   descriptor_id_map : DID_DL
                }) :-
-    
+    atom(Var_Name),
+    var(WOQL_Var),
+    var(Prolog_Var),
+    is_difference_list(DID_DL).
+
 var_record_pl_var(Var_Name,Binding,WOQL_Var) :-
     var_binding{
         woql_var : WOQL_Var,
@@ -51,15 +77,176 @@ merge_states(S0) -->
 
 merge_vars(Var1,Var2) :-
     var_binding{
-        woql_var : WOQL_Var1,
-        var_name : Var_Name1
+        woql_var : WOQL_Var,
+        var_name : Var_Name,
+        descriptor_id_map : DID_DL
     } :< Var1,
     var_binding{
-        woql_var : WOQL_Var2,
-        var_name : Var_Name2
+        woql_var : WOQL_Var,
+        var_name : Var_Name,
+        descriptor_id_map : DID_DL
     } :< Var2,
 
-    (   get_dict(
+    ignore(
+        (   get_dict(prolog_var, Var1, PV),
+            get_dict(prolog_var, Var2, PV))
+    ).
+
+:- begin_tests(merge).
+
+test(merge_same, []) :-
+    Var1 = var_binding{
+               woql_var : V1,
+               var_name : 'v',
+               descriptor_id_map : _DL1
+           },
+    Var2 = var_binding{
+        woql_var : V2,
+        var_name : 'v',
+        descriptor_id_map : _DL2
+    },
+
+    merge_vars(Var1, Var2),
+
+    get_dict(woql_var, Var1, V1),
+    get_dict(woql_var, Var2, V2),
+    V1 == V2,
+    get_dict(descriptor_id_map, Var1, DL1),
+    get_dict(descriptor_id_map, Var2, DL2),
+    DL1 == DL2.
+
+test(merge_different, []) :-
+    Var1 = var_binding{
+               woql_var : V1,
+               var_name : 'v',
+               descriptor_id_map : _DL1,
+               prolog_var : _X
+           },
+    Var2 = var_binding{
+        woql_var : V2,
+        var_name : 'v',
+        descriptor_id_map : _DL2
+    },
+
+    merge_vars(Var1, Var2),
+
+    get_dict(woql_var, Var1, V1),
+    get_dict(woql_var, Var2, V2),
+    V1 == V2,
+    get_dict(descriptor_id_map, Var1, DL1),
+    get_dict(descriptor_id_map, Var2, DL2),
+    DL1 == DL2.
+
+test(unify_output_bindings, []) :-
+    Bindings1 = [var_binding{descriptor_id_map:A, var_name:v2, woql_var:B}],
+    Bindings2 = [var_binding{descriptor_id_map:C, var_name:v2, woql_var:D},
+                 var_binding{descriptor_id_map:E, var_name:v3, woql_var:F}],
+    unify_output_bindings(Bindings1, Bindings2),
+
+    Bindings1 == [var_binding{descriptor_id_map:C, var_name:v2, woql_var:D}],
+    Bindings2 == [var_binding{descriptor_id_map:A, var_name:v2, woql_var:B},
+                  var_binding{descriptor_id_map:E, var_name:v3, woql_var:F}].
+
+test(merge_states, []) :-
+    S0 = query_state{
+             bindings: [
+                 var_binding{
+                     woql_var : V0_1,
+                     var_name : v1,
+                     descriptor_id_map : DIM0_1
+                 },
+                 var_binding{
+                     woql_var : V0_2,
+                     var_name : v2,
+                     descriptor_id_map : DIM0_2
+                 }],
+             resources: [
+                 branch_graph{ organization_name: "admin",
+                                    database_name : "db",
+                                    repository_name : "local",
+                                    branch_name : "main",
+                                    type : instance,
+                                    name : "main" } = G0_1,
+                 branch_graph{ organization_name: "admin",
+                                    database_name : "db",
+                                    repository_name : "local",
+                                    branch_name : "main",
+                                    type : schema,
+                                    name : "main" } = G0_2
+             ]
+         },
+    S1 = query_state{
+             bindings: [
+                 var_binding{
+                     woql_var : V1_2,
+                     var_name : v2,
+                     descriptor_id_map : DIM1_2
+                 },
+                 var_binding{
+                     woql_var : V1_3,
+                     var_name : v3,
+                     descriptor_id_map : DIM1_3
+                 }],
+             resources: [
+                 branch_graph{ organization_name: "admin",
+                               database_name : "db",
+                               repository_name : "local",
+                               branch_name : "main",
+                               type : schema,
+                               name : "main" } = G1_2
+             ]
+         },
+
+    merge_states(S0,S1,S2),
+
+    S2 = query_state{
+             bindings:[
+                 var_binding{
+                     descriptor_id_map: DIM2_1,
+                     var_name: v1,
+                     woql_var: V2_1
+                 },
+                 var_binding{
+                     descriptor_id_map: DIM2_2,
+                     var_name: v2,
+                     woql_var: V2_2
+                 },
+                 var_binding{
+                     descriptor_id_map: DIM2_3,
+                     var_name: v3,
+                     woql_var: V2_3
+                 }],
+             resources:[
+                 branch_graph{
+                     branch_name:"main",
+                     database_name:"db",
+                     name:"main",
+                     organization_name:"admin",
+                     repository_name:"local",
+                     type:instance
+                 }= G2_1,
+                 branch_graph{
+                     branch_name:"main",
+                     database_name:"db",
+                     name:"main",
+                     organization_name:"admin",
+                     repository_name:"local",
+                     type:schema
+                 }= G2_2]
+         },
+    V2_1 == V0_1,
+    V2_2 == V0_2,
+    V2_2 == V1_2,
+    V2_3 == V1_3,
+    DIM2_1 == DIM0_1,
+    DIM2_2 == DIM0_2,
+    DIM2_2 == DIM1_2,
+    DIM2_3 == DIM1_3,
+    G2_1 == G0_1,
+    G2_2 == G0_2,
+    G2_2 == G1_2.
+
+:- end_tests(merge).
 
 unify_same_named_vars([],_Var).
 unify_same_named_vars([Var1|Vars],Var) :-
@@ -93,10 +280,6 @@ merge_resource_bindings(B0, B1, Bindings) :-
     append(B0, B1, All),
     predsort(compare, All, Bindings).
 
-/*
- * Module to test query ideas
- */
-
 compile_goal(p(Predicate),Goal) -->
     compile_predicate(Predicate,Goal).
 compile_goal((Q1,Q2),(Goal1,Goal2)) -->
@@ -117,58 +300,77 @@ compile_predicate(Predicate, Goal) -->
 
 is_true(true).
 
+/* TBD. Needs to actually resolve the resource
+ *
+ */
+resolve_resource(_Relative_Resource,Resource) -->
+    view(default_collection,Default),
+    view(resources, Resources),
+    { memberchk(Default=Resource,Resources)
+
+resource_arg(false,Types,Args,[Resource_Arg]) -->
+    (   { once(nth0(N,Types,descriptor)),
+          once(nth0(N,Args,r(Relative_Resource)))
+        }
+    ->  resolve_resource(Relative_Resource,Resource)
+    ;   { once(nth0(N,Types,graph_descriptor)),
+          once(nth0(N,Args,r(Relative_Resource)))
+        }
+    ->  resolve_graph_resource(Relative_Resource,Resource)
+    ;   { true }
+    ),
+    register_resource(Resource, Resource_Arg).
+resource_arg(false,_,_,[]) -->
+    {true}.
+
+resource_arg(true,Types,Args,Resource_Arg) -->
+    true.
+resource_arg(false,Types,Args,Resource_Arg) -->
+    true.
+
 compile_predicate_descriptor(P/N,Args,Goal) -->
     { query_term_properties(P{ arity: N,
                                implementation: System_P,
-                               mode: Modes,
+                               mode: Mode_Lines,
                                type: Types,
                                resource: Resource,
-                               stream: Stream}),
-      zip(Args,Resolved,Args_Resolved),
-      zip(Modes,Types,Modes_Types) },
-    mapm(resolve,Args_Resolved,Modes_Types,Pre_Goals_Post_Goals),
+                               stream: Stream}) },
+    mapm(resolve,Args,Resolved,Types,Pre_Goal,Post_Goal),
+    { mode_goal(Args,Resolved,Mode_Lines,Mode_Goal) },
     resource_arg(Resource,Types,Args,Resource_Arg),
     stream_arg(Stream,Stream_Arg),
-    { zip(Pre_Goals, Post_Goals, Pre_Goals_Post_Goals),
-      append([Resolved,Resource_Arg,Stream_Arg],Implementation_Args),
+    { append([Resolved,Resource_Arg,Stream_Arg],Implementation_Args),
       Predicate_Goal =.. [System_P|Implementation_Args],
-      append([Pre_Goals,[Predicate_Goal],Post_Goals], Goal_List),
+      append([[Mode_Goal|Pre_Goal],[Predicate_Goal],[Post_Goal]], Goal_List),
       xfy_list(',',Goal, Goal_List) }.
-
-%% resource_arg(true, Args, Types, Resource_Arg) -->
-%%     {convlist([Arg,resource,Arg]>>true, Args, Types, Resource_Arg)}
-
-%% stream_arg(Stream, Args, Types, Stream_Arg) -->
-%%     peek(Stream, Arg
-
 
 query_term_properties(
     t{ arity: 3,
        implementation: triple,
-       mode: [any,any,any],
+       mode: [[any,any,any]],
        type: [node,node,obj],
-       resource: true,
+       resource: graph,
        stream: false }).
 query_term_properties(
     t{ arity: 4,
        implementation: triple,
-       mode: [any,any,any,ground],
-       type: [node,node,obj,resource],
-       resource: true,
+       mode: [[any,any,any,ground]],
+       type: [node,node,obj,graph],
+       resource: false,
        stream: false }).
 query_term_properties(
     insert{ arity: 3,
        implementation: insert,
-       mode: [any,any,any],
+       mode: [[any,any,any]],
        type: [node,node,obj],
-       resource: true,
+       resource: graph,
        stream: false }).
 query_term_properties(
     insert{ arity: 4,
        implementation: insert,
-       mode: [any,any,any,ground],
-       type: [node,node,obj,resource],
-       resource: true,
+       mode: [[any,any,any,ground]],
+       type: [node,node,obj,graph],
+       resource: false,
        stream: false }).
 
 mode_check_var(ground,Var,Term,
@@ -177,8 +379,8 @@ mode_check_var(ground,Var,Term,
                     error(instantiation_error(Var,Term))))).
 mode_check_var(any,_,_,true).
 
-mode_check(v(Var),Type,Term,Goal) :-
-    mode_check_var(Type,Var,Term,Goal).
+mode_check(v(Var),Term,Mode,Goal) :-
+    mode_check_var(Mode,Var,Term,Goal).
 mode_check(n(_),_,_,true).
 mode_check(l(_),_,_,true).
 mode_check(o(_),_,_,true).
@@ -193,9 +395,9 @@ type_check_literal(obj).
 type_check(r(Term), resource, _, true) :-
     % Must be atom at compile time.
     do_or_die(
-        the(atom,Term),
+        the(resource,Term),
         error(woql_type_error(Term,resource))).
-type_check(v(_), Type, Term, will_be(Type,Term)).
+type_check(v(_), Type, Term, can_be(Type,Term)).
 type_check(n(_), Type, _, true) :-
     type_check_node(Type).
 type_check(l(_), Type, _, true) :-
@@ -219,10 +421,11 @@ lookup_or_extend(Var_Name, Prolog_Var) -->
         (   lookup(Var_Name, Prolog_Var, B0)
         ->  B0 = B1
         ;   extend(Var_Name, Prolog_Var, B0, B1)
+        )
     }.
 
-variable_resolve(Var_Name,Variable) -->
-    lookup_or_extend(Var_Name,Variable).
+variable_resolve(Var_Name, Variable) -->
+    lookup_or_extend(Var_Name, Variable).
 
 type_resolve(v(Var_Name), Variable, true) -->
     variable_resolve(Var_Name,Variable).
@@ -253,21 +456,35 @@ literal_resolve(X^^T, XE^^TE, Goal) -->
 
 term_resolve(v(Var_Name), Variable, true) -->
     variable_resolve(Var_Name, Variable).
-term_resolve(l(Literal), Variable, Goal) -->
-    literal_resolve(Literal,Variable,Goal).
+term_resolve(l(Literal), Term, Goal) -->
+    literal_resolve(Literal,Term,Goal).
 term_resolve(r(Uri), Var, true) -->
     register_resource(Uri, Var).
 term_resolve(n(Uri), n(Uri), true) -->
     { true }.
 
-
-resolve(Element-Term,Mode-Type,(Mode_Goal,Type_Goal,Term_Goal)-true) -->
-    term_resolve(Element,Term,Term_Goal),
-    { mode_check(Element,Mode,Term,Mode_Goal),
-      do_or_die(
-          type_check(Element,Type,Term,Type_Goal),
-          error(woql_type_error(Element,Term,Type)))
+resolve(Arg,Term,Type,Pre_Type_Goal,Post_Goal) -->
+    term_resolve(Arg,Term,Term_Goal),
+    { do_or_die(
+          type_check(Arg,Type,Term,Pre_Type_Goal,Post_Type_Goal),
+          error(woql_type_error(Element,Term,Type))),
+      Post_Goal = (Term_Goal,Post_Type_Goal)
     }.
+
+:- meta_predicate choose(0,0).
+choose(A,B) :-
+    (   call(A)
+    ->  true
+    ;   call(B)
+    ).
+
+mode_line(Args,Terms,Modes,Goal) :-
+    maplist(mode_check,Args,Terms,Modes,Goal_List),
+    xfy_list(',', Goal, Goal_List).
+
+mode_goal(Args, Terms, Mode_Lines, Goal) :-
+    maplist(mode_line(Args,Terms), Mode_Lines, Goal_List),
+    xfy_list(choose, Goal, Goal_List).
 
 simplify(true,true) :-
     !.

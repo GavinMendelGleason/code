@@ -1,17 +1,17 @@
 :- module(difflist, [
-              is_dl/1,
+              is_difference_list/1,
               append_dl/3,
               member_dl/2,
               push_dl/3,
               push_new_dl/3
           ]).
 
-is_dl(dl(L,T)) :-
+is_difference_list(dl(L,T)) :-
     var(L),
     !,
     T == L.
-is_dl(dl([_|T],R)) :-
-    is_dl(T-R).
+is_difference_list(dl([_|T],R)) :-
+    is_difference_list(dl(T,R)).
 
 append_dl(dl(X,Y), dl(Y,YT), dl(X,YT)).
 
