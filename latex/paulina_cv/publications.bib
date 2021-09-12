@@ -1,0 +1,60 @@
+%% start of file `publications.bib'.
+
+@article{fixing,
+  author = {Kevin Chekov Feeney and Gavin Mendel Gleason and Rob Brennan},
+  title = {Linked data schemata: fixing unsound foundations},
+  journal = {Semantic Web Journal},
+  year = {2017},
+  abstract = {This paper describes our tools and method for an evaluation of the practical and logical implications of combining com-mon linked data vocabularies into a single local logical model for the purpose of reasoning or performing quality evalua-tions. These vocabularies need to be unified to form a combined model because they reference or reuse terms from other linked data vocabularies and thus the definitions of those terms must be imported. We found that strong interdependen-cies between vocabularies are common and that a significant number of logical and practical problems make this model unification inconsistent. In addition to identifying problems, this paper suggests a set of recommendations for linked data ontology design best practice. Finally we make some suggestions for improving OWL’s support for distributed authoring and ontology reuse.}
+}
+
+@article{checking,
+  author = {Gavin Mendel-Gleason and Rob Brennan and Kevin Feeney},
+  title = {Ontology consistency and instance checking for real world linked data},
+  booktitle = {2nd Workshop on Linked Data Quality},
+  year = {2016},
+  abstract = {Many large ontologies have been created which make use of OWL's expressiveness for specication. However, tools to ensure that instance data is in compliance with the schema are often not well integrated with triple-stores and cannot detect certain classes of schema-instance inconsistency due to the assumptions of the OWL axioms. This can lead to lower quality, inconsistent data. We have developed a simple ontology consistency and instance checking service, SimpleConsist[8]. We also define a number of ontology design best practice constraints on OWL or RDFS schemas. Our implementation allows the user to specify which constraints should be applied to schema and instance data.}
+}
+
+@article{building,
+  author = {Rob Brennan and Kevin Feeney and Gavin Mendel-Gleason and Stephanie Grohmann},
+  title = {Building the Seshat Ontology for a Global History Databank},
+  journal = {The Semantic Web. Latest Advances and New Domains},
+  pages = {693 -- 708},
+  year = {2017},
+  abstract = {This paper describes OWL ontology re-engineering from the wiki-based social science codebook (thesaurus) developed by the Seshat: Global History Databank. The ontology describes human history as a set of over 1500 time series variables and supports variable uncertainty, temporal scoping, annotations and bibliographic references. The ontology was developed to transition from traditional social science data collection and storage techniques to an RDF-based approach. RDF supports automated generation of high usability data entry and validation tools, data quality management, incorporation of facts from the web of data and management of the data curation lifecycle. This ontology re-engineering exercise identified several pitfalls in modelling social science codebooks with semantic web technologies; provided insights into the practical application of OWL to complex, real-world modelling challenges; and has enabled the construction of new, RDF-based tools to support the large-scale Seshat data curation effort. The Seshat ontology is an exemplar of a set of ontology design patterns for modelling uncertainty or temporal bounds in standard RDF. Thus the paper provides guidance for deploying RDF in the social sciences. Within Seshat, OWL-based data quality management will assure the data is suitable for statistical analysis. Publication of Seshat as high-quality, linked open data will enable other researchers to build on it.}
+}
+
+@article{devlopment,
+  author = {Gavin Mendel-Gleason and G.W. Hamilton}, 
+  title = {Development of the Productive Forces},
+  journal = {International Valentin Turchin Workshop on Metacomputation}, 
+  year = {2012},
+  abstrct = {Proofs involving infinite structures can use corecursive functions as inhabitants of a corecursive type. Admissibility of such functions in theorem provers such as Coq orAgda, requires that these functions areproductive. Typically this is proved by showing satisfaction of a guardedness condition. The guardedness condition however is extremely restrictive and many programs which are in fact productive and therefore willnot compromise soundness are nonetheless rejected. Supercompilationis a family of program transformations which retain program equiva-lence. Using supercompilation we can take programs whose productivityis suspected and transform them into programs for which guardedness issyntactically apparent.}
+}
+
+@article{graph,
+  author = {Geoff Hamilton and Gavin Mendel-Gleason},
+  title = {A Graph-Based Definition of Distillation},
+  journal = {International Workshop on Metacomputation in Russia},
+  year = {2010}, 
+  abstract = {In this paper, we give a graph-based definition of the distillation transformation algorithm. This definition is made within a similar framework to the positive supercompilation algorithm, thus allowing for a more in-depth comparison of the two algorithms. We show that the main distinguishing characteristic between the two algorithms is that in positive supercompilation, generalization and folding are performed with respect to expressions, while in distillation they are performed with respect to graphs. We also show that while only linear improvements in performance are possible using positive supercompilation, super-linear improvements are possible using distillation. This is because computationally expensive terms can only be extracted from within loops when generalizing graphs rather than expressions.}
+}
+
+@article{normalisation,
+  author={Gavin Mendel-Gleason and Geoff Hamilton},
+  title = {Supercompilation and Normalisation By Evaluation},
+  journal = {Second International Workshop on Metacomputation in Russia},
+  year = {2010},
+  abstract = {It has been long recognised that partial evaluation is related to proof normalisation. Normalisation by evaluation, which has been pre-sented for theories with simple types, has made this correspondence for-mal. Recently Andreas Abel formalised an algorithm for normalisationby evaluation for System-F. This is an important step towards the useof such techniques on practical functional programming languages suchas Haskell which can reasonably be embedded in relatives of System-omega . Supercompilation is a program transformation technique which performs a super-set of the simplifications performed by partial evaluation. The focus of this paper is to formalise the relationship between supercompilation and normalisation by evaluation for System-F with recursive types and terms.}
+}
+
+@article{inhabitation,
+  author = {Gavin Mendel-Gleason and Geoff Hamilton},
+  title = {Inhabitation of (Co)-inductive Types using Transition Systems, Workshop on Partiality and Recursion in Interactive Theorem Provers},
+  journal = {Second International Workshop on Metacomputation in Russia},
+  year = {2010},
+  abstract = {It is possible to provide a proof for a coinductive type using a corecursive function coupled with a guardedness condition. The guardedness condition, however, is quite restrictive and many programs which are in fact productive and do not compromise soundness will be rejected. We present a system of cyclic proof for an extension of System F extended with sums, products and (co)inductive types. Using program transformation techniques we are able to take some programs whose productivity is suspected and transform them, using a suitable theory of equivalence, into programs for which guardedness is syntactically apparent. The equivalence of the proof prior and subsequent to transformation is given by a bisimulation relation.}
+}
+
+%% end of file `publications.bib'.
