@@ -1,6 +1,9 @@
 \documentclass[a4paper,11pt]{moderncv}
 
-\usepackage[british]{babel}
+%\usepackage[british]{babel}
+\usepackage[german]{babel}
+%\usepackage[style=alphabetic]{biblatex}
+
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
@@ -9,6 +12,10 @@
 %\usepackage{slantsc}
 %\usepackage{microtype}
 \usepackage{textcase}
+
+\usepackage[backend=biber]{biblatex}
+\usepackage{url}
+\addbibresource{publications.bib}
 
 \newcommand{\cvreference}[7]{%
   \textbf{#1}\newline% Name
@@ -29,14 +36,12 @@
 %\setlength{\hintscolumnwidth}{45mm}
 %\AtBeginDocument{\recomputelengths}
 
-\firstname{Dr. Gavin}
-\familyname{Mendel-Gleason}
-\title{Chief Technology Officer}
-\address{169 St. Attracta Road}{Cabra, Dublin 7}
-\mobile{085 136 8737}
-%\phone{01 02 03 04 05}
-%\fax{01 02 03 04 05}
-\email{jacobian@gmail.com}
+\firstname{Paulina}
+\familyname{Abzieher, M.Phil.}
+\title{Translation Project Manager}
+\address{Hammerschmidtgasse 9/7}{1190, Wien}
+\mobile{0664 993 21 004}
+\email{abziehp@tcd.ie}
 %\extrainfo{Marié \\ beaucoup d'enfants}
 %\photo{side-angle-single.png}
 
@@ -48,135 +53,75 @@
 
 \section{Employment}
 
-\cventry{2018 -- 2021}{CTO}{TerminusDB}{Dublin}{}
+\cventry{2017 -- 2021}{Translation Project Manager/Partner Coordinator}{Translators Without Borders}{Dublin}{}
 {
+  \textbf{Responsibilities Include:}
   \begin{itemize}
-  \item Chief Technology Officer at TerminusDB.
-  \item Responsible for technical architecture of TerminusDB and TerminusX (managed cloud offering).
-  \item Manager for TerminusDB development team.
+  \item \textbf{Account Management:} Advising international NGOs on how to meet their multilingual communication needs to achieve maximum impact.
+  \item \textbf{Translation Project Management:} Overseeing and managing translation project team formation as well as content production and distribution.
+  \item \textbf{Internal Training:} Training of clients and staff in the use of TWB's Kató community translation platform.
+  \item \textbf{Customer Support:} Responding to client translation project queries, both technical and organisational.
+  \item \textbf{Volunteer Management:} Managing, overseeing and motivating volunteers involved in translation projects.
+  \item \textbf{Staff Mentoring:} Mentoring and management of interns.
   \end{itemize}
 }
 
-\cventry{2015 -- 2018}{Research Fellow}{Trinity College Dublin}{Dublin}{}
+\cventry{2012 -- 2017}{Communications and Community Coordinator}{The Rosetta Foundation}{Dublin}{}
 {
+  \textbf{Responsibilities Include:}
   \begin{itemize}
-  \item Co-lead of development with Kevin Feeney on the Dacura project, a semantic web ontology driven platform for data-storage and data-entry.
-  \item Developed algorithms and tools for proving properties of RDF graphs based on OWL ontology information.
-  \item Launched the Seshat Global Historical Databank (http://dacura.scss.tcd.ie/seshat/index.html) using Dacura technology.
+  \item \textbf{Quality Assurance:} Click testing and reporting of issues from the Trommons translation platform.
+  \item \textbf{Platform Product Development:} Management of platform product development, coordinating developers at the University of Limerick with NGOs and translation volunteers to produce a translation management platform.
+  \item \textbf{Communication Management:} Mangagement of social media communications,press releases, website content and customer relations.
+  \item \textbf{Community Management:} Multifunctional role encompassing NGO client and volunteer management as well as  general administration, staff, office and donor management.
   \end{itemize}
 }
 
-\cventry{2012 -- 2015}{Postdoctoral Researcher}{Dublin City University}{Dublin}{}
+\cventry{2010 -- 2012}{German Language Tutor}{Berlitz}{Dublin}{}
 {
   \begin{itemize}
-  \item A post-doctoral position with a team of four developers including the principle investigator (Deirdre Hogan).
-  \item Lead developer for the QuAS question answering software. This project developed an information retrieval based question answering system which leveraged customer support interactions. It is a cloud based project with a web and mobile interface.
-  \item Lead developer for the Atabot project, a platform for using machine learning techniques to recognise and classify user generated content.
+  \item \textbf{Tuition and Translation and QA}
   \end{itemize}
 }
 
-\cventry{2005 -- 2007}{Lead Software Engineer}{Cognotent Ltd.}{Dublin}{}
+\cventry{2010 -- }{Freelance Translation}{English-German/German-English}{Dublin}{}
 {
   \begin{itemize}
-  \item Lead developer for irishpressreleases.ie, a CMS for press releases from companies or their PR firms. I wrote a probabilistic parser for automatic data entry. The implementation of the probabilistic parser was written in Common Lisp.
-  \item Lead developer for irishblogs.ie. I implemented vector based similarity measures between blog posts using a modified k-means and a longest common sub-sequence algorithm based on Patricia tries to extract news story titles. I architected the treatment of time evolved clustring of news stories. 
-  \item All of the research, mathematical development, architecture and much of the implementation was done by myself.
-  \end{itemize}
-}
-
-\cventry{2004 -- 2005}{Chief Technology Officer}{Aeroglyph Inc.}{Marion, Montana}{}
-{
-  \begin{itemize}
-  \item I worked primarily as an architect and programmer of a logic database system with a semantics similar to a persistent Prolog utilising a triple-store. Elements of our design included a novel mechanism similar to tabling (as used by David Warren in XSB) using continuations, unfold/fold query optimisation, and a novel indexing data structure for persistently storing triples.
-  \item I wrote most of the low level programming (memory pager and inner loops) in C.
-  \item We successfully completed the development cycle and delivered one server to a client who is currently using it for storing pathology information (tens of thousands of records). Unfortunately funding ran out and the project was discontinued.
-  \end{itemize}
-}
-
-\cventry{2003 -- 2004}{Lecturer}{Carnegie Mellon University}{Pittsburgh, Pennsylvania}{}
-{
-  \begin{itemize}
-  \item Lecturer and teaching assistant. I was responsible for teaching the problem sessions for engineering physics.
-  \end{itemize}
-}
-
-\cventry{2003}{Research Assistant}{University of New Mexico}{Albuquerque, New Mexico}{}
-{
-  \begin{itemize}
-  \item Developed finite difference codes for simulation of complex non-linear differential equations for application in biological physics. Code was written in MatLab and Lisp.
-  \end{itemize}
-}
-
-\cventry{2000-2002}{Software Engineer}{MDLi}{San Francisco, California}{}
-{
-  \begin{itemize}
-  \item Helped write and maintain combinatorial chemistry informatics software for the leading reaction based software product, Afferent.
-  \item I participated in development through the end of one release cycle (3.0) and entire release cycle (3.1, a major release) and the beginning of a third (4.0) before the project was canceled due to changes in management. At this point I returned to school to complete my degree.
-  \item In charge of automation (robotics) and bug-fixes in the reaction based chemistry engine on Afferent 3.0.
-  \item In 3.1 I substantially re-factored the searching mechanism (object-relational mapping) to be thread safe for performance reasons. I designed and implemented the object serialization system for a very complex object system written in CLOS on Afferent 4.0.
+  \item \textbf{Translation:} Translation of literary and academic texts (bibliography included below).
   \end{itemize}
 }
 
 \section{References}
 
-\subsection{Ireland}
+\cvreference{Anete Raugule}{Partnership Team Manager}{}{Translators Without Borders}{}{anete.raugule@natakallam.com}{}
 
-\cvreference{Dr. Declan O'Sullivan}{Professor}{}{School of Computer Science and Statistics}{Trinity College Dublin}{declan.osullivan@scss.tcd.ie}{}
+\cvreference{Alan Barrett}{Senior Developer}{}{The Rosetta Foundation}{Dublin}{alanabarrett0@gmail.com}{}
 
-%\cvreference{Dr. Kevin Feeney}{Senior Research Fellow}{School of Computer Science and Statistics}{Trinity College Dublin}{Dublin}{kevin.feeney@cs.tcd.ie}{}
+\section{Activism}
 
-\cvreference{Dr. Deirdre Hogan}{Staff Applied Scientist}{}{LinkedIn}{Dublin}{deirdre.hogan@gmail.com}{}
-
-\cvreference{Roger Galligan}{CEO}{}{Cognotent Ltd.}{Dublin}{roger.galligan@cognotent.com}{}
-
-\subsection{United States}
-
-\cvreference{Dr. Randy Gobbel}{Alumnus}{}{SRI International}{San Francisco}{gobbel@acm.org}{}
-
-
-
-\section{Personal Experience}
-
-\cvlistitem{Expert in many programming languages including C, C++, Java, Php, Lisp, Haskell,
-  OCaML, Prolog, SQL}
-\cvlistitem{Expert knowledge of semantic web foundations including semantics of RDF and OWL}
-\cvlistitem{Experience in model driven approaches to development}
-\cvlistitem{Extensive knowledge of logic, mathematics, statistics and statistical methods}
-\cvlistitem{I have used machine learning techniques for text classification and clustering}
-\cvlistitem{Implementation experience with program transformation and optimisation techniques for functional, logcial and relational languages}
-\cvlistitem{Experience working with several proof assistants, including Coq and Agda}
-\cvlistitem{I have worked with ``big data'' in an information retrieval, machine learning and data mining setting}
-\cvlistitem{Experience using and customising the Xapian and Lucene search engines}
-
-
-%\cvcomputer{Humour}{Les histoires de mon oncle Anatole.}
-%           {Enfumage}{Je parle beaucoup...}
-%\cvcomputer{Opportunisme}{Toutes les occasions sont bonnes àprendre.}{}{}
+\cvlistitem{Founding member of SPARK single parent advocacy group.}
+\cvlistitem{Activist in Attac Ireland.}
+\cvlistitem{Involved in housing and workers rights campaigns.}
 
 \section{Education}
 
-\cventry{2007 -- 2011}{PhD Computer Science}
-{Dublin City University}{Dublin}{}
+\cventry{2008 -- 2009}{M.Phil. Literary Translation}
+{Trinity College Dublin}{Dublin}{}
 {
-  In 2007 I began a funded PhD program at Dublin City University in the School of Computing. My
-  thesis title is ``Types and Inhabitation of Infinite State Systems''. As part of my PhD I developed a supercompiler written in Haskell and mechanised proofs of correctness in the proof assistant Coq.
+  Graduated with first class honors.
 }
-\cventry{1999 -- 2004}{BS Pure Math, BS Physics}{University of New Mexico}{Albuquerque, New Mexico}{}{
-  Graduated Magna Cum Laude with a Bachelor of Science in Pure Math, and a Bachelor of Science in Physics. My GPA was 3.70. I was given the ``Feynman Award'' for excellent academic achievement in modern physics, and was awarded the title of ``Best Student in Pure Math'' by the Math Dept.
+\cventry{2003 -- 2008}{BA Translation and Interpreting: German, English, Russian}{University of Vienna}{Vienna}{}{
+  Graduated with first class honors.
 }
 
-%\section{Langues étrangères}
-%\cvlanguage{Belge}{courant}{langue maternelle}
-%\cvlanguage{Espagnol}{notions}{}
 
-%\section{Activités extra-professionnelles}
 
-%\cvline{Association}{Président du « Volant Club »}
-
-%\cvline{Association}{Président de la société philanthropique « Les Joyeux Turlurons »}
+%\setcounter{biburllcpenalty}{7000}
+%\setcounter{biburlucpenalty}{8000}
 
 \nocite{*}
-\bibliographystyle{plain}
-\bibliography{publications}
+%\bibliographystyle{plain}
+%\bibliography{publications}
+\printbibliography
 
 \end{document}
