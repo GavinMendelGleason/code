@@ -1,8 +1,6 @@
 \documentclass[a4paper,11pt]{moderncv}
 
-%\usepackage[british]{babel}
-\usepackage[german]{babel}
-%\usepackage[style=alphabetic]{biblatex}
+\usepackage[british]{babel}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -13,7 +11,7 @@
 %\usepackage{microtype}
 \usepackage{textcase}
 
-\usepackage[backend=biber]{biblatex}
+\usepackage[sorting=ynt]{biblatex}
 \usepackage{url}
 \addbibresource{publications.bib}
 
@@ -38,7 +36,7 @@
 
 \firstname{Paulina}
 \familyname{Abzieher, M.Phil.}
-\title{Translation Project Manager}
+%\title{Translation Project Manager}
 \address{Hammerschmidtgasse 9/7}{1190, Wien}
 \mobile{+43 664 993 21 004}
 \email{abziehp@tcd.ie}
@@ -95,7 +93,7 @@
 
 \cvreference{Anete Raugule}{Head of Translation and Interpreting}{}{NaTakallam}{}{anete.raugule@natakallam.com}{}
 
-\cvreference{Alan Barrett}{Senior Developer}{}{The Rosetta Foundation/Translators Without Borders}{alanabarrett0@gmail.com}{}
+\cvreference{Alan Barrett}{Senior Developer}{}{The Rosetta Foundation/Translators Without Borders}{}{alanabarrett0@gmail.com}{}
 
 \section{Activism}
 
@@ -114,14 +112,6 @@
   Graduated with First-Class Honours.
 }
 
-
-
-%\setcounter{biburllcpenalty}{7000}
-%\setcounter{biburlucpenalty}{8000}
-
-\nocite{*}
-%\bibliographystyle{plain}
-%\bibliography{publications}
-\printbibliography
+\printbibliography[title=Translations]
 
 \end{document}
