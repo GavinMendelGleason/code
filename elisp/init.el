@@ -13,12 +13,41 @@
 ;; do something smart if lines are super long
 (global-so-long-mode 1)
 
-;; Set Path manually
-(setenv "PATH" "/home/gavin/.cabal/bin:/home/gavin/.swivm/versions/v8.2.3/lib/swipl/bin/x86_64-linux:/home/gavin/tmp/google-cloud-sdk/bin:/home/gavin/bin:/home/gavin/.local/bin:/home/gavin/go/bin:/home/gavin/.cargo/bin:/home/gavin/.local/bin:/home/gavin/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin")
+;;; Fucking bell
+(setq visible-bell nil)
+(setq ring-bell-function 'ignore)
+
+;; Set Path manually (v8.2.4)
+(setenv "PATH" "/home/gavin/.cabal/bin:/home/gavin/.swivm/versions/v8.5.8/bin:/home/gavin/tmp/google-cloud-sdk/bin:/home/gavin/bin:/home/gavin/.local/bin:/home/gavin/go/bin:/home/gavin/.cargo/bin:/home/gavin/.local/bin:/home/gavin/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin")
+
+(defun set-exec-path-from-shell-PATH ()
+  "Set up Emacs' `exec-path' and PATH environment variable to match
+that used by the user's shell.
+
+This is particularly useful under Mac OS X and macOS, where GUI
+apps are not started from a shell."
+  (interactive)
+  (let ((path-from-shell (replace-regexp-in-string
+              "[ \t\n]*$" "" (shell-command-to-string
+                      "$SHELL --login -c 'echo $PATH'"
+                            ))))
+    (setenv "PATH" path-from-shell)
+    (setq exec-path (split-string path-from-shell path-separator))))
+
+(set-exec-path-from-shell-PATH)
+
+;; session
+(require 'session)
+(add-hook 'after-init-hook 'session-initialize)
+
+;;; GitHub Pull Requests
+;;(require 'magit-gh-pulls)
+;;(add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
+
 
 ;;; ******
 ;;; Lean
-(setq lean-rootdir "/home/gavin/lib/lean-4.0.0-m2-linux/")
+;;;(setq lean-rootdir "/home/gavin/lib/lean-4.0.0-m2-linux/")
 ;;(global-set-key (kbd "S-SPC") #'company-complete)
 
 ;;; *******************************************
@@ -112,10 +141,9 @@
 (add-hook 'web-mode-hook 'my-web-mode-hook)
 
 ;; Agda
-;; (setenv "PATH" "")
-;;(require 'agda-mode)
 (load-file (let ((coding-system-for-read 'utf-8))
              (shell-command-to-string "agda-mode locate")))
+;;(require 'agda-mode)
 
 ;; RDF (n3 mode)
 ;;(require 'n3-mode)
@@ -178,6 +206,15 @@
 ;;   (quote
 ;;	("." "/usr/share/agda-stdlib" "/home/francoisbabeuf/Documents/code/agda/agda-stdlib/" "/home/francoisbabeuf/Documents/code/agda/finset/")))
 
+;; Javascript
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(setq js2-strict-missing-semi-warning nil)
+(setq-default js2-basic-offset 2)
+(setq js2-mode-hook
+      '(lambda () (progn
+                    (set-variable 'js2-basic-offset 2)
+                    (set-variable 'indent-tabs-mode nil))))
+
 ;; Whitespace mode
 (require 'whitespace)
 
@@ -236,14 +273,12 @@
           (lambda ()
             (setq indent-tabs-mode nil)))
 
-
 ;;(setq prolog-program-name "swipl") ;;
 ;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
-;;
+(setq prolog-program-name "swipl")
 (setenv "TERMINUSDB_FILE_STORAGE_PATH" "/home/gavin/dev/terminusdb/storage/")
-(setenv "TERMINUSDB_HTTPS_ENABLED" "true")
+;; (setenv "TERMINUSDB_HTTPS_ENABLED" "true")
 ;;(setenv "TERMINUSDB_HTTPS_ENABLED" "false")
-;;(setenv "TERMINUSDB_HTTPS_ENABLED" "true")
 (setenv "TERMINUSDB_SERVER_PORT" "6363")
 ;;(setenv "TERMINUSDB_SERVER_DB_PATH" "/home/gavin/dev/terminus_electron")
 ;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dl.bintray.com/terminusdb/terminusdb/0.0.1")
@@ -268,7 +303,7 @@
 (setenv "AUDIENCE" "https://terminusdb.com/hubservices")
 
 (setq prolog-system 'swi)
-(setq prolog-program-name "/home/gavin/dev/terminusdb/src/interactive.pl")
+(setq prolog-program-name "swipl")
 ;;(setq prolog-program-name "/home/gavin/dev/terminusdb/start.pl")
 ;;(setq prolog-program-name "/home/gavin/dev/terminusdb/src/start.pl")
 ;;(setq prolog-program-switches '((t ("serve" "-i"))))
@@ -385,7 +420,7 @@
  '(custom-safe-themes
    '("4e7e04c4b161dd04dc671fb5288e3cc772d9086345cb03b7f5ed8538905e8e27" "23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default))
  '(package-selected-packages
-   '(yaml-mode tide helm-lean company-lean ## lean-mode rustic flycheck magit-gh-pulls magit-delta so-long tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode))
+   '(restclient js2-mode session wc-mode exec-path-from-shell ttl-mode yaml-mode tide helm-lean company-lean ## lean-mode rustic flycheck magit-delta so-long tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode))
  '(prolog-compile-string
    '((eclipse "[%f].")
      (mercury "mmc ")
@@ -418,6 +453,7 @@
              (setq m31-executable
                    (concat m31-root-directory "andromeda.native"))))))
  '(send-mail-function 'mailclient-send-it)
+ '(session-use-package t nil (session))
  '(ttl-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
