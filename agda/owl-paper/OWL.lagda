@@ -311,7 +311,7 @@ record Sets : Set where
 
   data ⊤ : Set where
     tt : ⊤
-    
+
   data ⊥ : Set where
 
 \end{code}
@@ -319,9 +319,9 @@ record Sets : Set where
 \begin{code}
   infix 3 ¬_
 \end{code}}
-\begin{code}  
+\begin{code}
   ¬_ : Set → Set
-  ¬ A = A → ⊥ 
+  ¬ A = A → ⊥
 
 \end{code}
 
@@ -346,7 +346,7 @@ type theory is sound.
 $\AK{data}$ declarations allow us to extend our type theory with a new
 type having some number of {\em constructors} which are axiomatically
 within the type. This will also allow us to deconstruct such sets into
-the constituent constructors from whence they must have come.  
+the constituent constructors from whence they must have come.
 
 We include two sets using $\AK{data}$ declarations, one representing
 {\em truth}, $\AD{⊤}$, which has precisely one constructor, and
@@ -393,8 +393,8 @@ get anything in the first place.
 
   lemma : zero ∈ IsZero
   lemma = tt
-  
-\end{code} 
+
+\end{code}
 
 In the above code we have an {\em implicit argument} $\AB{A}$, given
 in curly-braces $\{\AB{A}\;\AO{:}\;\AD{Set}\}$ to denote the fact that
@@ -413,16 +413,16 @@ the set $\AD{⊤}$ precisely when the number is zero, and supplies
 $\AD{⊥}$ otherwise.  A proof that this predicate applies when its
 argument is $\AIC{zero}$ is given in $\AF{lemma}$ and amounts merely
 to supplying the only inhabitant of $\AD{⊤}$.  No proof would be
-possible for other elements of $\AD{ℕ}$. 
+possible for other elements of $\AD{ℕ}$.
 
 \begin{code}
-  
+
   _⊆_ : ∀ {A : Set} → Pred A → Pred A → Set
   P ⊆ Q = ∀ {x} → x ∈ P → x ∈ Q
 
   _⇒_ : ∀ {A : Set} → Pred A → Pred A → Pred A
   P ⇒ Q = λ x → x ∈ P → x ∈ Q
-  
+
 \end{code}
 
 We understand $\AB{P}$ to be a subset of \AB{Q} if we are able to
@@ -437,7 +437,7 @@ reading the OWL semantics.
 
 \begin{code}
 
-  ∅ : ∀ {A : Set} → Pred A 
+  ∅ : ∀ {A : Set} → Pred A
   ∅ = λ _ → ⊥
 
   U : ∀ {A : Set} → Pred A
@@ -481,10 +481,11 @@ open import Data.Sum
 open import Level
 open import Relation.Nullary
 open import Relation.Unary hiding (Decidable)
-open import Relation.Binary using (Setoid; IsEquivalence) 
+open import Relation.Binary using (Setoid; IsEquivalence)
+open import Relation.Binary.PropositionalEquality
 open import Relation.Binary.Core hiding (_⇒_)
 open import Data.Nat hiding (_⊔_) renaming (suc to nsuc ; zero to nzero)
-open import Data.Vec hiding (_∈_)
+open import Data.Vec
 
 open import Facet
 module Main where
@@ -520,10 +521,10 @@ module OWL (ClassURI : Set) (IndividualURI : Set)
   (_ᴰᵀ : DataTypeURI → Pred Δᴰ zero)
   (_ᴸᵀ : Literal → Δᴰ) (_ᴵ : IndividualURI → Δᴵ)
   (_ᴰᴾ : DataPropertyURI → Pred (Δᴵ × Δᴰ) zero)
-  (_ᴼᴾ : ObjectPropertyURI → Pred (Δᴵ × Δᴵ ) zero) 
+  (_ᴼᴾ : ObjectPropertyURI → Pred (Δᴵ × Δᴵ ) zero)
   (_ᶠᴬ : Facet × Literal → Pred Δᴰ zero)
   (owlThing : ClassURI) (owlNothing : ClassURI)
-  (owlThingLaw : owlThing ᶜ ≡ U)
+  (owlThingLaw : (owlThing ᶜ) ≡ U)
   (owlNothingLaw : owlNothing ᶜ ≡ ∅)
   (owlTopObjectProperty : ObjectPropertyURI)
   (owlBottomObjectProperty : ObjectPropertyURI)
@@ -533,7 +534,7 @@ module OWL (ClassURI : Set) (IndividualURI : Set)
   (owlBottomDataProperty : DataPropertyURI)
   (owlTopDataPropertyLaw : owlTopDataProperty ᴰᴾ ≡ U)
   (owlBottomDataPropertyLaw : owlBottomDataProperty ᴰᴾ ≡ ∅)
-  (♯OP : Pred (Δᴵ × Δᴵ) zero → ℕ) (♯DP : Pred (Δᴵ × Δᴰ) zero → ℕ) 
+  (♯OP : Pred (Δᴵ × Δᴵ) zero → ℕ) (♯DP : Pred (Δᴵ × Δᴰ) zero → ℕ)
   where
 
 \end{code}
@@ -548,31 +549,31 @@ because these data-types are composite due to the possibility of
 inverse object properties.
 
 \begin{code}
-      
-  data ObjectProperty : Set where 
-    OP : ObjectPropertyURI → ObjectProperty
-    IOP : ObjectPropertyURI → ObjectProperty 
 
-  data DataRange : Set where 
+  data ObjectProperty : Set where
+    OP : ObjectPropertyURI → ObjectProperty
+    IOP : ObjectPropertyURI → ObjectProperty
+
+  data DataRange : Set where
     DataTypeRange : DataTypeURI → DataRange
     DataComplimentOf : DataRange → DataRange
     DataOneOf : ∀ {n} → Vec Literal n → DataRange
     DataTypeRestriction : DataRange → Facet → Literal → DataRange
-    
+
 \end{code}
 
 \AgdaHide{
 
 \begin{code}
 
-  data Description : Set where 
+  data Description : Set where
     OwlClassURI : ClassURI → Description
-    ObjectUnionOf : Description → Description → Description 
-    ObjectIntersectionOf : Description → Description → Description 
+    ObjectUnionOf : Description → Description → Description
+    ObjectIntersectionOf : Description → Description → Description
     ObjectComplementOf : Description → Description
     ObjectOneOf : ∀ {n} → Vec IndividualURI n → Description
     ObjectAllValuesFrom : ObjectProperty → Description → Description
-    ObjectSomeValuesFrom : ObjectProperty →  Description → Description 
+    ObjectSomeValuesFrom : ObjectProperty →  Description → Description
     ObjectExistsSelf : ObjectProperty → Description
     ObjectHasValue : ObjectProperty → IndividualURI → Description
     ObjectMinCardinality : ℕ → ObjectProperty → Description
@@ -590,23 +591,23 @@ inverse object properties.
     DataMinRangeCardinality : ℕ → DataPropertyURI → DataRange → Description
     DataMaxRangeCardinality : ℕ → DataPropertyURI → DataRange → Description
     DataExactRangeCardinality : ℕ → DataPropertyURI → DataRange → Description
-  
-  data ClassAxiom : Set where 
+
+  data ClassAxiom : Set where
     SubClassOf : Description → Description → ClassAxiom
     EquivalentClasses : Description → Description → ClassAxiom
     DisjointClasses : Description → Description → ClassAxiom
     DisjointUnion : ClassURI → Description → Description → ClassAxiom
 
-  data SubObjectProperty : Set where 
+  data SubObjectProperty : Set where
     SubObjectPropertyLift : ObjectProperty → SubObjectProperty
     SubObjectPropertyChain : ObjectProperty → ObjectProperty → SubObjectProperty
 
-  data ObjectPropertyAxiom : Set where 
+  data ObjectPropertyAxiom : Set where
     SubObjectPropertyOf : SubObjectProperty → ObjectProperty → ObjectPropertyAxiom
     EquivalentObjectProperties : ObjectProperty → ObjectProperty → ObjectPropertyAxiom
     DisjointObjectProperties : ObjectProperty → ObjectProperty → ObjectPropertyAxiom
     InverseObjectProperties : ObjectProperty → ObjectProperty → ObjectPropertyAxiom
-    ObjectPropertyDomain : ObjectProperty → Description → ObjectPropertyAxiom 
+    ObjectPropertyDomain : ObjectProperty → Description → ObjectPropertyAxiom
     ObjectPropertyRange : ObjectProperty → Description → ObjectPropertyAxiom
     FunctionalObjectProperty : ObjectProperty → ObjectPropertyAxiom
     InverseFunctionalObjectProperty : ObjectProperty → ObjectPropertyAxiom
@@ -616,15 +617,15 @@ inverse object properties.
     AsymetricObjectProperty : ObjectProperty → ObjectPropertyAxiom
     TransitiveObjectProperty : ObjectProperty → ObjectPropertyAxiom
 
-  data DataPropertyAxiom : Set where 
+  data DataPropertyAxiom : Set where
     SubDataPropertyOf : DataPropertyURI → DataPropertyURI → DataPropertyAxiom
     EquivalentDataProperties : DataPropertyURI → DataPropertyURI → DataPropertyAxiom
     DisjointDataProperties : DataPropertyURI → DataPropertyURI → DataPropertyAxiom
     DataPropertyDomain : DataPropertyURI → Description → DataPropertyAxiom
     DataPropertyRange : DataPropertyURI  → DataRange → DataPropertyAxiom
     FunctionalDataProperty : DataPropertyURI → DataPropertyAxiom
-  
-  data Fact : Set where 
+
+  data Fact : Set where
     SameIndividual : IndividualURI → IndividualURI → Fact
     DifferentIndividuals : IndividualURI → IndividualURI → Fact
     ClassAssertion : ClassURI → IndividualURI → Fact
@@ -637,7 +638,7 @@ inverse object properties.
 
 }
 
-\section{Interpretation} 
+\section{Interpretation}
 \label{Interpretation}
 
 From these syntactic rule definitions we translate into a type which
@@ -648,15 +649,15 @@ rules.
 
 \begin{code}
 
-  data Rule : Set where 
+  data Rule : Set where
     FactRule : Fact → Rule
     ClassRule : ClassAxiom → Rule
     ObjectPropertyRule : ObjectPropertyAxiom → Rule
     DataProperytRule : DataPropertyAxiom → Rule
-  
+
   Theory : ℕ → Set
   Theory n = Vec Rule n
-  
+
 \end{code}
 
 To translate our theory into its appropriate type we need a few
@@ -679,10 +680,10 @@ domain, and vice-versa.
 
 \begin{code}
 
-  domain : ∀ {A B : Set} → Pred (A × B) zero  → Pred A zero 
+  domain : ∀ {A B : Set} → Pred (A × B) zero  → Pred A zero
   domain {A} {B} p = λ x → Σ[ y ∈ B ] (x , y) ∈ p
 
-  range : ∀ {A B : Set} → Pred (A × B) zero  → Pred B zero 
+  range : ∀ {A B : Set} → Pred (A × B) zero  → Pred B zero
   range {A} {B} p = λ y → Σ[ x ∈ A ] (x , y) ∈ p
 
 \end{code}
@@ -704,11 +705,11 @@ literal $\AB{c}$.
 
   ∣_∣dr : DataRange → Pred Δᴰ zero
   ∣ DataTypeRange t ∣dr = t ᴰᵀ
-  ∣ DataComplimentOf r ∣dr = ∁ ∣ r ∣dr 
+  ∣ DataComplimentOf r ∣dr = ∁ ∣ r ∣dr
   ∣ DataOneOf v ∣dr = foldr (λ _ → Pred Δᴰ zero)
-                            (λ c p → (λ x → x ≡ c ᴸᵀ) ∪ p) ∅ v 
+                            (λ c p → (λ x → x ≡ c ᴸᵀ) ∪ p) ∅ v
   ∣ DataTypeRestriction r x x₁ ∣dr = ∣ r ∣dr ∩ (x , x₁) ᶠᴬ
-  
+
 \end{code}
 
 The translation of $\AD{ObjectProperty}$ and $\AD{SubObjectProperty}$
@@ -719,11 +720,11 @@ $(\AB{Δᴵ}\;\AD{×}\;\AB{Δᴵ})$.
 \begin{code}
 
   ∣_∣op : ObjectProperty → Pred (Δᴵ × Δᴵ) zero
-  ∣_∣op (OP x) = x ᴼᴾ 
+  ∣_∣op (OP x) = x ᴼᴾ
   ∣_∣op (IOP x) = ∁ (x ᴼᴾ)
 
   ∣_∣sop : SubObjectProperty → Pred (Δᴵ × Δᴵ) zero
-  ∣_∣sop (SubObjectPropertyLift p) = ∣ p ∣op 
+  ∣_∣sop (SubObjectPropertyLift p) = ∣ p ∣op
   ∣_∣sop (SubObjectPropertyChain p q) = ∣ p ∣op ⇒ ∣ q ∣op
 
 \end{code}
@@ -741,20 +742,20 @@ witnessing element from the domain of individuals.
 
   ∣_∣c : Description → Pred Δᴵ zero
   ∣ OwlClassURI x ∣c = x ᶜ
-  ∣ ObjectUnionOf xc xc₁ ∣c = ∣ xc ∣c ∪ ∣ xc₁ ∣c 
+  ∣ ObjectUnionOf xc xc₁ ∣c = ∣ xc ∣c ∪ ∣ xc₁ ∣c
   ∣ ObjectIntersectionOf x x₁ ∣c = ∣ x ∣c ∩ ∣ x₁ ∣c
   ∣ ObjectComplementOf x ∣c = ∁ (∣ x ∣c)
   ∣ ObjectAllValuesFrom p c ∣c =
     λ x → ∀ (y : Δᴵ) → (x , y) ∈ ∣ p ∣op → y ∈ ∣ c ∣c
   ∣ ObjectSomeValuesFrom p c ∣c =
     λ x → Σ[ y ∈ Δᴵ ] ((x , y) ∈ ∣ p ∣op × y ∈ ∣ c ∣c)
-    
+
 \end{code}
 \AgdaHide{
   \begin{code}
   ∣ ObjectOneOf v ∣c = foldr (λ _ → Pred Δᴵ zero)
     (λ y p → (λ x → x ≡ y ᴵ) ∪ p) ∅ v
-  ∣ ObjectExistsSelf p ∣c = λ x → (x , x) ∈ ∣ p ∣op 
+  ∣ ObjectExistsSelf p ∣c = λ x → (x , x) ∈ ∣ p ∣op
   ∣ ObjectHasValue (OP p) v ∣c = λ x → (x , v ᴵ) ∈ p ᴼᴾ
   ∣ ObjectHasValue (IOP p) v ∣c = ∁ (λ x → (x , v ᴵ) ∈ p ᴼᴾ)
   ∣ ObjectMinCardinality n p ∣c = λ x → ♯OP( λ prop → prop ∈ ∣ p ∣op × x ∈ domain ∣ p ∣op ) ≥ n

@@ -276,7 +276,8 @@ apps are not started from a shell."
 ;;(setq prolog-program-name "swipl") ;;
 ;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
 (setq prolog-program-name "swipl")
-(setenv "TERMINUSDB_FILE_STORAGE_PATH" "/home/gavin/dev/terminusdb/storage/")
+;;(setenv "TERMINUSDB_FILE_STORAGE_PATH" "/home/gavin/dev/terminusdb/storage/")
+;;(setenv "TERMINUSDB_FILE_STORAGE_PATH")
 ;; (setenv "TERMINUSDB_HTTPS_ENABLED" "true")
 ;;(setenv "TERMINUSDB_HTTPS_ENABLED" "false")
 (setenv "TERMINUSDB_SERVER_PORT" "6363")
@@ -287,7 +288,7 @@ apps are not started from a shell."
 ;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dcm.ist/console/v4.0.0")
 (setenv "TERMINUSDB_IGNORE_REF_AND_REPO_SCHEMA" "true")
 ;;(setq prolog-program-name "/home/gavin/dev/terminus-server/start.pl")
-(setenv "TERMINUSDB_SERVER_DB_PATH" "/home/gavin/dev/terminusdb/storage/db")
+;;(setenv "TERMINUSDB_SERVER_DB_PATH" "/home/gavin/dev/terminusdb/storage/db")
 (setenv "RUST_BACKTRACE" "1")
 
 ;; (setenv "AUTH0_DOMAIN" "terminushub.eu.auth0.com")

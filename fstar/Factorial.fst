@@ -4,7 +4,7 @@ module Factorial
 open FStar.List
 open FStar.Nat
 
-// other dependencies 
+// other dependencies
 
 val factorial: x:nat -> Tot nat
 val factorial: x:int{x>=0} -> Tot int
@@ -15,27 +15,27 @@ let rec fibonacci n =
   if n <= 1 then 1 else fibonacci (n - 1) + fibonacci (n - 2)
 
 val factorial_is_positive: x:nat -> GTot (u:unit{factorial x > 0})
-let rec factorial_is_positive x = 
-  match x with 
+let rec factorial_is_positive x =
+  match x with
   | 0 -> ()
   | _ ->  factorial_is_positive (x - 1)
 
 
 val length: list 'a -> Tot nat
-let rec length x = match x with 
-  | [] -> 0 
+let rec length x = match x with
+  | [] -> 0
   | h::tl -> 1 + (length tl)
 
 val append: list 'a -> list 'a -> Tot (list 'a)
 
-let rec append x y = match x with 
+let rec append x y = match x with
   | [] -> y
   | h::tl -> Cons h (append tl y)
 
 val append_sum: x: list 'a -> y: list 'a -> GTot (u:unit{length (append x y) = length x + length y})
 
-let rec append_sum x y = match x with 
-  | [] -> () 
+let rec append_sum x y = match x with
+  | [] -> ()
   | h::tl -> append_sum tl y
 
 val mem: a:'a -> l:list 'a -> Tot bool
@@ -45,7 +45,7 @@ let rec mem a l = match l with
 
 val append_mem:  l1:list 'a -> l2:list 'a -> a:'a
         -> Lemma (ensures (mem a (append l1 l2)  <==>  mem a l1 || mem a l2))
-let rec append_mem l1 l2 a = 
+let rec append_mem l1 l2 a =
   match l1 with
   | [] -> ()
   | h::tl -> append_mem tl l2 a
@@ -60,7 +60,7 @@ let snoc l h = append l [h]
 val snoc_cons: l:list 'a -> h:'a -> Lemma (reverse (snoc l h) = h::reverse l)
 let rec snoc_cons l h = match l with
   | [] -> ()
-  | hd::tl -> snoc_cons tl h 
+  | hd::tl -> snoc_cons tl h
 
 val rev_involutive: l:list 'a -> Lemma (reverse (reverse l) = l)
 let rec rev_involutive l = match l with
@@ -108,7 +108,7 @@ let rec find_1 f l = match l with
   | hd::tl -> if f hd then Some hd else find_1 f tl
 
 val fold : f: ('a -> 'b -> Tot 'b) -> l: list 'a -> a: 'b -> Tot 'b
-let rec fold f l a = match l with 
+let rec fold f l a = match l with
   | [] -> a
   | h::t -> f h (fold f t a)
 
@@ -118,22 +118,22 @@ let rec fold_left f l a = match l with
   | [] -> a
   | h::t -> fold_left f t (f h a)
 
-(* 
+(*
 val fold_left_cons_is_reverse: l:list 'a -> l':list 'a -> Lemma (fold_left Cons l l' = append (reverse l) l')
 let rec fold_left_cons_is_reverse l l' = match l, l' with
-  | h::t, h'::t' -> fold_left_cons_is_reverse t t' 
+  | h::t, h'::t' -> fold_left_cons_is_reverse t t'
   | _ -> ()
-*) 
+*)
 
 val hd : l:list 'a{is_Cons l} -> Tot 'a
-let hd l = match l with 
+let hd l = match l with
   | h::t -> h
 
 val tl : l:list 'a{is_Cons l} -> Tot (list 'a)
 let tl l = match l with
   | h::t -> t
 
-val nth : n:nat -> l:list 'a{length l > n} -> Tot 'a 
+val nth : n:nat -> l:list 'a{length l > n} -> Tot 'a
 let rec nth n l = match l with
 		 | h::t -> if n = 0 then h else nth (n-1) t
 
@@ -144,12 +144,12 @@ let rec rev l1 l2 =
   | hd::tl -> rev (hd::l1) tl
 
 (*
-[1;2;3] 
+[1;2;3]
 
 rev 2::[1] [3] = append (append (reverse [3]) [2]) [1]
 
 (reverse (append l [h]) = h::reverse l)
-*) 
+*)
 
 val rev_append: hd: 'a -> l:list 'a -> l_1:list 'a -> Lemma (requires find f l = Some x)
 													  (ensures f x = true)
@@ -159,7 +159,7 @@ let rec rev_append hd l l_1 = match l with
 
 val rev_is_ok : l:list 'a -> Lemma (rev [] l = reverse l)
 let rec rev_is_ok l = match l with
-  | [] -> () // rev [] [] = reverse [] 
+  | [] -> () // rev [] [] = reverse []
             // [] = []
   | hd::tl -> rev_is_ok tl // rev (hd::l_1) tl = append (reverse tl) [hd]
 

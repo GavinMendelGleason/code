@@ -1,5 +1,5 @@
 
-module Demo where 
+module Demo where
 
 --open import Data.Bool 
 open import Data.Nat
