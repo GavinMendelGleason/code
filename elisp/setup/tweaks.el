@@ -48,7 +48,9 @@ apps are not started from a shell."
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
 
-(set-exec-path-from-shell-PATH)
+(setenv "PATH" (concat (getenv "PATH") ":/home/gavin/.cargo/bin"))
+(setq exec-path (append exec-path '("/home/gavin/.cargo/bin")))
+
 
 ;; Set LD_LIBRARY_PATH manually (must also be v8.4.2)
 (setenv "LD_LIBRARY_PATH" "/home/gavin/.swivm/versions/v8.4.2/lib/swipl/lib/x86_64-linux/")

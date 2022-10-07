@@ -17,8 +17,8 @@
 (add-hook 'web-mode-hook 'my-web-mode-hook)
 
 ;; Agda
-(load-file (let ((coding-system-for-read 'utf-8))
-             (shell-command-to-string "agda-mode locate")))
+;;(load-file (let ((coding-system-for-read 'utf-8))
+;;             (shell-command-to-string "agda-mode locate")))
 ;;(require 'agda-mode)
 
 ;; RDF

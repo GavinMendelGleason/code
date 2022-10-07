@@ -16,7 +16,7 @@
               ("C-c C-c s" . lsp-rust-analyzer-status))
   :config
   ;; uncomment for less flashiness
-  (setq lsp-eldoc-hook nil)
+  ;; (setq lsp-eldoc-hook nil)
   ;; (setq lsp-enable-symbol-highlighting nil)
   ;; (setq lsp-signature-auto-activate nil)
 
@@ -111,5 +111,9 @@
           (indent-for-tab-command)))))
 
 (use-package flycheck :ensure)
+
+;;(custom-set-faces
+;;  '(rustic-compilation-column ((t (:inherit compilation-column-number))))
+;;  '(rustic-compilation-line ((t (:foreground "LimeGreen")))))
 
 (provide 'rusthacks)

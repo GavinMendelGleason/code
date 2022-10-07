@@ -7,7 +7,7 @@
                          ("melpa" . "http://melpa.org/packages/")))
 (package-initialize) ;; You might already have this line
 
-(add-to-list 'load-path (expand-file-name "setup"))
+(add-to-list 'load-path "~/.emacs.d/setup/")
 
 (require 'tweaks)
 (require 'magithacks)
@@ -82,7 +82,13 @@
  '(agda2-highlight-postulate-face ((t (:foreground "tomato"))))
  '(agda2-highlight-primitive-face ((t (:foreground "brown"))))
  '(agda2-highlight-primitive-type-face ((t (:foreground "brown"))))
- '(agda2-highlight-record-face ((t (:foreground "magenta")))))
+ '(agda2-highlight-record-face ((t (:foreground "magenta"))))
+ '(lsp-ui-peek-line-number ((t (:foreground "grey"))))
+ '(magit-reflog-checkout ((t (:foreground "DeepSkyBlue1"))))
+ '(rustic-cargo-outdated ((t (:foreground "orange red"))))
+ '(rustic-errno-face ((t (:foreground "orange red"))))
+ '(transient-blue ((t (:inherit transient-key :foreground "DeepSkyBlue1"))))
+ '(which-func ((t (:foreground "DeepSkyBlue1")))))
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 ;;(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
