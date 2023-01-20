@@ -133,4 +133,12 @@
  '(rustic-compilation-start ((t (:foreground "SkyBlue"))))
  '(rustic-compilation-warning ((t (:foreground "SkyBlue")))))
 
+(setq rustic-ansi-faces ["black"
+                         "orange"
+                         "green3"
+                         "yellow3"
+                         "cyan2"
+                         "magenta3"
+                         "cyan3"
+                         "white"])
 (provide 'rusthacks)
