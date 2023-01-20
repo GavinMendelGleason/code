@@ -70,7 +70,8 @@
                    (concat m31-root-directory "andromeda.native"))))))
  '(send-mail-function 'mailclient-send-it)
  '(session-use-package t nil (session))
- '(ttl-indent-level 2))
+ '(ttl-indent-level 2)
+ '(warning-suppress-types '((comp) (comp) (comp) (comp) (comp))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

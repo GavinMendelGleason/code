@@ -116,4 +116,21 @@
 ;;  '(rustic-compilation-column ((t (:inherit compilation-column-number))))
 ;;  '(rustic-compilation-line ((t (:foreground "LimeGreen")))))
 
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(compilation-error ((t (:foreground "SkyBlue"))))
+ '(compilation-info ((t (:foreground "SkyBlue"))))
+ '(compilation-message ((t (:foreground "SkyBlue"))))
+ '(compilation-warning ((t (:foreground "SkyBlue"))))
+ '(rustic-compilation ((t (:foreground "SkyBlue"))))
+ '(rustic-compilation-column ((t (:inherit compilation-column-number))))
+ '(rustic-compilation-error ((t (:foreground "SkyBlue"))))
+ '(rustic-compilation-info ((t (:foreground "SkyBlue"))))
+ '(rustic-compilation-line ((t (:foreground "LimeGreen"))))
+ '(rustic-compilation-start ((t (:foreground "SkyBlue"))))
+ '(rustic-compilation-warning ((t (:foreground "SkyBlue")))))
+
 (provide 'rusthacks)

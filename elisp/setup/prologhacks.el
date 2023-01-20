@@ -12,22 +12,10 @@
           (lambda ()
             (setq indent-tabs-mode nil)))
 
-;;(setq prolog-program-name "swipl") ;;
-;;(setq prolog-program-name "/home/francoisbabeuf/Documents/build/ClioPatria/run.pl")
-(setq prolog-program-name "swipl")
-;;(setenv "TERMINUSDB_FILE_STORAGE_PATH" "/home/gavin/dev/terminusdb/storage/")
-;;(setenv "TERMINUSDB_FILE_STORAGE_PATH")
-;; (setenv "TERMINUSDB_HTTPS_ENABLED" "true")
-;;(setenv "TERMINUSDB_HTTPS_ENABLED" "false")
+
 (setenv "TERMINUSDB_SERVER_PORT" "6363")
-;;(setenv "TERMINUSDB_SERVER_DB_PATH" "/home/gavin/dev/terminus_electron")
-;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dl.bintray.com/terminusdb/terminusdb/0.0.1")
-;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dl.bintray.com/terminusdb/terminusdb/0.0.1")
 (setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dl.bintray.com/terminusdb/terminusdb/canary")
-;;(setenv "TERMINUSDB_CONSOLE_BASE_URL" "https://dcm.ist/console/v4.0.0")
 (setenv "TERMINUSDB_IGNORE_REF_AND_REPO_SCHEMA" "true")
-;;(setq prolog-program-name "/home/gavin/dev/terminus-server/start.pl")
-;;(setenv "TERMINUSDB_SERVER_DB_PATH" "/home/gavin/dev/terminusdb/storage/db")
 (setenv "RUST_BACKTRACE" "1")
 
 ;; (setenv "AUTH0_DOMAIN" "terminushub.eu.auth0.com")
@@ -43,7 +31,7 @@
 (setenv "AUDIENCE" "https://terminusdb.com/hubservices")
 
 (setq prolog-system 'swi)
-(setq prolog-program-name "swipl")
+(setq prolog-program-name "/home/gavin/.swivm/versions/v9.0.3/bin/swipl")
 ;;(setq prolog-program-name "/home/gavin/dev/terminusdb/start.pl")
 ;;(setq prolog-program-name "/home/gavin/dev/terminusdb/src/start.pl")
 ;;(setq prolog-program-switches '((t ("serve" "-i"))))
