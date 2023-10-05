@@ -13,6 +13,7 @@
 (require 'magithacks)
 ;; assorted languages
 (require 'language)
+(require 'tshacks)
 (require 'rusthacks)
 
 ;; unicode-fonts
@@ -36,7 +37,7 @@
    '("4e7e04c4b161dd04dc671fb5288e3cc772d9086345cb03b7f5ed8538905e8e27" "23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default))
  '(ispell-dictionary nil)
  '(package-selected-packages
-   '(company lsp-ui use-package graphql-mode restclient js2-mode session wc-mode exec-path-from-shell ttl-mode yaml-mode tide helm-lean company-lean ## lean-mode rustic flycheck magit-delta so-long tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode))
+   '(prettier-rc typescript-mode json-mode company lsp-ui use-package graphql-mode restclient js2-mode session wc-mode exec-path-from-shell ttl-mode yaml-mode tide helm-lean company-lean ## lean-mode rustic flycheck magit-delta so-long tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode))
  '(prolog-compile-string
    '((eclipse "[%f].")
      (mercury "mmc ")
@@ -71,7 +72,7 @@
  '(send-mail-function 'mailclient-send-it)
  '(session-use-package t nil (session))
  '(ttl-indent-level 2)
- '(warning-suppress-types '((comp) (comp) (comp) (comp) (comp))))
+ '(warning-suppress-types '(((unlock-file)) (comp) (comp) (comp) (comp) (comp))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -84,9 +85,20 @@
  '(agda2-highlight-primitive-face ((t (:foreground "brown"))))
  '(agda2-highlight-primitive-type-face ((t (:foreground "brown"))))
  '(agda2-highlight-record-face ((t (:foreground "magenta"))))
+ '(compilation-error ((t (:foreground "SkyBlue"))))
+ '(compilation-info ((t (:foreground "SkyBlue"))))
+ '(compilation-message ((t (:foreground "SkyBlue"))))
+ '(compilation-warning ((t (:foreground "SkyBlue"))))
  '(lsp-ui-peek-line-number ((t (:foreground "grey"))))
  '(magit-reflog-checkout ((t (:foreground "DeepSkyBlue1"))))
  '(rustic-cargo-outdated ((t (:foreground "orange red"))))
+ '(rustic-compilation ((t (:foreground "SkyBlue"))))
+ '(rustic-compilation-column ((t (:inherit compilation-column-number))))
+ '(rustic-compilation-error ((t (:foreground "SkyBlue"))))
+ '(rustic-compilation-info ((t (:foreground "SkyBlue"))))
+ '(rustic-compilation-line ((t (:foreground "LimeGreen"))))
+ '(rustic-compilation-start ((t (:foreground "SkyBlue"))))
+ '(rustic-compilation-warning ((t (:foreground "SkyBlue"))))
  '(rustic-errno-face ((t (:foreground "orange red"))))
  '(transient-blue ((t (:inherit transient-key :foreground "DeepSkyBlue1"))))
  '(which-func ((t (:foreground "DeepSkyBlue1")))))

@@ -1,8 +1,13 @@
 ;; Kill the useless menu bar
 (menu-bar-mode -1)
 
-;; do something smart if lines are super long
-(global-so-long-mode 1)
+;; Long lines handling
+(setq-default bidi-paragraph-direction 'left-to-right)
+(if (version<= "27.1" emacs-version)
+    (setq bidi-inhibit-bpa t))
+
+(if (version<= "27.1" emacs-version)
+    (global-so-long-mode 1))
 
 ;;; Fucking bell
 (setq visible-bell nil)
@@ -20,6 +25,8 @@
 (tooltip-mode nil)
 (setq tooltip-use-echo-area t)
 
+(setq lsp-keymap-prefix "C-c C-c")
+
 ;; Colour theme
 (load-theme 'suscolors t)
 ;;(load-theme 'github t)
@@ -33,27 +40,29 @@
   (interactive)
   (load-theme 'suscolors t))
 
-;; Fix emacs env variables
-(defun set-exec-path-from-shell-PATH ()
-  "Set up Emacs' `exec-path' and PATH environment variable to match
-that used by the user's shell.
+;; ;; Fix emacs env variables
+;; (defun set-exec-path-from-shell-PATH ()
+;;   "Set up Emacs' `exec-path' and PATH environment variable to match
+;; that used by the user's shell.
 
-This is particularly useful under Mac OS X and macOS, where GUI
-apps are not started from a shell."
-  (interactive)
-  (let ((path-from-shell (replace-regexp-in-string
-              "[ \t\n]*$" "" (shell-command-to-string
-                      "$SHELL --login -c 'echo $PATH'"
-                            ))))
-    (setenv "PATH" path-from-shell)
-    (setq exec-path (split-string path-from-shell path-separator))))
+;; This is particularly useful under Mac OS X and macOS, where GUI
+;; apps are not started from a shell."
+;;   (interactive)
+;;   (let ((path-from-shell (replace-regexp-in-string
+;;               "[ \t\n]*$" "" (shell-command-to-string
+;;                       "$SHELL --login -c 'echo $PATH'"
+;;                             ))))
+;;     (setenv "PATH" path-from-shell)
+;;     (setq exec-path (split-string path-from-shell path-separator))))
 
-(setenv "PATH" (concat (getenv "PATH") ":/home/gavin/.cargo/bin:/home/gavin/.swivm/versions/v9.0.3/bin"))
-(setq exec-path (append exec-path '("/home/gavin/.cargo/bin")))
+;; (setenv "PATH" (concat (getenv "PATH") ":/home/gavin/.cargo/bin:/home/gavin/.swivm/versions/v9.0.4/bin"))
+;; (setq exec-path (append exec-path '("/home/gavin/.cargo/bin")))
 
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
 
-;; Set LD_LIBRARY_PATH manually (must also be v8.4.2)
-(setenv "LD_LIBRARY_PATH" "/home/gavin/.swivm/versions/v9.0.3/lib/swipl/lib/x86_64-linux/")
+;; Set LD_LIBRARY_PATH manually (must also be the same as above bin version)
+(setenv "LD_LIBRARY_PATH" "/home/gavin/.swivm/versions/v9.0.4/lib/swipl/lib/x86_64-linux/")
 
 ;; session
 (require 'session)

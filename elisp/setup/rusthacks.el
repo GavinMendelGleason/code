@@ -49,7 +49,15 @@
   (lsp-rust-analyzer-display-closure-return-type-hints t)
   (lsp-rust-analyzer-display-parameter-hints nil)
   (lsp-rust-analyzer-display-reborrow-hints nil)
+  (lsp-prefer-capf t)
+  :hook (lsp-mode . (lambda ()
+                      (let ((lsp-keymap-prefix "C-c C-c"))
+                        (lsp-enable-which-key-integration))))
+  :init
+  (setq lsp-keep-workspace-alive nil
+        lsp-signature-doc-lines 5)
   :config
+  (define-key lsp-mode-map (kbd "C-c C-c") lsp-command-map)
   (add-hook 'lsp-mode-hook 'lsp-ui-mode))
 
 (use-package lsp-ui
@@ -115,6 +123,10 @@
 ;;(custom-set-faces
 ;;  '(rustic-compilation-column ((t (:inherit compilation-column-number))))
 ;;  '(rustic-compilation-line ((t (:foreground "LimeGreen")))))
+
+(setq rustic-compile-command "cargo +nightly build")
+(setq rustic-cargo-build-exec-command "+nightly build")
+(setq rustic-cargo-nextest-exec-command "nextest +nightly run")
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

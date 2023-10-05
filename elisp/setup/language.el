@@ -36,4 +36,9 @@
 ;; Whitespace mode
 (require 'whitespace)
 
+;; Markdown
+(require 'markdown-mode)
+(setq markdown-fontify-code-blocks-natively t)
+(add-to-list 'markdown-code-lang-modes '("graphql" . graphql-mod))
+
 (provide 'language)
