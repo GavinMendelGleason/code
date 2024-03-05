@@ -81,8 +81,9 @@
 	      ("M->". company-select-last))
   :bind
   (:map company-mode-map
-	("<tab>". tab-indent-or-complete)
-	("TAB". tab-indent-or-complete)))
+	    ("<tab>". tab-indent-or-complete)
+        ("C-." . company-complete-common)
+	    ("TAB". tab-indent-or-complete)))
 
 (use-package yasnippet
   :ensure

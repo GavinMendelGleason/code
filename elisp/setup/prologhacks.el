@@ -31,7 +31,7 @@
 (setenv "AUDIENCE" "https://terminusdb.com/hubservices")
 
 (setq prolog-system 'swi)
-(setq prolog-program-name "/home/gavin/.swivm/versions/v9.0.3/bin/swipl")
+(setq prolog-program-name "/home/gavin/.swivm/versions/v9.2.1/bin/swipl")
 ;;(setq prolog-program-name "/home/gavin/dev/terminusdb/start.pl")
 ;;(setq prolog-program-name "/home/gavin/dev/terminusdb/src/start.pl")
 ;;(setq prolog-program-switches '((t ("serve" "-i"))))

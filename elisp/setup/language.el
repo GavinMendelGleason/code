@@ -24,15 +24,6 @@
 ;; RDF
 (add-to-list 'auto-mode-alist '("\\.ttl\\'" . ttl-mode))
 
-;; Javascript
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-(setq js2-strict-missing-semi-warning nil)
-(setq-default js2-basic-offset 2)
-(setq js2-mode-hook
-      '(lambda () (progn
-                    (set-variable 'js2-basic-offset 2)
-                    (set-variable 'indent-tabs-mode nil))))
-
 ;; Whitespace mode
 (require 'whitespace)
 
