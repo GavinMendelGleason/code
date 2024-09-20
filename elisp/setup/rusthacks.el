@@ -126,9 +126,9 @@
 ;;  '(rustic-compilation-column ((t (:inherit compilation-column-number))))
 ;;  '(rustic-compilation-line ((t (:foreground "LimeGreen")))))
 
-(setq rustic-compile-command "cargo +nightly build")
-(setq rustic-cargo-build-exec-command "+nightly build")
-(setq rustic-cargo-nextest-exec-command "nextest +nightly run")
+;; (setq rustic-compile-command "cargo +nightly build")
+;; (setq rustic-cargo-build-exec-command "+nightly build")
+;; (setq rustic-cargo-nextest-exec-command "nextest +nightly run")
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

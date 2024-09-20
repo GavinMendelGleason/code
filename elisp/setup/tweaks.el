@@ -90,4 +90,9 @@
 (add-hook 'eshell-mode-hook 'with-editor-export-editor)
 (add-hook 'shell-mode-hook 'with-editor-export-git-editor)
 
+
+(use-package direnv
+ :config
+ (direnv-mode))
+
 (provide 'tweaks)
