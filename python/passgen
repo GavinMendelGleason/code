@@ -14,7 +14,7 @@ $ cat google-10000-english.txt | grep ".....*" > google-10000-english-4+.txt
 Then set WF accordingly. 
 
 """
-WF = "/home/gavin/dev/google-10000-english/google-10000-english-4+.txt"
+WF = "/home/gavin/lib/google-10000-english/google-10000-english-4+.txt"
 SIZE = 8906
 password = ""
 

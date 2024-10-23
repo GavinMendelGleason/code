@@ -20,6 +20,9 @@
 (setq-default indent-tabs-mode nil)
 (setq-default show-trailing-whitespace t)
 
+;; British English
+(setq ispell-dictionary "british")
+
 ;; Emacs basics
 (tool-bar-mode -1)
 (tooltip-mode nil)
@@ -63,6 +66,10 @@
 
 ;; Set LD_LIBRARY_PATH manually (must also be the same as above bin version)
 (setenv "LD_LIBRARY_PATH" "/home/gavin/.swivm/versions/v9.0.4/lib/swipl/lib/x86_64-linux/")
+
+;; Requires downloading from https://www.nerdfonts.com/font-downloads
+;; copying to ~/.fonts and running `fc-cache -fv`
+(set-frame-font "Inconsolata Nerd Font Mono")
 
 ;; session
 (require 'session)

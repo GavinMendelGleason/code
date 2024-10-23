@@ -155,4 +155,8 @@
                          "magenta3"
                          "cyan3"
                          "white"])
+
+;;(setenv "RUSTFLAGS" "-C target-cpu=native")
+;;(setenv "CARGO_PROFILE_DEV_BUILD_OVERRIDE_DEBUG" "true")
+
 (provide 'rusthacks)

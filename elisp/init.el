@@ -16,12 +16,15 @@
 (require 'tshacks)
 (require 'jshacks)
 (require 'rusthacks)
+(require 'markdownhacks)
 (require 'ai)
 (require 'cpp)
 ;; unicode-fonts
 (require 'unicode-fonts)
 
 (require 'prologhacks)
+
+(setq max-lisp-eval-depth 160000)
 
 ;;; ************************************************
 ;;; Customisations
@@ -39,7 +42,7 @@
    '("4e7e04c4b161dd04dc671fb5288e3cc772d9086345cb03b7f5ed8538905e8e27" "23562d67c3657a80dd1afc21e1e80652db0ff819e477649d23a38c1502d1245f" default))
  '(ispell-dictionary nil)
  '(package-selected-packages
-   '(astyle direnv cuda-mode vterm nix-mode chatgpt-shell rust-playground handlebars-mode python-black prettier-rc typescript-mode json-mode company lsp-ui use-package graphql-mode restclient js2-mode session wc-mode exec-path-from-shell ttl-mode yaml-mode tide helm-lean company-lean ## lean-mode rustic flycheck magit-delta so-long tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode))
+   '(visual-fill-column astyle direnv cuda-mode vterm nix-mode chatgpt-shell rust-playground handlebars-mode python-black prettier-rc typescript-mode json-mode company lsp-ui use-package graphql-mode restclient js2-mode session wc-mode exec-path-from-shell ttl-mode yaml-mode tide helm-lean company-lean ## lean-mode rustic flycheck magit-delta so-long tramp exwm xelb csv-mode rust-mode with-editor markdown-preview-eww spinner lsp-mode auto-sudoedit tramp-theme tramp-term flycheck-mercury yasnippet web-mode utop unicode-fonts tuareg suscolors-theme sparql-mode sml-mode redprl ocp-indent n3-mode merlin markdown-mode magit idris-mode ghc fstar-mode))
  '(prolog-compile-string
    '((eclipse "[%f].")
      (mercury "mmc ")
@@ -80,7 +83,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Ubuntu Mono" :foundry "DAMA" :slant normal :weight normal :height 125 :width normal))))
+ '(default ((t (:family "Inconsolata Nerd Font Mono" :foundry "CYRE" :slant normal :weight normal :height 125 :width normal))))
  '(agda2-highlight-datatype-face ((t (:foreground "sky blue"))))
  '(agda2-highlight-function-face ((t (:foreground "deep sky blue"))))
  '(agda2-highlight-postulate-face ((t (:foreground "tomato"))))
