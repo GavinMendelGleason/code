@@ -31,7 +31,9 @@
 (setq lsp-keymap-prefix "C-c C-c")
 
 ;; Colour theme
-(load-theme 'suscolors t)
+;;(load-theme 'suscolors t)
+(load-theme 'nordic-night t)
+
 ;;(load-theme 'github t)
 (defun light-contrast-mode ()
   "Light contrast"
