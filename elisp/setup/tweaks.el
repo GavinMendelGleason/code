@@ -32,7 +32,8 @@
 
 ;; Colour theme
 ;;(load-theme 'suscolors t)
-(load-theme 'nordic-night t)
+;;(load-theme 'nordic-night t)
+(load-theme 'tango-dark t)
 
 ;;(load-theme 'github t)
 (defun light-contrast-mode ()
