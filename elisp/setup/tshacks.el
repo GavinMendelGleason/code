@@ -1,8 +1,9 @@
 (use-package typescript-mode
+  :ensure typescript-mode
   :config
   (add-hook 'typescript-mode-hook 'ts/ts-mode-hook))
 
-(require 'prettier-rc)
+(use-package prettier-rc :ensure prettier-rc)
 
 (set-variable 'typescript-indent-level 2)
 

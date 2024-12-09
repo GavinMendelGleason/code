@@ -2,7 +2,7 @@
 ;;; Languages
 
 ;; Web-mode
-(require 'web-mode)
+(use-package web-mode :ensure web-mode)
 (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
@@ -25,10 +25,10 @@
 (add-to-list 'auto-mode-alist '("\\.ttl\\'" . ttl-mode))
 
 ;; Whitespace mode
-(require 'whitespace)
+(use-package whitespace :ensure whitespace)
 
 ;; Markdown
-(require 'markdown-mode)
+(use-package markdown-mode :ensure markdown-mode)
 (setq markdown-fontify-code-blocks-natively t)
 (add-to-list 'markdown-code-lang-modes '("graphql" . graphql-mod))
 

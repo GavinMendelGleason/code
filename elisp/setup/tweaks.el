@@ -75,7 +75,7 @@
 (set-frame-font "Inconsolata Nerd Font Mono")
 
 ;; session
-(require 'session)
+(use-package session :ensure session)
 (add-hook 'after-init-hook 'session-initialize)
 
 ;;; *****************
@@ -102,7 +102,8 @@
 
 
 (use-package direnv
- :config
- (direnv-mode))
+  :ensure direnv
+  :config
+  (direnv-mode))
 
 (provide 'tweaks)
