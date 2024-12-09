@@ -106,4 +106,7 @@
   :config
   (direnv-mode))
 
+(use-package vterm
+  :ensure vterm)
+
 (provide 'tweaks)

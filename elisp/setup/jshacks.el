@@ -1,6 +1,7 @@
 ;; Javascript mode setup
 
 (use-package js2-mode
+  :ensure js2-mode
   :config
   (add-hook 'js2-mode-hook 'js/js-mode-hook))
 

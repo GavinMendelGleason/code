@@ -14,6 +14,7 @@
       (package-refresh-contents)
       (package-install 'use-package)))
 
+(setq package-install-upgrade-built-in t)
 (require 'use-package)
 
 (require 'tweaks)
@@ -30,7 +31,7 @@
 (require 'cpp)
 
 ;; unicode-fonts
-(require 'unicode-fonts)
+(use-package unicode-fonts :ensure unicode-fonts)
 
 (require 'prologhacks)
 

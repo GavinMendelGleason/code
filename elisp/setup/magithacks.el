@@ -1,6 +1,7 @@
 ;; Magit
+(use-package seq :ensure seq)
 (use-package magit :ensure magit)
-(require 'magit)
+
 (global-set-key (kbd "C-x g") 'magit-status)
 
 ;; Git password control
