@@ -61,15 +61,6 @@
 ;;     (setenv "PATH" path-from-shell)
 ;;     (setq exec-path (split-string path-from-shell path-separator))))
 
-;; (setenv "PATH" (concat (getenv "PATH") ":/home/gavin/.cargo/bin:/home/gavin/.swivm/versions/v9.0.4/bin"))
-;; (setq exec-path (append exec-path '("/home/gavin/.cargo/bin")))
-
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
-
-;; Set LD_LIBRARY_PATH manually (must also be the same as above bin version)
-(setenv "LD_LIBRARY_PATH" "/home/gavin/.swivm/versions/v9.0.4/lib/swipl/lib/x86_64-linux/")
-
 ;; Requires downloading from https://www.nerdfonts.com/font-downloads
 ;; copying to ~/.fonts and running `fc-cache -fv`
 (set-frame-font "Inconsolata Nerd Font Mono")
