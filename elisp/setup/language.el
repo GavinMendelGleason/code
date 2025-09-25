@@ -27,6 +27,9 @@
 ;; Whitespace mode
 (use-package whitespace :ensure whitespace)
 
+(add-hook 'vterm-mode-hook
+          (lambda ()
+            (whitespace-mode -1)))
 ;; Markdown
 (use-package markdown-mode :ensure markdown-mode)
 (setq markdown-fontify-code-blocks-natively t)

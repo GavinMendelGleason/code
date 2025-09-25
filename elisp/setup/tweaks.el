@@ -100,4 +100,8 @@
 (use-package vterm
   :ensure vterm)
 
+(add-hook 'vterm-mode-hook
+          (lambda ()
+            (setq-local show-trailing-whitespace nil)))
+
 (provide 'tweaks)
