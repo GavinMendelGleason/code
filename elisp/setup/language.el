@@ -35,4 +35,7 @@
 (setq markdown-fontify-code-blocks-natively t)
 (add-to-list 'markdown-code-lang-modes '("graphql" . graphql-mod))
 
+;; Nix
+(use-package nix-mode :ensure nix-mode)
+
 (provide 'language)
