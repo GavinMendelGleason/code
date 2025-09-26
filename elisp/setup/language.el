@@ -35,6 +35,8 @@
 (setq markdown-fontify-code-blocks-natively t)
 (add-to-list 'markdown-code-lang-modes '("graphql" . graphql-mod))
 
+(use-package yaml-mode :ensure yaml-mode)
+
 ;; Nix
 (use-package nix-mode :ensure nix-mode)
 

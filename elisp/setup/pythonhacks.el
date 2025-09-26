@@ -9,6 +9,9 @@
   (python-mode . poetry-tracking-mode)
   )
 
+(use-package blacken :ensure blacken)
+(use-package elpy :ensure elpy)
+
 (add-hook 'python-mode-hook
           (lambda ()
             (elpy-enable)
