@@ -37,7 +37,6 @@
 
 (use-package yaml-mode :ensure yaml-mode)
 
-;; Nix
 (use-package nix-mode :ensure nix-mode)
 
 (provide 'language)
